@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord login test</title>
+</head>
+
+<body>
+  <button id='loginBtn'>
+    로그인
+  </button>
+</body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const loginBtn = document.getElementById('loginBtn')
+    loginBtn.addEventListener('click', function () {
+      window.location.href = 'http://localhost:5001/auth/login'
+    })
+  })
+</script>
+
+</html>

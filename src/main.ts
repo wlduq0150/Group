@@ -9,6 +9,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
+import session from "express-session";
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -56,6 +57,19 @@ async function bootstrap() {
     const port: number = configService.get("SERVER_PORT");
 
     app.useStaticAssets(join(__dirname, "..", "assets"));
+
+    // 세션
+    app.use(
+        session({
+            secret: configService.get<string>("SESSION_SECRET"),
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 24 * 60 * 60 * 1000,
+            },
+        }),
+    );
 
     await app.listen(port);
 }

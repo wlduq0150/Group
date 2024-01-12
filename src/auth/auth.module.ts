@@ -2,27 +2,17 @@ import { Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { UserModule } from "src/user/user.module";
-import { JwtModule } from "@nestjs/jwt";
-import { accessTokenGuard } from "./guard/access-token.guard";
-import { accessTokenStrategy } from "./strategy/access-token.strategy";
-import { refreshTokenGuard } from "./guard/refresh-token.guard";
-import { refreshTokenStrategy } from "./strategy/refresh-token.strategy";
+import { ConfigModule } from "@nestjs/config";
+import discordConfig from "src/config/discord.config";
 
 @Module({
-    imports: [UserModule, JwtModule],
-    exports: [
-        accessTokenGuard,
-        accessTokenStrategy,
-        refreshTokenGuard,
-        refreshTokenStrategy,
+    imports: [
+        UserModule,
+        ConfigModule.forRoot({
+            load: [discordConfig],
+        }),
     ],
     controllers: [AuthController],
-    providers: [
-        AuthService,
-        accessTokenGuard,
-        accessTokenStrategy,
-        refreshTokenGuard,
-        refreshTokenStrategy,
-    ],
+    providers: [AuthService],
 })
 export class AuthModule {}
