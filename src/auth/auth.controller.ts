@@ -2,6 +2,10 @@ import { Controller, Get, Query, Redirect, Res, Session } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Response } from "express";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+    DiscordAuthResponse,
+    DiscordUser,
+} from "./interfaces/discord.interface";
 
 @ApiTags("사용자 인증")
 @Controller("auth")
@@ -15,9 +19,7 @@ export class AuthController {
         status: 302,
         description: "디스코드 인증 페이지로 리다이렉트됩니다.",
     })
-    @ApiResponse({ status: 401, description: "인증에 실패했습니다." })
-    @ApiResponse({ status: 500, description: "서버 내부 오류가 발생했습니다." })
-    getDiscordAuth() {
+    getDiscordAuth(): { url: string } {
         const redirectUrl: string = this.authService.getDiscordAuthURL();
 
         return { url: redirectUrl };
@@ -34,25 +36,23 @@ export class AuthController {
         status: 200,
         description: "인증 성공, 세션에 액세스 토큰 저장",
     })
-    @ApiResponse({ status: 400, description: "잘못된 요청입니다." })
-    @ApiResponse({ status: 401, description: "인증에 실패했습니다." })
-    @ApiResponse({ status: 500, description: "서버 내부 오류가 발생했습니다." })
     async discordCallback(
         @Query("code") code: string,
         @Session() session: Record<string, any>,
         @Res() res: Response,
-    ) {
+    ): Promise<void> {
         if (!code) {
             res.redirect("/login?error=NoCodeProvided");
             return;
         }
 
         try {
-            const accessTokenResponse =
+            const accessTokenResponse: DiscordAuthResponse =
                 await this.authService.getAccessToken(code);
-            const accessToken = accessTokenResponse.access_token;
+            const accessToken: string = accessTokenResponse.access_token;
 
-            const user = await this.authService.getDiscordUser(accessToken);
+            const user: DiscordUser =
+                await this.authService.getDiscordUser(accessToken);
 
             const isMember: Boolean = await this.authService.isUserInGuild(
                 user.id,
@@ -64,13 +64,10 @@ export class AuthController {
 
             session.accessToken = accessToken;
 
-            // todo: 개발 완료 후 지울 것
-            console.log("session", session);
-
             res.redirect("/");
         } catch (err) {
-            console.log("err", err);
-            res.redirect("/login?error=AuthenticationFailed");
+            console.error("인증 실패", err);
+            res.redirect("/");
         }
     }
 }

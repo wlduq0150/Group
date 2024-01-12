@@ -5,6 +5,12 @@ import {
     UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import {
+    DiscordAuthResponse,
+    DiscordConfig,
+    DiscordUser,
+    GuildMember,
+} from "./interfaces/discord.interface";
 
 @Injectable()
 export class AuthService {
@@ -16,7 +22,7 @@ export class AuthService {
     private readonly botToken: string;
 
     constructor(private readonly configService: ConfigService) {
-        const discordConfig = this.configService.get("discord");
+        const discordConfig: DiscordConfig = this.configService.get("discord");
 
         this.clientId = discordConfig.clientId;
         this.clientSecret = discordConfig.clientSecret;
@@ -27,12 +33,12 @@ export class AuthService {
     }
 
     getDiscordAuthURL(): string {
-        const redirectUriEncoded = encodeURIComponent(this.redirectUri);
+        const redirectUriEncoded: string = encodeURIComponent(this.redirectUri);
 
         return `https://discord.com/api/oauth2/authorize?client_id=${this.clientId}&redirect_uri=${redirectUriEncoded}&response_type=code&scope=${this.scope}`;
     }
 
-    async getAccessToken(code: string) {
+    async getAccessToken(code: string): Promise<DiscordAuthResponse> {
         const params = new URLSearchParams({
             client_id: this.clientId,
             client_secret: this.clientSecret,
@@ -66,7 +72,7 @@ export class AuthService {
         }
     }
 
-    async getDiscordUser(accessToken: string) {
+    async getDiscordUser(accessToken: string): Promise<DiscordUser> {
         const response = await fetch("https://discord.com/api/users/@me", {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -80,7 +86,10 @@ export class AuthService {
         return response.json();
     }
 
-    async addUserToGuild(accessToken: string, userId: string) {
+    async addUserToGuild(
+        accessToken: string,
+        userId: string,
+    ): Promise<GuildMember> {
         const response = await fetch(
             `https://discord.com/api/guilds/${this.guildId}/members/${userId}`,
             {
