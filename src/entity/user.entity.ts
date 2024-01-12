@@ -14,16 +14,13 @@ export class User {
     id: number;
 
     @Column({ unique: true })
-    email: string;
+    discordId: string;
 
     @Column()
-    password: string;
-
-    @Column({ nullable: true })
-    currentRefreshToken?: string;
+    username: string;
 
     @Column()
-    name: string;
+    avatar: string;
 
     @CreateDateColumn()
     createdAt: Date;

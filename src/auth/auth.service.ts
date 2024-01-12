@@ -11,6 +11,9 @@ import {
     DiscordUser,
     GuildMember,
 } from "./interfaces/discord.interface";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/entity/user.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class AuthService {
@@ -21,7 +24,11 @@ export class AuthService {
     private readonly guildId: string;
     private readonly botToken: string;
 
-    constructor(private readonly configService: ConfigService) {
+    constructor(
+        private readonly configService: ConfigService,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) {
         const discordConfig: DiscordConfig = this.configService.get("discord");
 
         this.clientId = discordConfig.clientId;
@@ -139,5 +146,21 @@ export class AuthService {
                 "사용자가 채널에 속해있는지 확인하는데 실패했습니다.",
             );
         }
+    }
+
+    async saveDiscordUser(discordUser: DiscordUser): Promise<User> {
+        let user = await this.userRepository.findOneBy({
+            discordId: discordUser.id,
+        });
+
+        if (!user) {
+            user = this.userRepository.create({
+                discordId: discordUser.id,
+                username: discordUser.username,
+                avatar: discordUser.avatar,
+            });
+        }
+
+        return this.userRepository.save(user);
     }
 }
