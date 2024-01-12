@@ -6,6 +6,7 @@ import {
     DiscordAuthResponse,
     DiscordUser,
 } from "./interfaces/discord.interface";
+import { User } from "src/entity/user.entity";
 
 @ApiTags("사용자 인증")
 @Controller("auth")
@@ -62,6 +63,9 @@ export class AuthController {
                 await this.authService.addUserToGuild(user.id, accessToken);
             }
 
+            const saveUser: User = await this.authService.saveDiscordUser(user);
+
+            session.discordUserId = saveUser.discordId;
             session.accessToken = accessToken;
 
             res.redirect("/");
