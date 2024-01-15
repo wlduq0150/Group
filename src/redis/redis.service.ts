@@ -43,6 +43,10 @@ export class RedisService {
         return await this.redisClient.keys("*");
     }
 
+    getRedisClient() {
+        return this.redisClient;
+    }
+
     getRedis(): IORedis {
         return this.redisClient;
     }

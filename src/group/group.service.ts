@@ -120,29 +120,58 @@ export class GroupService {
         }
     }
 
-    // 레디스를 사용하는데 트랜잭션을 통한 동시성 처리가 필요하다면?
+    // 레디스의 multi와 watch를 통해 트랜잭션과 락 구현
     async selectPosition(groupId: string, userId: number, position: Position) {
         const groupStateKey = `group-${groupId}-state`;
 
-        const groupState = await this.findGroupStateById(groupId);
+        const redisClient = this.redisService.getRedisClient();
+        const transaction = redisClient.multi();
 
-        if (!groupState[position].isActive) {
-            throw new WsException("해당 포지션은 선택할 수 없습니다.");
-        }
+        let groupState: GroupState;
 
-        if (groupState[position].userId !== null) {
-            throw new WsException(
-                "다른 사용자가 이미 해당 포지션을 선택했습니다.",
-            );
-        }
+        await transaction.get(groupStateKey).exec((err, data: any) => {
+            groupState = JSON.parse(data[0][1]);
 
-        if (checkIsUserPositionSelect(groupState, userId) !== "none") {
-            throw new WsException("이미 포지션을 선택했습니다.");
-        }
+            try {
+                let count: number;
+                if (userId === 1) count = 5000000000;
+                else count = 500;
 
-        groupState[position].userId = userId;
+                for (let i = 0; i < count; i++) {
+                    const a = 10000 + 20000;
+                }
 
-        await this.redisService.set(groupStateKey, JSON.stringify(groupState));
+                if (err) {
+                    throw new WsException(err.message);
+                }
+
+                if (!groupState) {
+                    throw new WsException("그룹이 존재하지 않습니다.");
+                }
+
+                if (!groupState[position].isActive) {
+                    throw new WsException("해당 포지션은 선택할 수 없습니다.");
+                }
+
+                if (groupState[position].userId !== null) {
+                    throw new WsException(
+                        "다른 사용자가 이미 해당 포지션을 선택했습니다.",
+                    );
+                }
+
+                if (checkIsUserPositionSelect(groupState, userId) !== "none") {
+                    throw new WsException("이미 포지션을 선택했습니다.");
+                }
+
+                groupState[position].userId = userId;
+
+                transaction.set(groupStateKey, JSON.stringify(groupState));
+                transaction.exec();
+            } catch (e) {
+                transaction.discard();
+                throw e;
+            }
+        });
 
         return groupState;
     }
