@@ -5,7 +5,7 @@ import { ConfigProjectModule } from "./config/config.module";
 import { TypeormModule } from "./typeorm/typeorm.module";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
-import { UserInforModule } from './user-infor/user-infor.module';
+import { RedisModule } from "./redis/redis.module";
 
 @Module({
     imports: [
@@ -14,6 +14,7 @@ import { UserInforModule } from './user-infor/user-infor.module';
         AuthModule,
         UserModule,
         UserInforModule,
+        RedisModule,
     ],
     controllers: [AppController],
     providers: [AppService],
