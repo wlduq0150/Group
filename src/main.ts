@@ -9,6 +9,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
+import { IoAdapter } from "@nestjs/platform-socket.io";
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -26,6 +27,8 @@ async function bootstrap() {
             // forbidNonWhitelisted: true,
         }),
     );
+
+    app.useWebSocketAdapter(new IoAdapter(app));
 
     // Swagger
     const swaggerCustomOptions: SwaggerCustomOptions = {
