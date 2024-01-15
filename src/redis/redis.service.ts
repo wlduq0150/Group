@@ -24,11 +24,14 @@ export class RedisService {
             console.error("Redis connection error:", err);
         });
     }
+
+    getRedisClient(): IORedis {
+        return this.redisClient;
+    }
+
     async get(key: string) {
         const keyValue = await this.redisClient.get(key);
-        if (!keyValue) {
-            throw new NotFoundException("해당하는 key에는 value값이 없습니다");
-        }
+
         return keyValue;
     }
 
