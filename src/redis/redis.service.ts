@@ -1,4 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import IORedis from "ioredis";
 
@@ -20,18 +24,28 @@ export class RedisService {
             console.error("Redis connection error:", err);
         });
     }
-    get(key: string) {
-        const keyValue = this.redisClient.get(key);
+    async get(key: string) {
+        const keyValue = await this.redisClient.get(key);
+        if (!keyValue) {
+            throw new NotFoundException("해당하는 key에는 value값이 없습니다");
+        }
         return keyValue;
     }
 
-    set(key: string, value: any) {
-        this.redisClient.set(key, value);
+    async set(key: string, value: any) {
+        await this.redisClient.set(key, value);
+
         return value;
     }
 
-    delete(key: string) {
-        this.redisClient.del(key);
+    async rename(key: string, newKey: string) {
+        await this.redisClient.rename(key, newKey);
+
+        return newKey;
+    }
+
+    async del(key: string) {
+        await this.redisClient.del(key);
         return key;
     }
 }
