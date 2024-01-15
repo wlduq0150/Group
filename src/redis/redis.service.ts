@@ -10,7 +10,6 @@ export class RedisService {
             host: this.configService.get<string>("REDIS_HOST"),
             port: this.configService.get<number>("REDIS_PORT"),
             password: this.configService.get<string>("REDIS_PASSWORD"),
-            //db: this.configService.get<number>("REDIS_DB"),
         });
         // (선택) Redis 연결 여부 확인
         this.redisClient.on("connect", () => {
@@ -20,17 +19,30 @@ export class RedisService {
             console.error("Redis connection error:", err);
         });
     }
+
+    getRedisClient(): IORedis {
+        return this.redisClient;
+    }
+
     async get(key: string) {
         const keyValue = await this.redisClient.get(key);
+
         return keyValue;
     }
 
     async set(key: string, value: any) {
         await this.redisClient.set(key, value);
+
         return value;
     }
 
-    async delete(key: string) {
+    async rename(key: string, newKey: string) {
+        await this.redisClient.rename(key, newKey);
+
+        return newKey;
+    }
+
+    async del(key: string) {
         await this.redisClient.del(key);
         return key;
     }
@@ -41,13 +53,5 @@ export class RedisService {
 
     async getAll() {
         return await this.redisClient.keys("*");
-    }
-
-    getRedisClient() {
-        return this.redisClient;
-    }
-
-    getRedis(): IORedis {
-        return this.redisClient;
     }
 }

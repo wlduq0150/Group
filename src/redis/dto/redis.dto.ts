@@ -5,6 +5,6 @@ export class RedisDto {
     @IsNotEmpty({ message: "문자열 key를 작성해 주세요" })
     key: string;
 
-    @IsNotEmpty({ message: "value를 작성해 주세요" })
+    @IsNotEmpty({ message: "value 작성해 주세요" })
     value: any;
 }

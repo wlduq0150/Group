@@ -65,8 +65,8 @@ export class GroupService {
         const groupInfoKey = `group-${groupId}`;
         const groupStateKey = `group-${groupId}-state`;
 
-        await this.redisService.delete(groupInfoKey);
-        await this.redisService.delete(groupStateKey);
+        await this.redisService.del(groupInfoKey);
+        await this.redisService.del(groupStateKey);
 
         return true;
     }
@@ -108,8 +108,8 @@ export class GroupService {
         const isGroupEmpty = groupState.currentUser > 0 ? false : true;
 
         if (isGroupEmpty) {
-            await this.redisService.delete(groupInfoKey);
-            await this.redisService.delete(groupStateKey);
+            await this.redisService.del(groupInfoKey);
+            await this.redisService.del(groupStateKey);
             return null;
         } else {
             await this.redisService.set(
@@ -133,14 +133,6 @@ export class GroupService {
             groupState = JSON.parse(data[0][1]);
 
             try {
-                let count: number;
-                if (userId === 1) count = 5000000000;
-                else count = 500;
-
-                for (let i = 0; i < count; i++) {
-                    const a = 10000 + 20000;
-                }
-
                 if (err) {
                     throw new WsException(err.message);
                 }
