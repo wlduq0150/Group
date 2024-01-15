@@ -15,6 +15,7 @@ import { checkIsUserAlreadyJoin } from "./function/check-user-already-join.funct
 import { checkIsUserAlreadyGroupJoin } from "./function/check-user-group-join.function";
 import { WsException } from "./exception/ws-exception.exception";
 import { WsExceptionFilter } from "./filter/ws-exception.filter";
+import { RedisService } from "src/redis/redis.service";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -34,6 +35,20 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.connections.delete(client.id);
 
         console.log(`[Group]client disconnected: ${client.id}`);
+    }
+
+    @SubscribeMessage("clear")
+    clear(client: Socket): void {
+        this.groupService.clear();
+
+        this.server.emit("clear", { message: "Redis 초기화 완료" });
+    }
+
+    @SubscribeMessage("getAll")
+    async getAll(client: Socket): Promise<void> {
+        const data = await this.groupService.getAll();
+
+        this.server.emit("getAll", { keys: data });
     }
 
     // 클라이언트 socket 연결시 connections에 등록
@@ -77,14 +92,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const userId = this.connections.get(client.id);
         const { groupId } = joinGroupDto;
 
-        const groupInfo = await this.groupService.findGroupInfoById(groupId);
-        const groupState = await this.groupService.joinGroup(groupId, userId);
-
         // 이미 그룹에 참여중인 경우 예외처리
         const result = checkIsUserAlreadyJoin(client);
         if (result) {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
+
+        const groupInfo = await this.groupService.findGroupInfoById(groupId);
+        const groupState = await this.groupService.joinGroup(groupId, userId);
 
         // 그룹 참가
         client.join(groupId);

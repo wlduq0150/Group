@@ -7,10 +7,19 @@ import { Position } from "./type/position.type";
 import { checkIsUserPositionSelect } from "./function/check-position-select.function";
 import { WsException } from "./exception/ws-exception.exception";
 import { Server, Socket } from "socket.io";
+import { RedisService } from "src/redis/redis.service";
 
 @Injectable()
 export class GroupService {
-    groups: Map<string, Group | GroupState> = new Map();
+    constructor(private readonly redisService: RedisService) {}
+
+    async clear() {
+        await this.redisService.clear();
+    }
+
+    async getAll() {
+        return await this.redisService.getAll();
+    }
 
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {
         const { name, mode, mic, owner, position } = createGroupDto;
@@ -21,15 +30,16 @@ export class GroupService {
         const group: Group = { name, mode, mic, owner };
         const groupState = initGroupState(position);
 
-        this.groups.set(groupInfoKey, group);
-        this.groups.set(groupStateKey, groupState);
+        await this.redisService.set(groupInfoKey, JSON.stringify(group));
+        await this.redisService.set(groupStateKey, JSON.stringify(groupState));
 
         return group;
     }
 
     async findGroupInfoById(groupId: string) {
         const groupInfoKey = `group-${groupId}`;
-        const group = this.groups.get(groupInfoKey);
+        const data = await this.redisService.get(groupInfoKey);
+        const group: Group = JSON.parse(data);
 
         if (!group) {
             throw new WsException("존재하지 않는 그룹입니다.");
@@ -41,21 +51,22 @@ export class GroupService {
     async findGroupStateById(groupId: string) {
         const groupStateKey = `group-${groupId}-state`;
 
-        const group = this.groups.get(groupStateKey);
+        const data = await this.redisService.get(groupStateKey);
+        const groupState: GroupState = JSON.parse(data);
 
-        if (!group) {
+        if (!groupState) {
             throw new WsException("존재하지 않는 그룹입니다.");
         }
 
-        return group;
+        return groupState;
     }
 
-    removeGroup(groupId: string) {
+    async removeGroup(groupId: string) {
         const groupInfoKey = `group-${groupId}`;
         const groupStateKey = `group-${groupId}-state`;
 
-        this.groups.delete(groupInfoKey);
-        this.groups.delete(groupStateKey);
+        await this.redisService.delete(groupInfoKey);
+        await this.redisService.delete(groupStateKey);
 
         return true;
     }
@@ -63,7 +74,7 @@ export class GroupService {
     async joinGroup(groupId: string, userId: number) {
         const groupStateKey = `group-${groupId}-state`;
 
-        const groupState = this.groups.get(groupStateKey) as GroupState;
+        const groupState = await this.findGroupStateById(groupId);
 
         if (groupState.currentUser >= groupState.totalUser) {
             throw new WsException(
@@ -73,7 +84,7 @@ export class GroupService {
 
         groupState.currentUser += 1;
 
-        this.groups.set(groupStateKey, groupState);
+        this.redisService.set(groupStateKey, JSON.stringify(groupState));
 
         return groupState;
     }
@@ -82,12 +93,12 @@ export class GroupService {
         const groupInfoKey = `group-${groupId}`;
         const groupStateKey = `group-${groupId}-state`;
 
-        const groupState = this.groups.get(groupStateKey) as GroupState;
+        const groupState = await this.findGroupStateById(groupId);
 
         // 현재 포지션을 선택한 상태라면 포지션 해제
         const pos = checkIsUserPositionSelect(groupState, userId);
         if (pos !== "none") {
-            this.deselectPosition(groupId, userId, pos);
+            await this.deselectPosition(groupId, userId, pos);
         }
 
         // 유저 나가기
@@ -97,11 +108,14 @@ export class GroupService {
         const isGroupEmpty = groupState.currentUser > 0 ? false : true;
 
         if (isGroupEmpty) {
-            this.groups.delete(groupInfoKey);
-            this.groups.delete(groupStateKey);
+            await this.redisService.delete(groupInfoKey);
+            await this.redisService.delete(groupStateKey);
             return null;
         } else {
-            this.groups.set(groupStateKey, groupState);
+            await this.redisService.set(
+                groupStateKey,
+                JSON.stringify(groupState),
+            );
             return groupState;
         }
     }
@@ -110,7 +124,7 @@ export class GroupService {
     async selectPosition(groupId: string, userId: number, position: Position) {
         const groupStateKey = `group-${groupId}-state`;
 
-        const groupState = this.groups.get(groupStateKey) as GroupState;
+        const groupState = await this.findGroupStateById(groupId);
 
         if (!groupState[position].isActive) {
             throw new WsException("해당 포지션은 선택할 수 없습니다.");
@@ -128,6 +142,8 @@ export class GroupService {
 
         groupState[position].userId = userId;
 
+        await this.redisService.set(groupStateKey, JSON.stringify(groupState));
+
         return groupState;
     }
 
@@ -138,7 +154,7 @@ export class GroupService {
     ) {
         const groupStateKey = `group-${groupId}-state`;
 
-        const groupState = this.groups.get(groupStateKey) as GroupState;
+        const groupState = await this.findGroupStateById(groupId);
 
         if (!groupState[position].isActive) {
             throw new WsException("해당 포지션은 선택할 수 없습니다.");
@@ -149,6 +165,8 @@ export class GroupService {
         }
 
         groupState[position].userId = null;
+
+        await this.redisService.set(groupStateKey, JSON.stringify(groupState));
 
         return groupState;
     }
