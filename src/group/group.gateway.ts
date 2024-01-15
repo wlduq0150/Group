@@ -77,7 +77,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         client.join(groupId);
 
-        const groupState = await this.groupService.joinGroup(groupId, userId);
+        const groupState = await this.groupService.joinGroup(groupId);
 
         this.server
             .to(client.id)
@@ -99,7 +99,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         const groupInfo = await this.groupService.findGroupInfoById(groupId);
-        const groupState = await this.groupService.joinGroup(groupId, userId);
+        const groupState = await this.groupService.joinGroup(groupId);
 
         // 그룹 참가
         client.join(groupId);

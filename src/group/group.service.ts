@@ -72,7 +72,7 @@ export class GroupService {
     }
 
     // userId 지우기
-    async joinGroup(groupId: string, userId: number) {
+    async joinGroup(groupId: string) {
         const groupStateKey = `group-${groupId}-state`;
 
         const groupState = await this.findGroupStateById(groupId);
