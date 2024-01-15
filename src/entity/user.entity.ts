@@ -2,6 +2,8 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    JoinTable,
+    ManyToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -30,4 +32,8 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToMany(() => User, (user) => user.friends, { cascade: true })
+    @JoinTable()
+    friends: User[];
 }
