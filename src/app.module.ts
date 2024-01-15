@@ -5,6 +5,7 @@ import { ConfigProjectModule } from "./config/config.module";
 import { TypeormModule } from "./typeorm/typeorm.module";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
+import { DiscordModule } from './discord/discord.module';
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { UserModule } from "./user/user.module";
         TypeormModule.forRoot(),
         AuthModule,
         UserModule,
+        DiscordModule,
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -20,7 +20,7 @@ export class AuthController {
         status: 302,
         description: "디스코드 인증 페이지로 리다이렉트됩니다.",
     })
-    getDiscordAuth(): { url: string } {
+    getDiscordAuth() {
         const redirectUrl: string = this.authService.getDiscordAuthURL();
 
         return { url: redirectUrl };
@@ -68,10 +68,18 @@ export class AuthController {
             session.discordUserId = saveUser.discordId;
             session.accessToken = accessToken;
 
-            res.redirect("/");
+            res.redirect("http://localhost:5500/public/auth-test.html");
         } catch (err) {
             console.error("인증 실패", err);
-            res.redirect("/");
+            res.redirect("http://localhost:5500/public/auth-test.html");
         }
+    }
+
+    @Get("/session")
+    getSessiondata(@Session() session: Record<string, any>) {
+        return {
+            discordUserId: session.discordUserId,
+            accessToken: session.accessToken,
+        };
     }
 }

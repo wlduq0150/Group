@@ -11,6 +11,12 @@
   <button id='loginBtn'>
     로그인
   </button>
+  <button id='joinChannelBtn'>
+    채널 참여
+  </button>
+  <button id='getSessionDataBtn'>
+    세션 데이터 가져오기
+  </button>
 </body>
 
 <script>
@@ -18,6 +24,52 @@
     const loginBtn = document.getElementById('loginBtn')
     loginBtn.addEventListener('click', function () {
       window.location.href = 'http://localhost:5001/auth/login'
+    })
+
+    const joinChannelBtn = document.getElementById('joinChannelBtn');
+    joinChannelBtn.addEventListener('click', async function () {
+      try {
+        const response = await fetch('http://localhost:5001/discord/join-voice', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error('서버 상태 오류')
+        }
+
+        const data = await response.json();
+        console.log(data)
+        alert('음성 채널에 참여했습니다. 채널 ID: ' + data.channelId)
+      } catch (err) {
+        alert(err.message)
+      }
+    })
+
+    const getSessionDataBtn = document.getElementById('getSessionDataBtn');
+    getSessionDataBtn.addEventListener('click', async function () {
+      try {
+        const response = await fetch('http://localhost:5001/auth/session', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error('서버 상태 오류')
+        }
+
+        const data = await response.json();
+        console.log(data)
+        alert('세션 데이터를 가져왔습니다. 세션 데이터: ' + JSON.stringify(data))
+      } catch (err) {
+        alert(err.message)
+      }
     })
   })
 </script>

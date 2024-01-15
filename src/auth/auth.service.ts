@@ -112,8 +112,8 @@ export class AuthService {
         );
 
         if (!response.ok) {
-            const errorCode = response.status;
-            const errorText = await response.text();
+            const errorCode: number = response.status;
+            const errorText: string = await response.text();
 
             throw new HttpException(
                 `사용자를 채널에 추가하는데 실패했습니다.: ${errorText}`,
