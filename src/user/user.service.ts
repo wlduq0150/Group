@@ -63,6 +63,7 @@ export class UserService {
             }
         };
         // puuid -> match -> 경기기록을 가져와서 통계를 때려야해요
+        //35번 -> 샤코 35번 -> 서버에 저장시킬려고요
         const response = await getResponse(splits);
         console.log(response);
         if (!response) {
@@ -73,11 +74,11 @@ export class UserService {
         // %name : 앞 문자와 상관없이 'name'이 포함
         // name% : 뒤 문자와 상관없이 'name'이 포함
         // %name% : 양쪽 문자와 상관없이 'name'이 포함
-        // 아 -> 아아아
+        // 20판 
         console.log(response);
         return await this.userRepository.find({
             where: {
-                name: Like(`${getData}%`)
+                username: Like(`${getData}%`)
             }
         });
     }

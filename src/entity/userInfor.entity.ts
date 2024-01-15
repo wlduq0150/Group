@@ -1,20 +1,32 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({
-    name: "users" // 데이터베이스 테이블의 이름
+    name: "userInfor" // 데이터베이스 테이블의 이름
 })
-export class User {
+export class UserInfor {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ unique: true })
-    discordId: string;
+    gameName: string;
 
     @Column()
-    username: string;
+    gameTag: string;
 
     @Column({ nullable: true })
-    avatar: string;
+    description: string;
+
+    @Column()
+    popular: number;
+
+    @Column()
+    gender: string;
+
+    @Column()
+    puuid: string;
+
+    @Column()
+    previous_id: string;
 
     @CreateDateColumn()
     createdAt: Date;
