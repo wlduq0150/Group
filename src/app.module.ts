@@ -6,12 +6,15 @@ import { TypeormModule } from "./typeorm/typeorm.module";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 
+import { LolModule } from "./lol/lol.module";
+
 @Module({
     imports: [
         ConfigProjectModule,
         TypeormModule.forRoot(),
         AuthModule,
         UserModule,
+        LolModule,
     ],
     controllers: [AppController],
     providers: [AppService],
