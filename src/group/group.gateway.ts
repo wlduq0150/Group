@@ -123,6 +123,13 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
         }
 
+        // let count = 5000000000;
+        // if (userId === 2) count = 0;
+        // for (let i = 0; i < count; i++) {
+        //     const a = 100000 + 200000;
+        // }
+        // console.log(position);
+
         const groupState = await this.groupService.selectPosition(
             groupId,
             userId,
