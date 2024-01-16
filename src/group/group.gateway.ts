@@ -46,7 +46,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage("getAll")
     async getAll(client: Socket): Promise<void> {
-        const data = await this.groupService.getAll();
+        const data = await this.groupService.findGroupIdByOwner(1);
 
         this.server.emit("getAll", { keys: data });
     }
@@ -69,7 +69,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
 
-        const groupId = "group-4234"; // 유니큰한 값 랜덤 생성으로 바뀔 예정
+        const groupId = "group-4234#"; // 유니큰한 값 랜덤 생성으로 바뀔 예정
         const groupInfo = await this.groupService.createGroup(
             groupId,
             createGroupDto,

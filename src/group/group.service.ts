@@ -36,6 +36,23 @@ export class GroupService {
         return group;
     }
 
+    // 유저 아이디를 통해 해당 유저가 방장인 그룹Id를 반환(없을 경우 null 반환)
+    async findGroupIdByOwner(userId: number) {
+        const redisClient = this.redisService.getRedisClient();
+        const keys = await redisClient.keys("group-*#");
+
+        for (let key of keys) {
+            const groupId = key.replace("group-", "");
+            const group = await this.findGroupInfoById(groupId);
+
+            if (group.owner === userId) {
+                return groupId;
+            }
+        }
+
+        return null;
+    }
+
     async findGroupInfoById(groupId: string) {
         const groupInfoKey = `group-${groupId}`;
         const data = await this.redisService.get(groupInfoKey);
