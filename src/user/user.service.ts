@@ -75,13 +75,13 @@ export class UserService {
             const champions = {};
             /*
             {
-                "350": { name: 'Yummi', total: 0, wins: 0, losses: 0 }
+                "350": { name: 'Yummi', total: 5, wins: 2, losses: 3 }
             }
             */
             //puuid , userId ,response
             const puuid = user.puuid;
             const userId = user.id;
-            //puuid통해서 API호출
+            //puuid통해 match list를 불러오는 API 호출
             const response = await fetch(`${process.env.LOL_API_PUUID_BASE}jqnwnN9nbrhfV6dpANDKoAG_TmyWo0xEFlFQ0w093owVmk6mtYOtmF0RpXfOGnbb6dsOAS-jH4UDWw/ids?start=0&count=20&api_key=${process.env.LOL_API_KEY}`);
             const data = await response.json(); //data를 json 형태로
             console.log(data);
@@ -89,7 +89,7 @@ export class UserService {
             //sort나 map을 활용할 경우 API요청이 많아져서 undefined뜸
             //그래서 for문을 이용하여 가져오는거임
             for (const match of data) {
-                //match아이디 통해서 API받아오는거임
+                //match 통해서 match 상세 정보 API 호출
                 const response = await fetch(`${process.env.LOL_API_MATCH_BASE}${match}?api_key=${process.env.LOL_API_KEY}`);
                 const data = await response.json();
 
@@ -140,7 +140,6 @@ export class UserService {
                 // lol/summoner/v4/summoners/by-name/{summonerName}
                 console.log(`${process.env.LOL_API_SUMMONER_BASE}${encodeURI(array[0])}?api_key=${process.env.LOL_API_KEY}`);
                 return await fetch(`${process.env.LOL_API_SUMMONER_BASE}${encodeURI(array[0])}?api_key=${process.env.LOL_API_KEY}`);
-
             }
         };*/
         // puuid -> match -> 경기기록을 가져와서 통계를 때려야해요
