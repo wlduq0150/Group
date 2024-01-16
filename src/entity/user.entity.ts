@@ -2,6 +2,8 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    JoinTable,
+    ManyToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -14,20 +16,35 @@ export class User {
     id: number;
 
     @Column({ unique: true })
-    email: string;
+    discordId: string;
 
     @Column()
-    password: string;
-
-    @Column({ nullable: true })
-    currentRefreshToken?: string;
+    username: string;
 
     @Column()
-    name: string;
+    avatar: string;
+
+    @Column({ default: 0 })
+    reportCount: number;
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToMany(() => User, (user) => user.friends)
+    @JoinTable()
+    friends: User[];
+
+    @ManyToMany(() => User, (user) => user.blockedUsers)
+    @JoinTable()
+    blockedUsers: User[];
+
+    @ManyToMany(() => User, (user) => user.reportedUsers)
+    @JoinTable()
+    reportedUsers: User[];
+
+    @Column({ default: false })
+    isSuspended: boolean;
 }
