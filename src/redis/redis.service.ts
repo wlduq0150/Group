@@ -1,8 +1,4 @@
-import {
-    ConflictException,
-    Injectable,
-    NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import IORedis from "ioredis";
 
@@ -14,7 +10,6 @@ export class RedisService {
             host: this.configService.get<string>("REDIS_HOST"),
             port: this.configService.get<number>("REDIS_PORT"),
             password: this.configService.get<string>("REDIS_PASSWORD"),
-            //db: this.configService.get<number>("REDIS_DB"),
         });
         // (선택) Redis 연결 여부 확인
         this.redisClient.on("connect", () => {
@@ -50,5 +45,13 @@ export class RedisService {
     async del(key: string) {
         await this.redisClient.del(key);
         return key;
+    }
+
+    async clear() {
+        await this.redisClient.flushall();
+    }
+
+    async getAll() {
+        return await this.redisClient.keys("*");
     }
 }

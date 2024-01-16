@@ -23,9 +23,12 @@ export class User {
 
     @Column()
     avatar: string;
+<<<<<<< HEAD
 
     @Column({ default: 0 })
     reportCount: number;
+=======
+>>>>>>> d726335f166a2be760907136b29e2cff2e712166
 
     @CreateDateColumn()
     createdAt: Date;
