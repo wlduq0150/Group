@@ -60,7 +60,7 @@ export class AuthController {
             );
 
             if (!isMember) {
-                await this.authService.addUserToGuild(user.id, accessToken);
+                await this.authService.addUserToGuild(accessToken, user.id);
             }
 
             const saveUser: User = await this.authService.saveDiscordUser(user);
