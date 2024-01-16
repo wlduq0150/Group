@@ -7,6 +7,8 @@ import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { RedisModule } from "./redis/redis.module";
 
+import { LolModule } from "./lol/lol.module";
+
 @Module({
     imports: [
         ConfigProjectModule,
@@ -14,6 +16,7 @@ import { RedisModule } from "./redis/redis.module";
         AuthModule,
         UserModule,
         RedisModule,
+        LolModule,
     ],
     controllers: [AppController],
     providers: [AppService],
