@@ -67,6 +67,7 @@ export class AuthController {
 
             session.discordUserId = saveUser.discordId;
             session.accessToken = accessToken;
+            console.log(session);
 
             res.redirect("http://localhost:5500/public/auth-test.html");
         } catch (err) {
