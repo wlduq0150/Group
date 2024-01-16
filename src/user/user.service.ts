@@ -6,6 +6,8 @@ import { User } from "src/entity/user.entity";
 import { Like, Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import { GetUserDto } from "./dto/get-user.dto";
+import { Cron } from "@nestjs/schedule";
+import { UserInfo } from "../entity/userInfo.entity";
 
 
 @Injectable()
@@ -13,6 +15,8 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        @InjectRepository(UserInfo)
+        private readonly userInfoRepository: Repository<UserInfo>,
         private readonly configService: ConfigService
     ) {
     }
@@ -45,12 +49,89 @@ export class UserService {
     }
 
     async findUserByName(getData: GetUserDto) {
-        const splits = getData.name.split("#");
+        // SELECT * FROM user WHERE name LIKE "(name)%"; => User Entity 여러 개
+        // % : 'name'이 포함된 값
+        // %name : 앞 문자와 상관없이 'name'이 포함
+        // name% : 뒤 문자와 상관없이 'name'이 포함
+        // %name% : 양쪽 문자와 상관없이 'name'이 포함
+        // 유저를 검색해서 찾는걸로 O //  라이엇으로 로그인을해서 그 데이터를 기반으로 ->가져와야함
+        console.log(response);
+        return await this.userRepository.find({
+            where: {
+                username: Like(`${getData}%`)
+            }
+        });
+    }
+
+    // (초) 분 시 일 월 요일
+    // * * * * * => 매 분마다 실행
+    // 10 * * * * => 매 시간의 10분에 실행
+    // 0-59/3 * * * * => 3분 마다 실행
+    @Cron("0 0 * * *")
+    async updateUserInfor() {
+        const users: UserInfo[] = await this.userInfoRepository.find();
+        for (const user of users) {
+
+            const champions = {};
+            /*
+            {
+                "350": { name: 'Yummi', total: 0, wins: 0, losses: 0 }
+            }
+            */
+            //puuid , userId ,response
+            const puuid = user.puuid;
+            const userId = user.id;
+            //puuid통해서 API호출
+            const response = await fetch(`${process.env.LOL_API_PUUID_BASE}jqnwnN9nbrhfV6dpANDKoAG_TmyWo0xEFlFQ0w093owVmk6mtYOtmF0RpXfOGnbb6dsOAS-jH4UDWw/ids?start=0&count=20&api_key=${process.env.LOL_API_KEY}`);
+            const data = await response.json(); //data를 json 형태로
+            console.log(data);
+
+            //sort나 map을 활용할 경우 API요청이 많아져서 undefined뜸
+            //그래서 for문을 이용하여 가져오는거임
+            for (const match of data) {
+                //match아이디 통해서 API받아오는거임
+                const response = await fetch(`${process.env.LOL_API_MATCH_BASE}${match}?api_key=${process.env.LOL_API_KEY}`);
+                const data = await response.json();
+
+                const games = data.info.participants.filter(player => player.puuid === puuid);
+                games.map((game) => {
+                    // champions의 game.championId가 비어있다면 champions[game.championId]에 새로운 정보 추가
+                    if (!champions[game.championId]) {
+                        champions[game.championId] = { name: game.championName, total: 0, wins: 0, losses: 0 };
+                    }
+
+                    if (game.win) {
+                        champions[game.championId].total += 1;
+                        champions[game.championId].wins += 1;
+                    } else {
+                        champions[game.championId].total += 1;
+                        champions[game.championId].losses += 1;
+                    }
+                });
+            }
+
+            const targetKeys = Object.keys(champions)
+                .sort((a, b) => champions[b].total - champions[a].total).slice(0, 3);
+            const filterChampions = Object.fromEntries(Object.entries(champions).filter(([key]) => targetKeys.includes(key)));
+
+            const userChampions = Object.entries(filterChampions).map(([id, data]) => {
+                const object = data as {
+                    total: number;
+                    wins: number;
+                    losses: number;
+                };
+
+                return {
+                    userId: userId,
+                    championId: parseInt(id), ...object
+                };
+            });
+        }
+
         // 케리아아#NA2 => ['케리아아', 'NA2'] => splits.length = 2
         // PB Blossom => ['PB Blossom'] => splits.length = 1
         // ' ' = %20
-
-        const getResponse = async (array: string[]) => {
+        /*const getResponse = async (array: string[]) => {
             if (array.length === 2) {
                 // riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}
                 console.log(`${process.env.LOL_API_ACCOUNT_BASE}${array[0]}/${array[1]}?api_key=${process.env.LOL_API_KEY}`);
@@ -61,7 +142,7 @@ export class UserService {
                 return await fetch(`${process.env.LOL_API_SUMMONER_BASE}${encodeURI(array[0])}?api_key=${process.env.LOL_API_KEY}`);
 
             }
-        };
+        };*/
         // puuid -> match -> 경기기록을 가져와서 통계를 때려야해요
         //35번 -> 샤코 35번 -> 서버에 저장시킬려고요
         const response = await getResponse(splits);
@@ -69,18 +150,6 @@ export class UserService {
         if (!response) {
             throw new BadRequestException("검색할 수 없는 유저 입니다.");
         }
-        // SELECT * FROM user WHERE name LIKE "(name)%"; => User Entity 여러 개
-        // % : 'name'이 포함된 값
-        // %name : 앞 문자와 상관없이 'name'이 포함
-        // name% : 뒤 문자와 상관없이 'name'이 포함
-        // %name% : 양쪽 문자와 상관없이 'name'이 포함
-        // 20판 
-        console.log(response);
-        return await this.userRepository.find({
-            where: {
-                username: Like(`${getData}%`)
-            }
-        });
     }
 
     async findUserByIdWithBoards(id: number) {

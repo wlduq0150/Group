@@ -1,17 +1,23 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({
-    name: "userInfor" // 데이터베이스 테이블의 이름
+    name: "userInfo" // 데이터베이스 테이블의 이름
 })
-export class UserInfor {
+export class UserInfo {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ unique: true })
+    puuid: string;
+
+    @Column()
     gameName: string;
 
     @Column()
     gameTag: string;
+
+    @Column()
+    previous_id: string;
 
     @Column({ nullable: true })
     description: string;
@@ -21,12 +27,6 @@ export class UserInfor {
 
     @Column()
     gender: string;
-
-    @Column()
-    puuid: string;
-
-    @Column()
-    previous_id: string;
 
     @CreateDateColumn()
     createdAt: Date;
