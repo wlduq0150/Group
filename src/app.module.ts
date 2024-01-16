@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { RedisModule } from "./redis/redis.module";
 import { GroupModule } from "./group/group.module";
+import { DiscordModule } from "./discord/discord.module";
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { GroupModule } from "./group/group.module";
         UserModule,
         RedisModule,
         GroupModule,
+        DiscordModule,
     ],
     controllers: [AppController],
     providers: [AppService],

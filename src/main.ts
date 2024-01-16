@@ -10,6 +10,7 @@ import { ConfigService } from "@nestjs/config";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
 import { IoAdapter } from "@nestjs/platform-socket.io";
+import session from "express-session";
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -59,6 +60,22 @@ async function bootstrap() {
     const port: number = configService.get("SERVER_PORT");
 
     app.useStaticAssets(join(__dirname, "..", "assets"));
+
+    // 세션
+    app.use(
+        session({
+            secret: configService.get<string>("SESSION_SECRET"),
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                path: "/",
+                httpOnly: true,
+                secure: false,
+                maxAge: 24 * 60 * 60 * 1000,
+                sameSite: "lax",
+            },
+        }),
+    );
 
     await app.listen(port);
 }
