@@ -24,6 +24,9 @@ export class User {
     @Column()
     avatar: string;
 
+    @Column({ default: 0 })
+    reportCount: number;
+
     @CreateDateColumn()
     createdAt: Date;
 
@@ -33,4 +36,15 @@ export class User {
     @ManyToMany(() => User, (user) => user.friends)
     @JoinTable()
     friends: User[];
+
+    @ManyToMany(() => User, (user) => user.blockedUsers)
+    @JoinTable()
+    blockedUsers: User[];
+
+    @ManyToMany(() => User, (user) => user.reportedUsers)
+    @JoinTable()
+    reportedUsers: User[];
+
+    @Column({ default: false })
+    isSuspended: boolean;
 }
