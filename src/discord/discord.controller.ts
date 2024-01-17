@@ -1,5 +1,6 @@
 import {
     Controller,
+    HttpStatus,
     NotFoundException,
     Post,
     Req,
@@ -17,14 +18,14 @@ export class DiscordController {
 
     @Post("/join-voice")
     async joinVoice(@Session() session) {
-        const userId = session.discordUserId;
         const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
+        const discordId = session.discordUserId;
 
-        const channelId = await this.discordService.joinVoiceChannel(
-            userId,
-            guildId,
-        );
+        await this.discordService.setupUserVoiceChannel(guildId, discordId);
 
-        return { channelId };
+        return {
+            statusCode: HttpStatus.OK,
+            message: "음성 채널에 입장했습니다.",
+        };
     }
 }
