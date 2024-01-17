@@ -15,11 +15,6 @@ export class LolController {
         return await this.lolService.findUser(lolDto.name, lolDto.tag);
     }
 
-    @Get("tier")
-    async findMatchIds(@Body() lolPuuidDto: LolPuuidDto) {
-        return await this.lolService.findMatchIds(lolPuuidDto.puuid);
-    }
-
     @Get("matchIds")
     async findMatches(@Body() lolMatchIdDto: LolMatchIdDto) {
         return await this.lolService.findMatches(
