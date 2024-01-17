@@ -5,9 +5,9 @@ import { ConfigProjectModule } from "./config/config.module";
 import { TypeormModule } from "./typeorm/typeorm.module";
 import { AuthModule } from "./auth/auth.module";
 import { RedisModule } from "./redis/redis.module";
-import { FriendModule } from "./friend/friend.module";
 import { GroupModule } from "./group/group.module";
 import { DiscordModule } from "./discord/discord.module";
+import { FriendModule } from "./friend/friend.module";
 
 @Module({
     imports: [
@@ -15,9 +15,9 @@ import { DiscordModule } from "./discord/discord.module";
         TypeormModule.forRoot(),
         AuthModule,
         RedisModule,
-        FriendModule,
         GroupModule,
-        DiscordModule,
+        // DiscordModule,
+        FriendModule,
     ],
     controllers: [AppController],
     providers: [AppService],

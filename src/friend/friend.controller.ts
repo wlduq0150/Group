@@ -15,15 +15,24 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 import { accessTokenGuard } from "src/auth/guard/access-token.guard";
 import { FriendRequestDto } from "./dto/friend.dto";
 
-@ApiBearerAuth("accessToken")
-@UseGuards(accessTokenGuard)
 @Controller("friend")
 export class FriendController {
     constructor(private readonly friendService: FriendService) {}
 
-    @Post("/:friendId/request")
-    async sendFriendRequest(@Req() req, @Param("friendId") friendId: number) {
-        const { id: senderId } = req.user;
+    @Get("test/:key")
+    async test(@Param("key") key: string) {
+        return await this.friendService.test(key);
+    }
+
+    @Post("/:friendId/request/:myId")
+    async sendFriendRequest(
+        @Req() req,
+        @Param("friendId") friendId: number,
+        @Param("myId") senderId: number,
+    ) {
+        // 추후에 세션으로 바꿀 예정 테스트 중
+
+        // const { id: senderId } = req.user;
 
         const send = await this.friendService.sendFriendRequest(
             senderId,
@@ -37,15 +46,16 @@ export class FriendController {
         };
     }
 
-    @Patch("/:friendId/accept")
+    @Post("/:requestId/accept/:accepterId")
     async acceptFriendRequest(
         @Req() req,
-        @Param("friendId") requestId: number,
+        @Param("requestId") requestId: number,
+        @Param("accepterId") accepterId: number,
     ) {
-        const { id: userId } = req.user;
+        // const { id: userId } = req.user;
         const accept = await this.friendService.acceptFriendRequest(
-            userId,
             requestId,
+            accepterId,
         );
         return {
             statusCode: HttpStatus.OK,
@@ -54,15 +64,16 @@ export class FriendController {
         };
     }
 
-    @Patch("/:friendId/decline")
+    @Delete("/:requestId/decline/:accepterId")
     async declineFriendRequest(
         @Req() req,
-        @Param("friendId") requestId: number,
+        @Param("requestId") requestId: number,
+        @Param("accepterId") accepterId: number,
     ) {
-        const { id: userId } = req.user;
+        // const { id: userId } = req.user;
         const decline = await this.friendService.declineFriendRequest(
-            userId,
             requestId,
+            accepterId,
         );
         return {
             statusCode: HttpStatus.OK,
@@ -71,12 +82,16 @@ export class FriendController {
         };
     }
 
-    @Delete("/:friendId")
-    async deleteFriend(@Req() req, @Param("friendId") friendId: number) {
-        const { id: userId } = req.user;
+    @Delete("/:requestId/delete/:accepterId")
+    async deleteFriend(
+        @Req() req,
+        @Param("requestId") requestId: number,
+        @Param("accepterId") accepterId: number,
+    ) {
+        // const { id: userId } = req.user;
         const deleteUser = await this.friendService.deleteFriend(
-            userId,
-            friendId,
+            requestId,
+            accepterId,
         );
         return {
             statusCode: HttpStatus.OK,
@@ -85,10 +100,14 @@ export class FriendController {
         };
     }
 
-    @Post("/:friendId/block")
-    async blockUser(@Req() req, @Param("friendId") userIdToBlock: number) {
-        const { id: userId } = req.user;
-        const block = await this.friendService.blockUser(userId, userIdToBlock);
+    @Post("/:requestId/block/:accepterId")
+    async blockUser(
+        @Req() req,
+        @Param("requestId") requestId: number,
+        @Param("accepterId") accepterId: number,
+    ) {
+        // const { id: userId } = req.user;
+        const block = await this.friendService.blockUser(requestId, accepterId);
         return {
             statusCode: HttpStatus.CREATED,
             message: "사용자를 차단했습니다.",
@@ -96,23 +115,28 @@ export class FriendController {
         };
     }
 
-    @Post("/:friendId/report")
-    async reportUser(@Req() req, @Param("friendId") reportedUserId: number) {
-        const { id: userId } = req.user;
-        const report = await this.friendService.reportUser(
-            userId,
-            reportedUserId,
-        );
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: "사용자를 신고했습니다.",
-            data: report,
-        };
-    }
+    // 신고 추후 다시 결정
+    // @Post("/:requestId/report/:accepterId")
+    // async reportUser(
+    //     @Req() req,
+    //     @Param("requestId") requestId: number,
+    //     @Param("accepterId") accepterId: number,
+    // ) {
+    //     // const { id: userId } = req.user;
+    //     const report = await this.friendService.reportUser(
+    //         requestId,
+    //         accepterId,
+    //     );
+    //     return {
+    //         statusCode: HttpStatus.CREATED,
+    //         message: "사용자를 신고했습니다.",
+    //         data: report,
+    //     };
+    // }
 
-    @Get("/:userId/friends")
-    async getFriendList(@Param("userId") userId: number) {
-        const friends = await this.friendService.getFriendList(userId);
+    @Get("/:requestId/friends")
+    async getFriendList(@Param("requestId") requestId: number) {
+        const friends = await this.friendService.getFriendList(requestId);
         return {
             statusCode: HttpStatus.OK,
             message: "친구를 조회했습니다.",
@@ -120,9 +144,10 @@ export class FriendController {
         };
     }
 
-    @Get("/:userId/blocked-users")
-    async getBlockedUsers(@Param("userId") userId: number) {
-        const blockedUsers = await this.friendService.getBlockedUsers(userId);
+    @Get("/:requestId/blocked-users")
+    async getBlockedUsers(@Param("requestId") requestId: number) {
+        const blockedUsers =
+            await this.friendService.getBlockedUsers(requestId);
         return {
             statusCode: HttpStatus.OK,
             message: "차단 목록을 조회했습니다.",
