@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { request } from "https";
 
 const asiaServer = "https://asia.api.riotgames.com/";
 const krServer = "https://kr.api.riotgames.com/";
@@ -10,16 +9,12 @@ const apiKey = "RGAPI-70a1dd8b-bdd7-4276-8b89-a360dbdc57f7";
 export class LolService {
     //이름+태그로 유저의 승률, 티어, 챔피언의 승률, kda 가져오기
     async findUser(name: string, tag: string) {
-        const userPuuid = await fetch(
+        const response = await fetch(
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
-        ) //puuid, gameName, gameTag
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                return data;
-            });
+        ); //puuid, gameName, gameTag
+        const userPuuid = await response.json();
+
         const userTier = await this.findTier(userPuuid.puuid);
         let count: number = userTier[0].wins + userTier[0].losses;
         const userMatchIds = await this.findMatchIds(userPuuid.puuid, count);
@@ -47,31 +42,21 @@ export class LolService {
 
     //이름 +태그로 puuid 가져오기
     async findUserInfo(name: string, tag: string) {
-        const userPuuid = await fetch(
+        const response = await fetch(
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
-        )
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                return data;
-            });
+        );
+        const userPuuid = await response.json();
         return userPuuid; //puuid, gameName, gameTag
     }
 
     //puuid로 summonerId가져오기
     async findSummonerId(puuid: string) {
-        const userSummoner = await fetch(
+        const response = await fetch(
             `${krServer}lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${apiKey}`,
             { method: "GET" },
-        )
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                return data;
-            });
+        );
+        const userSummoner = await response.json();
         return userSummoner; //id(==summonerId), accountId,puuid,name,profileIconId,revisionDate,summonerLevel
     }
 
@@ -79,17 +64,11 @@ export class LolService {
     async findTier(puuid: string) {
         const summmonerId = await this.findSummonerId(puuid);
         //summmonerId로 leagueId, queueType, tier, rank, leaguePoints, wins, losses, veteran, inactive, freshBlood, hotStreak
-        const user = await fetch(
+        const response = await fetch(
             `${krServer}lol/league/v4/entries/by-summoner/${summmonerId.id}?api_key=${apiKey}`,
             { method: "GET" },
-        )
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                return data;
-            });
-
+        );
+        const user = await response.json();
         return user;
     }
 
@@ -99,31 +78,22 @@ export class LolService {
         if (count > 100) {
             count = 100;
         }
-        const userMatchIds = await fetch(
+        const respose = await fetch(
             `${asiaServer}lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&api_key=${apiKey}`,
             { method: "GET" },
-        )
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                return data;
-            });
-        return userMatchIds;
+        );
+        const userMatchIds = await respose.json();
+
+        return userMatchIds; //promise
     }
 
     //matchId로 puuid를 가진 유저의 match정보 가져오기
     async findMatches(matchId: string, puuid: string) {
-        const userMatch = await fetch(
+        const response = await fetch(
             `${asiaServer}lol/match/v5/matches/${matchId}?api_key=${apiKey}`,
             { method: "GET" },
-        )
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                return data;
-            });
+        );
+        const userMatch = await response.json();
         //다시하기는 제외하기
         if (userMatch.info.gameDuration > 300) {
             const thisUser = userMatch.info.participants.filter(
@@ -139,6 +109,7 @@ export class LolService {
         const champions = [];
         for (let matchId of matchIds) {
             const one_match = await this.findMatches(matchId, puuid);
+            //배열에 championId번째 객체가 비어있을 경우 championId번째 배열에 챔피언 객체 생성
             if (!champions[one_match[0].championId]) {
                 champions[one_match[0].championId] = {
                     id: one_match[0].championId,
@@ -153,7 +124,7 @@ export class LolService {
                     kda: 0,
                 };
             }
-
+            //이겼을때
             if (one_match[0].win) {
                 champions[one_match[0].championId].total += 1;
                 champions[one_match[0].championId].wins += 1;
@@ -171,6 +142,7 @@ export class LolService {
                     (one_match[0].kills + one_match[0].assists) /
                     one_match[0].deaths
                 ).toFixed(1);
+                //졌을 때
             } else {
                 champions[one_match[0].championId].total += 1;
                 champions[one_match[0].championId].losses += 1;
