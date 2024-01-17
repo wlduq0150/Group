@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UserLolInfo } from "./user-lol-info";
+import { UserLolInfoEntity } from "./user-lol-info.entity";
 
 @Entity({
     name: "user" // 데이터베이스 테이블의 이름
@@ -17,8 +17,8 @@ export class User {
     @Column({ nullable: true })
     avatar: string;
 
-    @OneToOne(() => UserLolInfo, (userLolInfo) => userLolInfo.user)
-    userInfo: UserLolInfo;
+    @OneToOne(() => UserLolInfoEntity, (userLolInfo) => userLolInfo.user)
+    userInfo: UserLolInfoEntity;
 
     @CreateDateColumn()
     created_at: Date;

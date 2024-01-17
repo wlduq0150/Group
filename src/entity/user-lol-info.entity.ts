@@ -15,7 +15,7 @@ import { LolDataChampion } from "./lol-data-champion.entity";
 @Entity({
     name: "userLolInfo" // 데이터베이스 테이블의 이름
 })
-export class UserLolInfo {
+export class UserLolInfoEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

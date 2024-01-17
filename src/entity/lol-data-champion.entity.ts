@@ -8,7 +8,7 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import { Champion } from "./champion.entity";
-import { UserLolInfo } from "./user-lol-info";
+import { UserLolInfoEntity } from "./user-lol-info.entity";
 
 // lol-data-champion.entity.ts
 @Entity({
@@ -31,9 +31,9 @@ export class LolDataChampion {
     @JoinColumn({ name: "id" })
     champion: Champion;
 
-    @ManyToOne(() => UserLolInfo, (userLolInfo) => userLolInfo.lolDataChampions)
+    @ManyToOne(() => UserLolInfoEntity, (userLolInfo) => userLolInfo.lolDataChampions)
     @JoinColumn({ name: "id" })
-    userLolInfo: UserLolInfo;
+    userLolInfo: UserLolInfoEntity;
 
     @CreateDateColumn()
     created_at: Date;
