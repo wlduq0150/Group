@@ -14,20 +14,4 @@ export class LolController {
     async findUser(@Body() lolDto: LolhDto) {
         return await this.lolService.findUser(lolDto.name, lolDto.tag);
     }
-
-    @Get("matchIds")
-    async findMatches(@Body() lolMatchIdDto: LolMatchIdDto) {
-        return await this.lolService.findMatches(
-            lolMatchIdDto.matchId,
-            lolMatchIdDto.puuid,
-        );
-    }
-
-    @Get("matches")
-    async allMatches(@Body() lolMatchesDto: LolMatchesDto) {
-        return await this.lolService.allMatches(
-            lolMatchesDto.matches,
-            lolMatchesDto.puuid,
-        );
-    }
 }

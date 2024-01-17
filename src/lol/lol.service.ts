@@ -1,27 +1,23 @@
 import { Injectable } from "@nestjs/common";
-
-const asiaServer = "https://asia.api.riotgames.com/";
-const krServer = "https://kr.api.riotgames.com/";
-const apiKey = "RGAPI-70a1dd8b-bdd7-4276-8b89-a360dbdc57f7";
+import { ConfigService } from "@nestjs/config";
+import { LolServer } from "./constants/lol-server.constants";
 
 @Injectable()
 export class LolService {
+    constructor(private readonly configService: ConfigService) {}
     //이름+태그로 유저의 승률, 티어, 챔피언의 승률, kda 가져오기
     async findUser(name: string, tag: string) {
-        const response = await fetch(
-            `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
-            { method: "GET" },
-        ); //puuid, gameName, gameTag
-        const userPuuid = await response.json();
+        const userPuuid = await this.findUserPuuid(name, tag);
 
         const userTier = await this.findTier(userPuuid.puuid);
-        let count: number = userTier[0].wins + userTier[0].losses;
+
+        const count: number = userTier[0].wins + userTier[0].losses;
         const userMatchIds = await this.findMatchIds(userPuuid.puuid, count);
         const userChampions = await this.allMatches(
             userMatchIds,
             userPuuid.puuid,
         );
-        let clearChampions = userChampions
+        const clearChampions = userChampions
             .filter((e) => {
                 return e != null;
             })
@@ -39,8 +35,14 @@ export class LolService {
         };
     }
 
+    //유저 id로 유저 repositoty에서 이름, 태그 가져오는 함수
+    private async findUserNameTag(userId: number) {}
+
     //이름 +태그로 puuid 가져오기
-    async findUserInfo(name: string, tag: string) {
+    private async findUserPuuid(name: string, tag: string) {
+        const asiaServer: string = LolServer[0];
+        const apiKey: string = this.configService.get("LOL_API_KEY");
+
         const response = await fetch(
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
@@ -50,7 +52,10 @@ export class LolService {
     }
 
     //puuid로 summonerId가져오기
-    async findSummonerId(puuid: string) {
+    private async findSummonerId(puuid: string) {
+        const krServer: string = LolServer[1];
+        const apiKey: string = this.configService.get("LOL_API_KEY");
+
         const response = await fetch(
             `${krServer}lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${apiKey}`,
             { method: "GET" },
@@ -59,10 +64,12 @@ export class LolService {
         return userSummoner; //id(==summonerId), accountId,puuid,name,profileIconId,revisionDate,summonerLevel
     }
 
-    //puuid로 유저의 티어, 승리, 패배, 프로필 정보
-    async findTier(puuid: string) {
+    //puuid로 가져온 summonerId로 유저의 티어, 승리, 패배, 프로필 정보 가져옴
+    private async findTier(puuid: string) {
+        const krServer: string = LolServer[1];
+        const apiKey: string = this.configService.get("LOL_API_KEY");
+
         const summmonerId = await this.findSummonerId(puuid);
-        //summmonerId로 leagueId, queueType, tier, rank, leaguePoints, wins, losses, veteran, inactive, freshBlood, hotStreak
         const response = await fetch(
             `${krServer}lol/league/v4/entries/by-summoner/${summmonerId.id}?api_key=${apiKey}`,
             { method: "GET" },
@@ -72,11 +79,15 @@ export class LolService {
     }
 
     //puuid로 해당하는 유저의 최근 count 판의 matchId[]가져오기
-    async findMatchIds(puuid: string, count: number) {
+    private async findMatchIds(puuid: string, count: number) {
+        const asiaServer: string = LolServer[0];
+        const apiKey: string = this.configService.get("LOL_API_KEY");
+
         const start = 0;
         if (count > 100) {
             count = 100;
         }
+
         const respose = await fetch(
             `${asiaServer}lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&api_key=${apiKey}`,
             { method: "GET" },
@@ -87,7 +98,10 @@ export class LolService {
     }
 
     //matchId로 puuid를 가진 유저의 match정보 가져오기
-    async findMatches(matchId: string, puuid: string) {
+    private async findMatches(matchId: string, puuid: string) {
+        const asiaServer: string = LolServer[0];
+        const apiKey: string = this.configService.get("LOL_API_KEY");
+
         const response = await fetch(
             `${asiaServer}lol/match/v5/matches/${matchId}?api_key=${apiKey}`,
             { method: "GET" },
@@ -104,7 +118,7 @@ export class LolService {
     }
 
     //matchId[]로 puuid에 해당하는 유저의 match정보를 배열로 받음
-    async allMatches(matchIds: string[], puuid: string) {
+    private async allMatches(matchIds: string[], puuid: string) {
         const champions = [];
         for (let matchId of matchIds) {
             const one_match = await this.findMatches(matchId, puuid);
@@ -116,31 +130,31 @@ export class LolService {
                     total: 0,
                     wins: 0,
                     losses: 0,
-                    winRate: 0,
+                    //winRate: 0,
                     kills: 0,
                     deaths: 0,
                     assists: 0,
-                    kda: 0,
+                    //kda: 0,
                 };
             }
             //이겼을때
             if (one_match[0].win) {
                 champions[one_match[0].championId].total += 1;
                 champions[one_match[0].championId].wins += 1;
-                champions[one_match[0].championId].winRate = Math.floor(
-                    (champions[one_match[0].championId].wins /
-                        champions[one_match[0].championId].total) *
-                        100,
-                );
+                // champions[one_match[0].championId].winRate = Math.floor(
+                //     (champions[one_match[0].championId].wins /
+                //         champions[one_match[0].championId].total) *
+                //         100,
+                // );
                 champions[one_match[0].championId].kills += one_match[0].kills;
                 champions[one_match[0].championId].deaths +=
                     one_match[0].deaths;
                 champions[one_match[0].championId].assists +=
                     one_match[0].assists;
-                champions[one_match[0].championId].kda = (
-                    (one_match[0].kills + one_match[0].assists) /
-                    one_match[0].deaths
-                ).toFixed(1);
+                // champions[one_match[0].championId].kda = (
+                //     (one_match[0].kills + one_match[0].assists) /
+                //     one_match[0].deaths
+                // ).toFixed(1);
                 //졌을 때
             } else {
                 champions[one_match[0].championId].total += 1;
@@ -150,10 +164,10 @@ export class LolService {
                     one_match[0].deaths;
                 champions[one_match[0].championId].assists +=
                     one_match[0].assists;
-                champions[one_match[0].championId].kda = (
-                    (one_match[0].kills + one_match[0].assists) /
-                    one_match[0].deaths
-                ).toFixed(1);
+                // champions[one_match[0].championId].kda = (
+                //     (one_match[0].kills + one_match[0].assists) /
+                //     one_match[0].deaths
+                // ).toFixed(1);
             }
         }
         return champions;
