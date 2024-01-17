@@ -4,7 +4,6 @@ const asiaServer = "https://asia.api.riotgames.com/";
 const krServer = "https://kr.api.riotgames.com/";
 const apiKey = "RGAPI-70a1dd8b-bdd7-4276-8b89-a360dbdc57f7";
 
-//https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/
 @Injectable()
 export class LolService {
     //이름+태그로 유저의 승률, 티어, 챔피언의 승률, kda 가져오기
