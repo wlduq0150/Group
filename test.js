@@ -2,12 +2,10 @@ const main = async () => {
     const champions = {};
 
     const puuid = "jqnwnN9nbrhfV6dpANDKoAG_TmyWo0xEFlFQ0w093owVmk6mtYOtmF0RpXfOGnbb6dsOAS-jH4UDWw";
-    const response = await fetch("https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/jqnwnN9nbrhfV6dpANDKoAG_TmyWo0xEFlFQ0w093owVmk6mtYOtmF0RpXfOGnbb6dsOAS-jH4UDWw/ids?start=0&count=20&api_key=RGAPI-4ea1ce7c-90c9-4486-8f3c-b5f772ea02f2");
     const data = await response.json();
     console.log(data);
 
     for (const match of data) {
-        const response = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${match}?api_key=RGAPI-4ea1ce7c-90c9-4486-8f3c-b5f772ea02f2`);
         const data = await response.json();
 
         const games = data.info.participants.filter(player => player.puuid === puuid);
