@@ -1,14 +1,15 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserLolInfo } from "./user-lol-info";
 
 @Entity({
-    name: "users" // 데이터베이스 테이블의 이름
+    name: "user" // 데이터베이스 테이블의 이름
 })
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ unique: true, name: "discord_id" })
-    discordId: string;
+    @Column({ unique: true })
+    discord_id: string;
 
     @Column()
     username: string;
@@ -16,9 +17,12 @@ export class User {
     @Column({ nullable: true })
     avatar: string;
 
+    @OneToOne(() => UserLolInfo, (userLolInfo) => userLolInfo.user)
+    userInfo: UserLolInfo;
+
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;
 }
