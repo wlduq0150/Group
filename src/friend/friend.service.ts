@@ -8,6 +8,8 @@ import { User } from "src/entity/user.entity";
 import { RedisService } from "src/redis/redis.service";
 import { Repository } from "typeorm";
 import IORedis from "ioredis";
+import { UserService } from "src/user/user.service";
+import { randomBytes } from "crypto";
 @Injectable()
 export class FriendService {
     private readonly redisClient: IORedis;
@@ -16,10 +18,12 @@ export class FriendService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly redisService: RedisService,
+        private readonly userService: UserService,
     ) {
         this.redisClient = this.redisService.getRedisClient();
     }
 
+    // 키 확인 테스트
     async test(key: string) {
         try {
             const redisClient = this.redisService.getRedisClient();
@@ -30,9 +34,16 @@ export class FriendService {
         }
     }
 
-    async sendFriendRequest(senderId: number, friendId: number) {
-        if (senderId === friendId) {
+    // 친구 요청
+    async initiateFriendRequest(myId: string, friendId: number) {
+        if (+myId == friendId) {
             throw new ConflictException("자기 자신에게 보낼 수 없습니다.");
+        }
+
+        const senderId = (await this.userService.findOneByDiscordId(myId)).id;
+
+        if (!senderId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
         const [user, requester] = await Promise.all([
@@ -43,16 +54,20 @@ export class FriendService {
         const friendRequestKey = this.getFriendRequestKey(senderId, friendId);
 
         const friendRequest = { senderId, friendId };
+
+        const oneDaySeconds = 86400;
+
         await this.redisClient.set(
             friendRequestKey,
             JSON.stringify(friendRequest),
             "EX",
-            86400,
+            oneDaySeconds,
         );
 
         return { user, requester };
     }
 
+    // 친구 요청 수락
     async acceptFriendRequest(requestId: number, accepterId: number) {
         const key = await this.checkFriendRequestExists(requestId, accepterId);
 
@@ -68,36 +83,39 @@ export class FriendService {
         await this.redisService.del(key);
     }
 
-    async declineFriendRequest(requestId: number, accepterId: number) {
+    // 친구 요청 거절
+    async declineFriendRequest(requestId: number, myId: number) {
         const friendRequestKey = await this.checkFriendRequestExists(
             requestId,
-            accepterId,
+            myId,
         );
 
         await this.redisService.del(friendRequestKey);
     }
 
-    async deleteFriend(requestId: number, accepterId: number) {
+    // 친구 삭제
+    async deleteFriend(requestId: number, myId: number) {
         const [user, friend] = await Promise.all([
             this.getUserById(requestId),
-            this.getUserById(accepterId),
+            this.getUserById(myId),
         ]);
 
-        user.friends = user.friends.filter((f) => f.id !== accepterId);
+        user.friends = user.friends.filter((f) => f.id !== myId);
 
         friend.friends = friend.friends.filter((u) => u.id !== requestId);
 
         await this.userRepository.save([user, friend]);
     }
 
-    async blockUser(requestId: number, accepterId: number) {
+    // 유저 차단
+    async blockUser(requestId: number, myId: number) {
         const [user, userToBlock] = await Promise.all([
             this.getUserById(requestId),
-            this.getUserById(accepterId),
+            this.getUserById(myId),
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === accepterId,
+            (blockedUser) => blockedUser.id === myId,
         );
 
         if (!isBlocked) {
@@ -109,14 +127,15 @@ export class FriendService {
         }
     }
 
-    async unblockUser(requestId: number, accepterId: number) {
+    // 유저 차단 해제
+    async unblockUser(requestId: number, myId: number) {
         const [user, userToUnblock] = await Promise.all([
             this.getUserById(requestId),
-            this.getUserById(accepterId),
+            this.getUserById(myId),
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === accepterId,
+            (blockedUser) => blockedUser.id === myId,
         );
 
         if (!isBlocked) {
@@ -124,42 +143,18 @@ export class FriendService {
         }
 
         user.blockedUsers = user.blockedUsers.filter(
-            (blockedUser) => blockedUser.id !== accepterId,
+            (blockedUser) => blockedUser.id !== myId,
         );
 
         await this.userRepository.save(user);
     }
 
-    // 신고 추후 다시 결정
-    // async reportUser(requestId: number, accepterId: number) {
-    //     const user = await this.getUserById(requestId);
-    //     const reportedUser = await this.getUserById(accepterId);
-
-    //     const alreadyReported = user.reportedUsers.some(
-    //         (reported) => reported.id === accepterId,
-    //     );
-
-    //     if (alreadyReported) {
-    //         throw new ConflictException("이미 해당 사용자를 신고했습니다.");
-    //     }
-
-    //     user.reportedUsers.push(reportedUser);
-    //     user.reportCount++;
-
-    //     const reportLimit = 5;
-    //     if (user.reportCount >= reportLimit) {
-    //         user.isSuspended = true;
-    //     }
-
-    //     await this.userRepository.save(user);
-    // }
-
-    async getFriendList(requestId: number): Promise<User[]> {
+    async getFriendList(requestId: number) {
         const user = await this.getUserById(requestId);
         return user.friends;
     }
 
-    async getBlockedUsers(requestId: number): Promise<User[]> {
+    async getBlockedUsers(requestId: number) {
         const user = await this.getUserById(requestId);
         return user.blockedUsers;
     }
@@ -181,8 +176,10 @@ export class FriendService {
         return user;
     }
 
+    // 친구 요청 키 체크
     async checkFriendRequestExists(senderId: number, friendId: number) {
         const friendRequestKey = this.getFriendRequestKey(senderId, friendId);
+
         const friendRequestExists =
             await this.redisService.get(friendRequestKey);
 
@@ -194,7 +191,14 @@ export class FriendService {
         return friendRequestKey;
     }
 
+    // 친구 요청 키 생성
     private getFriendRequestKey(senderId: number, friendId: number) {
-        return `friend-request:${senderId}:${friendId}`;
+        const randomToken = this.generateRandomToken();
+        return `friend-request:${senderId}:${friendId}:${randomToken}`;
+    }
+
+    // 랜덤 키 생성
+    private generateRandomToken() {
+        return randomBytes(16).toString("hex");
     }
 }
