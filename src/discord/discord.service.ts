@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
+import {
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+    OnModuleInit,
+} from "@nestjs/common";
 import {
     ChannelType,
     Client,
@@ -35,6 +40,7 @@ export class DiscordService implements OnModuleInit {
         this.client.on("voiceStateUpdate", async (oldState, newState) => {
             if (oldState.channelId && !newState.channelId) {
                 const channel = oldState.channel;
+                const discordId = newState.member.id;
 
                 if (channel) {
                     const shouldDelete = this.shouldDeleteChannel(
@@ -42,7 +48,7 @@ export class DiscordService implements OnModuleInit {
                         lobbyChannelId,
                     );
                     if (shouldDelete) {
-                        await this.deleteChannel(channel);
+                        await this.deleteChannel(channel, discordId);
                     }
                 }
             }
@@ -65,11 +71,15 @@ export class DiscordService implements OnModuleInit {
     }
 
     // 채널 삭제
-    private async deleteChannel(channel: VoiceBasedChannel): Promise<void> {
+    private async deleteChannel(
+        channel: VoiceBasedChannel,
+        discordId: string,
+    ): Promise<void> {
         try {
             const guild = this.client.guilds.cache.get(channel.guild.id);
+            const user = await this.userService.findOneByDiscordId(discordId);
             const role = guild.roles.cache.find(
-                (role) => role.name === `${channel.name}-access`,
+                (role) => role.name === `${user.username}-access`,
             );
 
             if (role) {
@@ -88,8 +98,7 @@ export class DiscordService implements OnModuleInit {
         const role = guild.roles.cache.get(roleId);
 
         if (!role) {
-            console.log("역할을 찾을 수 없습니다.");
-            return;
+            throw new NotFoundException("해당 역할을 찾을 수 없습니다.");
         }
 
         try {
@@ -100,26 +109,39 @@ export class DiscordService implements OnModuleInit {
     }
 
     // 그룹 취소 시 음성 채널 삭제
-    async deleteVoiceChannelForGroup(groupId: string): Promise<void> {
+    async deleteVoiceChannelForGroup(
+        groupId: string,
+        discordId: string,
+    ): Promise<void> {
         const channelId = this.groupChannelMap.get(groupId);
+        const user = await this.userService.findOneByDiscordId(discordId);
 
-        if (channelId) {
-            const channel = this.client.channels.cache.get(
-                channelId,
-            ) as GuildChannel;
-            if (channel) {
-                const guild = this.client.guilds.cache.get(channel.guild.id);
-                const role = guild.roles.cache.find(
-                    (role) => role.name === `${channel.name}-access`,
-                );
+        try {
+            if (channelId) {
+                const channel = this.client.channels.cache.get(
+                    channelId,
+                ) as GuildChannel;
+                if (channel) {
+                    const guild = this.client.guilds.cache.get(
+                        channel.guild.id,
+                    );
+                    const role = guild.roles.cache.find(
+                        (role) => role.name === `${user.username}-access`,
+                    );
 
-                if (role) {
-                    await this.deleteRole(guild.id, role.id);
+                    if (role) {
+                        await this.deleteRole(guild.id, role.id);
+                    }
+
+                    await this.deleteChannel(
+                        channel as VoiceBasedChannel,
+                        discordId,
+                    );
                 }
-
-                await this.deleteChannel(channel as VoiceBasedChannel);
+                this.groupChannelMap.delete(groupId);
             }
-            this.groupChannelMap.delete(groupId);
+        } catch (error) {
+            console.error(`채널 삭제 중 오류 발생: ${channelId}`, error);
         }
     }
 
@@ -178,17 +200,21 @@ export class DiscordService implements OnModuleInit {
         const channel = guild.channels.cache.get(channelId) as VoiceChannel;
 
         if (!channel) {
-            throw new NotFoundException(
-                "해당 유저 또는 채널을 찾을 수 없습니다.",
-            );
+            throw new NotFoundException("해당 채널을 찾을 수 없습니다.");
         }
 
         for (const discordId of discordIds) {
             const member = await guild.members.fetch(discordId);
 
             if (member) {
-                await member.roles.add(roleId);
-                await member.voice.setChannel(channel);
+                try {
+                    await member.roles.add(roleId);
+                    await member.voice.setChannel(channel);
+                } catch (err) {
+                    throw new NotFoundException(
+                        "유저가 대기실에 존재하지 않습니다.",
+                    );
+                }
             }
         }
     }
@@ -205,9 +231,17 @@ export class DiscordService implements OnModuleInit {
 
         const user = await this.userService.findOneByDiscordId(discordId);
 
+        if (!user) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
+
         const groupId: string = await this.groupService.findGroupIdByOwner(
             user.id,
         );
+
+        if (!groupId) {
+            throw new NotFoundException("해당 그룹을 찾을 수 없습니다.");
+        }
 
         const groupState = await this.groupService.findGroupStateById(groupId);
         const positions: string[] = ["mid", "adc", "sup", "top", "jg"];
