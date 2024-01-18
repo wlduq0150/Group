@@ -15,6 +15,7 @@ import { checkIsUserAlreadyJoin } from "./function/check-user-already-join.funct
 import { checkIsUserAlreadyGroupJoin } from "./function/check-user-group-join.function";
 import { WsException } from "./exception/ws-exception.exception";
 import { WsExceptionFilter } from "./filter/ws-exception.filter";
+import { v4 as uuidv4 } from "uuid";
 import { RedisService } from "src/redis/redis.service";
 
 @UseFilters(WsExceptionFilter)
@@ -46,7 +47,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage("getAll")
     async getAll(client: Socket): Promise<void> {
-        const data = await this.groupService.findGroupIdByOwner(1);
+        const data = await this.groupService.findAllGroup();
 
         this.server.emit("getAll", { keys: data });
     }
@@ -69,7 +70,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
 
-        const groupId = "group-4234#"; // 유니큰한 값 랜덤 생성으로 바뀔 예정
+        const uniqueId = uuidv4();
+        const groupId = `group-${uniqueId}#`; // 유니큰한 값 랜덤 생성으로 바뀔 예정
         const groupInfo = await this.groupService.createGroup(
             groupId,
             createGroupDto,
@@ -79,11 +81,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const groupState = await this.groupService.joinGroup(groupId);
 
+        this.server.to(groupId).emit("groupJoin", { groupId, userId });
         this.server
             .to(client.id)
             .emit("positionSelect", { groupId, groupInfo, groupState });
-
-        // this.server.emit("groupCreate", group, groupState);
     }
 
     // 클라이언트에서 그룹 참여시 발생하는 이벤트
@@ -104,7 +105,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // 그룹 참가
         client.join(groupId);
 
-        this.server.to(groupId).emit("groupJoin", { userId });
+        this.server.to(groupId).emit("groupJoin", { groupId, userId });
         this.server
             .to(client.id)
             .emit("positionSelect", { groupId, groupInfo, groupState });
@@ -131,7 +132,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         this.server
             .to(groupId)
-            .emit("positionSelected", { groupState, position });
+            .emit("positionSelected", { groupState, position, userId });
     }
 
     // 클라이언트에서 포지션 선택해제시 발생하는 이벤트
@@ -149,7 +150,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const groupState = await this.groupService.deselectPosition(
             groupId,
-            userId,
+            +userId,
             position,
         );
 
