@@ -146,13 +146,13 @@ export class DiscordService implements OnModuleInit {
 
         // 역할 생성
         const role = await guild.roles.create({
-            name: `${channelName}-access`,
+            name: `${user.username}-access`,
             permissions: [],
         });
 
         // 음성 채널 생성
         const voiceChannel = await guild.channels.create({
-            name: channelName,
+            name: user.username,
             type: ChannelType.GuildVoice,
             parent: this.configService.get<string>("DISCORD_PARENT_ID"),
             permissionOverwrites: [
