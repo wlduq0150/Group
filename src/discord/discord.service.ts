@@ -42,7 +42,6 @@ export class DiscordService implements OnModuleInit {
                         lobbyChannelId,
                     );
                     if (shouldDelete) {
-                        console.log("채널 삭제 `조건 충족:", channel.id);
                         await this.deleteChannel(channel);
                     }
                 }
@@ -78,7 +77,6 @@ export class DiscordService implements OnModuleInit {
             }
 
             await channel.delete();
-            console.log(`채널 삭제 성공: ${channel.id}`);
         } catch (error) {
             console.error(`채널 삭제 중 오류 발생: ${channel.id}`, error);
         }
@@ -141,8 +139,6 @@ export class DiscordService implements OnModuleInit {
         const groupId: string = await this.groupService.findGroupIdByOwner(
             user.id,
         );
-        const group = await this.groupService.findGroupInfoById(groupId);
-        const channelName: string = group.name;
 
         // 역할 생성
         const role = await guild.roles.create({
