@@ -74,6 +74,7 @@ export class LolService {
             `${krServer}lol/league/v4/entries/by-summoner/${summmonerId.id}?api_key=${apiKey}`,
             { method: "GET" },
         );
+
         const user = await response.json();
         return user;
     }
@@ -83,7 +84,7 @@ export class LolService {
         const asiaServer: string = LolServer[0];
         const apiKey: string = this.configService.get("LOL_API_KEY");
 
-        const start = 0;
+        const start: number = 0;
         if (count > 100) {
             count = 100;
         }
@@ -93,7 +94,6 @@ export class LolService {
             { method: "GET" },
         );
         const userMatchIds = await respose.json();
-
         return userMatchIds; //promise
     }
 
@@ -112,9 +112,9 @@ export class LolService {
             const thisUser = userMatch.info.participants.filter(
                 (player) => player.puuid == puuid,
             );
-            return thisUser;
+            return { thisUser, matchId: matchId };
         }
-        return; //다시하기의 경우
+        return false; //다시하기의 경우
     }
 
     //matchId[]로 puuid에 해당하는 유저의 match정보를 배열로 받음
@@ -122,54 +122,48 @@ export class LolService {
         const champions = [];
         for (let matchId of matchIds) {
             const one_match = await this.findMatches(matchId, puuid);
-            //배열에 championId번째 객체가 비어있을 경우 championId번째 배열에 챔피언 객체 생성
-            if (!champions[one_match[0].championId]) {
-                champions[one_match[0].championId] = {
-                    id: one_match[0].championId,
-                    name: one_match[0].championName,
-                    total: 0,
-                    wins: 0,
-                    losses: 0,
-                    //winRate: 0,
-                    kills: 0,
-                    deaths: 0,
-                    assists: 0,
-                    //kda: 0,
-                };
-            }
-            //이겼을때
-            if (one_match[0].win) {
-                champions[one_match[0].championId].total += 1;
-                champions[one_match[0].championId].wins += 1;
-                // champions[one_match[0].championId].winRate = Math.floor(
-                //     (champions[one_match[0].championId].wins /
-                //         champions[one_match[0].championId].total) *
-                //         100,
-                // );
-                champions[one_match[0].championId].kills += one_match[0].kills;
-                champions[one_match[0].championId].deaths +=
-                    one_match[0].deaths;
-                champions[one_match[0].championId].assists +=
-                    one_match[0].assists;
-                // champions[one_match[0].championId].kda = (
-                //     (one_match[0].kills + one_match[0].assists) /
-                //     one_match[0].deaths
-                // ).toFixed(1);
-                //졌을 때
-            } else {
-                champions[one_match[0].championId].total += 1;
-                champions[one_match[0].championId].losses += 1;
-                champions[one_match[0].championId].kills += one_match[0].kills;
-                champions[one_match[0].championId].deaths +=
-                    one_match[0].deaths;
-                champions[one_match[0].championId].assists +=
-                    one_match[0].assists;
-                // champions[one_match[0].championId].kda = (
-                //     (one_match[0].kills + one_match[0].assists) /
-                //     one_match[0].deaths
-                // ).toFixed(1);
+            //다시하기 제외 로직
+            if (one_match) {
+                //배열에 championId번째 객체가 비어있을 경우 championId번째 배열에 챔피언 객체 생성
+                if (!champions[one_match.thisUser[0].championId]) {
+                    champions[one_match.thisUser[0].championId] = {
+                        id: one_match.thisUser[0].championId,
+                        name: one_match.thisUser[0].championName,
+                        total: 0,
+                        wins: 0,
+                        losses: 0,
+                        kills: 0,
+                        deaths: 0,
+                        assists: 0,
+                    };
+                }
+
+                //이겼을때
+                if (one_match.thisUser[0].win) {
+                    champions[one_match.thisUser[0].championId].total += 1;
+                    champions[one_match.thisUser[0].championId].wins += 1;
+                    champions[one_match.thisUser[0].championId].kills +=
+                        one_match.thisUser[0].kills;
+                    champions[one_match.thisUser[0].championId].deaths +=
+                        one_match.thisUser[0].deaths;
+                    champions[one_match.thisUser[0].championId].assists +=
+                        one_match.thisUser[0].assists;
+                    champions[0] = one_match.matchId;
+                    //졌을 때
+                } else {
+                    champions[one_match.thisUser[0].championId].total += 1;
+                    champions[one_match.thisUser[0].championId].losses += 1;
+                    champions[one_match.thisUser[0].championId].kills +=
+                        one_match.thisUser[0].kills;
+                    champions[one_match.thisUser[0].championId].deaths +=
+                        one_match.thisUser[0].deaths;
+                    champions[one_match.thisUser[0].championId].assists +=
+                        one_match.thisUser[0].assists;
+                    champions[0] = one_match.matchId;
+                }
             }
         }
+
         return champions;
     }
 }
