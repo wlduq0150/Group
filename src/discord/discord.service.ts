@@ -1,8 +1,10 @@
 import {
+    Inject,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
     OnModuleInit,
+    forwardRef,
 } from "@nestjs/common";
 import {
     ChannelType,
@@ -25,6 +27,7 @@ export class DiscordService implements OnModuleInit {
 
     constructor(
         private readonly configService: ConfigService,
+        @Inject(forwardRef(() => GroupService))
         private readonly groupService: GroupService,
         private readonly userService: UserService,
     ) {}
