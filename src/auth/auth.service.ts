@@ -157,8 +157,16 @@ export class AuthService {
             user = this.userRepository.create({
                 discordId: discordUser.id,
                 username: discordUser.username,
-                avatar: discordUser.avatar,
+                avatar:
+                    discordUser.avatar !== undefined
+                        ? discordUser.avatar
+                        : null,
             });
+        } else {
+            user.avatar =
+                discordUser.avatar !== undefined
+                    ? discordUser.avatar
+                    : user.avatar;
         }
 
         return this.userRepository.save(user);
