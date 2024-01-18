@@ -16,14 +16,13 @@ import { checkIsUserAlreadyGroupJoin } from "./function/check-user-group-join.fu
 import { WsException } from "./exception/ws-exception.exception";
 import { WsExceptionFilter } from "./filter/ws-exception.filter";
 import { v4 as uuidv4 } from "uuid";
-import { RedisService } from "src/redis/redis.service";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
 @Injectable()
 export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
-    private connections: Map<string, number> = new Map();
+    // private connections: Map<string, number> = new Map();
 
     constructor(private readonly groupService: GroupService) {}
 
@@ -33,7 +32,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     handleDisconnect(client: Socket) {
         // 클라이언트 socket 연결 해제시 connections에 등록 해제
-        this.connections.delete(client.id);
+        client["userId"] = null;
 
         console.log(`[Group]client disconnected: ${client.id}`);
     }
@@ -55,7 +54,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 클라이언트 socket 연결시 connections에 등록
     @SubscribeMessage("connectWithUserId")
     connectWithUserId(client: Socket, userId: number): void {
-        this.connections.set(client.id, +userId);
+        client["userId"] = +userId;
     }
 
     // 클라이언트에서 그룹 생성시 발생하는 이벤트
@@ -64,7 +63,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         createGroupDto: CreateGroupDto,
     ): Promise<void> {
-        const userId = this.connections.get(client.id);
+        const userId = client["userId"];
+        if (!userId) {
+            throw new WsException("로그인이 필요합니다.");
+        }
 
         if (checkIsUserAlreadyJoin(client)) {
             throw new WsException("이미 그룹에 참여중입니다.");
@@ -90,8 +92,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 클라이언트에서 그룹 참여시 발생하는 이벤트
     @SubscribeMessage("groupJoin")
     async groupJoin(client: Socket, joinGroupDto: JoinGroupDto): Promise<void> {
-        const userId = this.connections.get(client.id);
         const { groupId } = joinGroupDto;
+        const userId = client["userId"];
+        if (!userId) {
+            throw new WsException("로그인이 필요합니다.");
+        }
 
         // 이미 그룹에 참여중인 경우 예외처리
         const result = checkIsUserAlreadyJoin(client);
@@ -117,8 +122,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
-        const userId = this.connections.get(client.id);
         const { groupId, position } = selectPositionDto;
+        const userId = client["userId"];
+        if (!userId) {
+            throw new WsException("로그인이 필요합니다.");
+        }
 
         if (!checkIsUserAlreadyGroupJoin(client, groupId)) {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
@@ -141,8 +149,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
-        const userId = this.connections.get(client.id);
         const { groupId, position } = selectPositionDto;
+        const userId = client["userId"];
+        if (!userId) {
+            throw new WsException("로그인이 필요합니다.");
+        }
 
         if (!checkIsUserAlreadyGroupJoin(client, groupId)) {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
@@ -162,8 +173,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         joinGroupDto: JoinGroupDto,
     ): Promise<void> {
-        const userId = this.connections.get(client.id);
         const { groupId } = joinGroupDto;
+        const userId = client["userId"];
+        if (!userId) {
+            throw new WsException("로그인이 필요합니다.");
+        }
 
         const result = await this.groupService.leaveGroup(groupId, userId);
 

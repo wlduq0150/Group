@@ -11,6 +11,8 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import session from "express-session";
+import { RedisIoAdapter } from "./adapters/redis-io.adapter";
+import { RedisService } from "./redis/redis.service";
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -29,7 +31,13 @@ async function bootstrap() {
         }),
     );
 
-    app.useWebSocketAdapter(new IoAdapter(app));
+    const redisService = app.get(RedisService);
+    const redisIoAdapter = new RedisIoAdapter(app, redisService);
+    await redisIoAdapter.connectToRedis();
+
+    app.useWebSocketAdapter(redisIoAdapter);
+
+    // app.useWebSocketAdapter(new IoAdapter(app));
 
     // Swagger
     const swaggerCustomOptions: SwaggerCustomOptions = {
