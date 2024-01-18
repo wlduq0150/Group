@@ -3,4 +3,5 @@ export interface Group {
     mode: string;
     mic: boolean;
     owner: number;
+    open: boolean;
 }

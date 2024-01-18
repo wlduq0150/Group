@@ -1,10 +1,12 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { GroupService } from "./group.service";
 import { GroupGateway } from "src/group/group.gateway";
 import { RedisModule } from "src/redis/redis.module";
+import { UserModule } from "src/user/user.module";
+import { DiscordModule } from "src/discord/discord.module";
 
 @Module({
-    imports: [RedisModule],
+    imports: [RedisModule, UserModule, forwardRef(() => DiscordModule)],
     exports: [GroupService],
     providers: [GroupService, GroupGateway],
 })

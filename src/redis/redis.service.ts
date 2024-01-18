@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { IoAdapter } from "@nestjs/platform-socket.io";
 import IORedis from "ioredis";
 
 @Injectable()
