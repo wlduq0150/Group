@@ -66,18 +66,18 @@
   <script>
 
     // const server = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
-    const server = "http://localhost:5001";
+    // const server = "http://localhost:5001";
 
     document.addEventListener('DOMContentLoaded', function () {
       const loginBtn = document.getElementById('loginBtn')
       loginBtn.addEventListener('click', function () {
-        window.location.href = server + '/auth/login'
+        window.location.href = '/auth/login'
       })
 
       const joinChannelBtn = document.getElementById('joinChannelBtn');
       joinChannelBtn.addEventListener('click', async function () {
         try {
-          const response = await fetch(server + '/discord/join-voice', {
+          const response = await fetch('/discord/join-voice', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -100,7 +100,7 @@
       const getSessionDataBtn = document.getElementById('getSessionDataBtn');
       getSessionDataBtn.addEventListener('click', async function () {
         try {
-          const response = await fetch(server + '/auth/session', {
+          const response = await fetch('/auth/session', {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -246,7 +246,7 @@
       }
 
       try {
-        const response = await fetch(server + `/friend/${friendId}/request`, {
+        const response = await fetch(`/friend/${friendId}/request`, {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -273,7 +273,7 @@
       }
 
       try {
-        const response = await fetch(server + `/friend/${friendId}/accept`, {
+        const response = await fetch(`/friend/${friendId}/accept`, {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -300,7 +300,7 @@
       }
 
       try {
-        const response = await fetch(server + `/friend/${friendId}/decline`, {
+        const response = await fetch(`/friend/${friendId}/decline`, {
           method: 'DELETE',
           credentials: 'include',
           headers: {
@@ -327,7 +327,7 @@
       }
 
       try {
-        const response = await fetch(server + `/friend/${friendId}/delete`, {
+        const response = await fetch(`/friend/${friendId}/delete`, {
           method: 'DELETE',
           credentials: 'include',
           headers: {
@@ -354,7 +354,7 @@
       }
 
       try {
-        const response = await fetch(server + `/friend/${friendId}/block`, {
+        const response = await fetch(`/friend/${friendId}/block`, {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -381,7 +381,7 @@
       }
 
       try {
-        const response = await fetch(server + `/friend/${friendId}/unblock`, {
+        const response = await fetch(`/friend/${friendId}/unblock`, {
           method: 'DELETE',
           credentials: 'include',
           headers: {
@@ -401,7 +401,7 @@
 
     async function getFriendList() {
       try {
-        const response = await fetch(server + `/friend/friends`, {
+        const response = await fetch(`/friend/friends`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -421,7 +421,7 @@
 
     async function getBlockList() {
       try {
-        const response = await fetch(server + `/friend/blocked-users`, {
+        const response = await fetch(`/friend/blocked-users`, {
           method: 'GET',
           credentials: 'include',
           headers: {
