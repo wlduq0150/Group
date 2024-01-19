@@ -126,7 +126,7 @@ export class FriendService {
             this.getUserById(deleterId),
         ]);
 
-        const checkFriend = user.friends.some((f) => f.id === deleterId);
+        const checkFriend = user.friends.some((f) => f.id === requestId);
 
         if (!checkFriend) {
             throw new NotFoundException("이미 친구가 아닙니다.");
@@ -163,7 +163,7 @@ export class FriendService {
 
             await this.userRepository.save(user);
         } else {
-            throw new NotFoundException("이미 차단된 사용자입니다.");
+            throw new ConflictException("이미 차단된 사용자입니다.");
         }
     }
 
@@ -183,7 +183,7 @@ export class FriendService {
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === unblockerId,
+            (blockedUser) => blockedUser.id === requestId,
         );
 
         if (!isBlocked) {
@@ -191,7 +191,7 @@ export class FriendService {
         }
 
         user.blockedUsers = user.blockedUsers.filter(
-            (blockedUser) => blockedUser.id !== unblockerId,
+            (blockedUser) => blockedUser.id !== requestId,
         );
 
         await this.userRepository.save(user);
