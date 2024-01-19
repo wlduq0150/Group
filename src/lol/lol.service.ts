@@ -86,18 +86,23 @@ export class LolService {
     private async saveLolUser(name: string, tag: string) {
         const userPuuid = await this.findUserPuuid(name, tag);
 
-        const userLolInfo = await this.findTier(userPuuid.puuid);
-        console.log(userLolInfo);
+        const { user, profileIconId, summonerLevel } = await this.findTier(
+            userPuuid.puuid,
+        );
+        console.log(summonerLevel);
+        console.log(profileIconId);
         await this.lolUserRepository.save({
             gameName: name,
             gameTag: tag,
             nameTag: name + tag,
+            summonerLevel: summonerLevel,
+            profileIconId: profileIconId,
             puuid: userPuuid.puuid,
-            tier: userLolInfo[0].tier,
-            rank: userLolInfo[0].rank,
-            leaguePoints: userLolInfo[0].leaguePoints,
-            wins: userLolInfo[0].wins,
-            losses: userLolInfo[0].losses,
+            tier: user[0].tier,
+            rank: user[0].rank,
+            leaguePoints: user[0].leaguePoints,
+            wins: user[0].wins,
+            losses: user[0].losses,
             lastMatchId: "no",
         });
         const thisUser = await this.lolUserRepository.findOne({
@@ -182,15 +187,19 @@ export class LolService {
         const krServer: string = LolServer[1];
         const apiKey: string = this.configService.get("LOL_API_KEY");
 
-        const summmonerId = await this.findSummonerId(puuid);
+        const summmonerInfo = await this.findSummonerId(puuid);
         const response = await fetch(
-            `${krServer}lol/league/v4/entries/by-summoner/${summmonerId.id}?api_key=${apiKey}`,
+            `${krServer}lol/league/v4/entries/by-summoner/${summmonerInfo.id}?api_key=${apiKey}`,
             { method: "GET" },
         );
 
         const user = await response.json();
-        console.log(user);
-        return user;
+
+        return {
+            user,
+            profileIconId: summmonerInfo.profileIconId,
+            summonerLevel: summmonerInfo.summonerLevel,
+        };
     }
 
     //puuid로 해당하는 유저의 최근 count 판의 matchId[]가져오기
@@ -291,19 +300,20 @@ export class LolService {
         const preTotal: number =
             Number(userInfo.wins) + Number(userInfo.losses);
         //새로운 유저 정보
-        const updaeUserInfo = await this.findTier(userInfo.puuid);
-        const newTotal: number =
-            updaeUserInfo[0].wins + updaeUserInfo[0].losses;
+        const { user, profileIconId, summonerLevel } = await this.findTier(
+            userInfo.puuid,
+        );
+        const newTotal: number = user[0].wins + user[0].losses;
         //새롭게 플레이 한 게임만 갱신
         if (newTotal > preTotal) {
             await this.lolUserRepository.update(
                 { id: userId },
                 {
-                    tier: updaeUserInfo[0].tier,
-                    rank: updaeUserInfo[0].rank,
-                    leaguePoints: updaeUserInfo[0].leaguePoints,
-                    wins: updaeUserInfo[0].wins,
-                    losses: updaeUserInfo[0].losses,
+                    tier: user[0].tier,
+                    rank: user[0].rank,
+                    leaguePoints: user[0].leaguePoints,
+                    wins: user[0].wins,
+                    losses: user[0].losses,
                 },
             );
 
@@ -359,6 +369,4 @@ export class LolService {
             }
         }
     }
-
-    async findUserInforById(userId) {}
 }

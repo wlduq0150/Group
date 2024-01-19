@@ -17,6 +17,12 @@ export class LolUser {
     @Column({ type: "varchar" })
     nameTag: string;
 
+    @Column({ type: "bigint" })
+    summonerLevel: number;
+
+    @Column({ type: "bigint" })
+    profileIconId: number;
+
     @Column({ type: "varchar" })
     puuid: string;
 

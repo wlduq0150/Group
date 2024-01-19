@@ -13,6 +13,9 @@ import { join } from "path";
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+    const cors = require("cors");
+    app.use(cors());
+
     app.enableCors({
         origin: true,
         credentials: true,
