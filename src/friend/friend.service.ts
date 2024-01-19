@@ -35,12 +35,14 @@ export class FriendService {
     }
 
     // 친구 요청
-    async initiateFriendRequest(myId: string, friendId: number) {
-        if (+myId == friendId) {
+    async initiateFriendRequest(myDiscordId: string, friendId: number) {
+        const senderId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (+myDiscordId == friendId) {
             throw new ConflictException("자기 자신에게 보낼 수 없습니다.");
         }
-
-        const senderId = (await this.userService.findOneByDiscordId(myId)).id;
 
         if (!senderId) {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
@@ -68,7 +70,15 @@ export class FriendService {
     }
 
     // 친구 요청 수락
-    async acceptFriendRequest(requestId: number, accepterId: number) {
+    async acceptFriendRequest(requestId: number, myDiscordId: string) {
+        const accepterId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!accepterId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
         const key = await this.checkFriendRequestExists(requestId, accepterId);
 
         const [accepter, requester] = await Promise.all([
@@ -84,23 +94,39 @@ export class FriendService {
     }
 
     // 친구 요청 거절
-    async declineFriendRequest(requestId: number, myId: number) {
+    async declineFriendRequest(requestId: number, myDiscordId: string) {
+        const declinerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!declinerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
         const friendRequestKey = await this.checkFriendRequestExists(
             requestId,
-            myId,
+            declinerId,
         );
 
         await this.redisService.del(friendRequestKey);
     }
 
     // 친구 삭제
-    async deleteFriend(requestId: number, myId: number) {
+    async deleteFriend(requestId: number, myDiscordId: string) {
+        const deleterId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!deleterId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
         const [user, friend] = await Promise.all([
             this.getUserById(requestId),
-            this.getUserById(myId),
+            this.getUserById(deleterId),
         ]);
 
-        user.friends = user.friends.filter((f) => f.id !== myId);
+        user.friends = user.friends.filter((f) => f.id !== deleterId);
 
         friend.friends = friend.friends.filter((u) => u.id !== requestId);
 
@@ -108,14 +134,22 @@ export class FriendService {
     }
 
     // 유저 차단
-    async blockUser(requestId: number, myId: number) {
+    async blockUser(requestId: number, myDiscordId: string) {
+        const blockerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!blockerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
         const [user, userToBlock] = await Promise.all([
             this.getUserById(requestId),
-            this.getUserById(myId),
+            this.getUserById(blockerId),
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === myId,
+            (blockedUser) => blockedUser.id === +myDiscordId,
         );
 
         if (!isBlocked) {
@@ -128,14 +162,22 @@ export class FriendService {
     }
 
     // 유저 차단 해제
-    async unblockUser(requestId: number, myId: number) {
+    async unblockUser(requestId: number, myDiscordId: string) {
+        const unblockerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!unblockerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
         const [user, userToUnblock] = await Promise.all([
             this.getUserById(requestId),
-            this.getUserById(myId),
+            this.getUserById(unblockerId),
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === myId,
+            (blockedUser) => blockedUser.id === unblockerId,
         );
 
         if (!isBlocked) {
@@ -143,7 +185,7 @@ export class FriendService {
         }
 
         user.blockedUsers = user.blockedUsers.filter(
-            (blockedUser) => blockedUser.id !== myId,
+            (blockedUser) => blockedUser.id !== unblockerId,
         );
 
         await this.userRepository.save(user);
@@ -193,12 +235,6 @@ export class FriendService {
 
     // 친구 요청 키 생성
     private getFriendRequestKey(senderId: number, friendId: number) {
-        const randomToken = this.generateRandomToken();
-        return `friend-request:${senderId}:${friendId}:${randomToken}`;
-    }
-
-    // 랜덤 키 생성
-    private generateRandomToken() {
-        return randomBytes(16).toString("hex");
+        return `friend-request:${senderId}:${friendId}`;
     }
 }
