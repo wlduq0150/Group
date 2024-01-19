@@ -4,8 +4,10 @@ import { AppService } from "./app.service";
 import { ConfigProjectModule } from "./config/config.module";
 import { TypeormModule } from "./typeorm/typeorm.module";
 import { AuthModule } from "./auth/auth.module";
-import { UserModule } from "./user/user.module";
 import { RedisModule } from "./redis/redis.module";
+import { GroupModule } from "./group/group.module";
+import { DiscordModule } from "./discord/discord.module";
+import { FriendModule } from "./friend/friend.module";
 
 import { LolModule } from "./lol/lol.module";
 import { CachingModule } from "./caching/caching.module";
@@ -14,9 +16,11 @@ import { CachingModule } from "./caching/caching.module";
     imports: [
         ConfigProjectModule,
         TypeormModule.forRoot(),
-        //AuthModule,
-        //UserModule,
+        AuthModule,
         RedisModule,
+        GroupModule,
+        FriendModule,
+        DiscordModule,
         LolModule,
         CachingModule.register(),
     ],

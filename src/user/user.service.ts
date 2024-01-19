@@ -17,112 +17,21 @@ export class UserService {
     ) {
     }
 
-    async create(createUserDto: CreateUserDto) {
-        const { email } = createUserDto;
+    // 디스코드 id로 유저 찾기
+    async findOneByDiscordId(discordId: string): Promise<User> {
+        const user = await this.userRepository.findOneBy({ discordId });
 
-        const isUser = await this.findUserByEmail(email);
-
-        if (isUser) {
-            throw new ConflictException("이미 존재하는 이메일입니다.");
+        if (!user) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
         }
 
-        const user = await this.userRepository.save(createUserDto);
-
-        return user.id;
+        return user;
     }
 
-    async findAll() {
-        return await this.userRepository.find({
-            select: ["id", "email", "name", "createdAt", "updatedAt"]
+    async findDiscordIdByUserId(userId: number): Promise<string> {
+        const user = await this.userRepository.findOneBy({
+            id: userId,
         });
-    }
-
-    async findUserById(id: number) {
-        return await this.userRepository.findOne({
-            where: { id },
-            select: ["id", "email", "name", "createdAt", "updatedAt"]
-        });
-    }
-
-    async findUserByName(getData: GetUserDto) {
-        const splits = getData.name.split("#");
-        // 케리아아#NA2 => ['케리아아', 'NA2'] => splits.length = 2
-        // PB Blossom => ['PB Blossom'] => splits.length = 1
-        // ' ' = %20
-
-        const getResponse = async (array: string[]) => {
-            if (array.length === 2) {
-                // riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}
-                console.log(`${process.env.LOL_API_ACCOUNT_BASE}${array[0]}/${array[1]}?api_key=${process.env.LOL_API_KEY}`);
-                return await fetch(`${process.env.LOL_API_ACCOUNT_BASE}${array[0]}/${array[1]}?api_key=${process.env.LOL_API_KEY}`);
-            } else {
-                // lol/summoner/v4/summoners/by-name/{summonerName}
-                console.log(`${process.env.LOL_API_SUMMONER_BASE}${encodeURI(array[0])}?api_key=${process.env.LOL_API_KEY}`);
-                return await fetch(`${process.env.LOL_API_SUMMONER_BASE}${encodeURI(array[0])}?api_key=${process.env.LOL_API_KEY}`);
-
-            }
-        };
-        // puuid -> match -> 경기기록을 가져와서 통계를 때려야해요
-        const response = await getResponse(splits);
-        console.log(response);
-        if (!response) {
-            throw new BadRequestException("검색할 수 없는 유저 입니다.");
-        }
-        // SELECT * FROM user WHERE name LIKE "(name)%"; => User Entity 여러 개
-        // % : 'name'이 포함된 값
-        // %name : 앞 문자와 상관없이 'name'이 포함
-        // name% : 뒤 문자와 상관없이 'name'이 포함
-        // %name% : 양쪽 문자와 상관없이 'name'이 포함
-        // 아 -> 아아아
-        console.log(response);
-        return await this.userRepository.find({
-            where: {
-                name: Like(`${getData}%`)
-            }
-        });
-    }
-
-    async findUserByIdWithBoards(id: number) {
-        return await this.userRepository.findOne({
-            where: { id },
-            select: ["id", "email", "name", "createdAt", "updatedAt"]
-        });
-    }
-
-    async findUserByEmail(email: string) {
-        return await this.userRepository.findOne({
-            where: { email }
-        });
-    }
-
-    async update(id: number, updateUserDto: UpdateUserDto) {
-        const isUser = await this.findUserById(id);
-
-        if (!isUser) {
-            throw new NotFoundException("존재하지 않는 사용자입니다.");
-        }
-
-        const result = await this.userRepository.update(
-            {
-                id
-            },
-            {
-                ...updateUserDto
-            }
-        );
-
-        return result;
-    }
-
-    async remove(id: number) {
-        const isUser = await this.findUserById(id);
-
-        if (!isUser) {
-            throw new NotFoundException("존재하지 않는 사용자입니다.");
-        }
-
-        const result = await this.userRepository.delete({ id });
-
-        return result;
+        return user.discordId;
     }
 }
