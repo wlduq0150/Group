@@ -17,11 +17,6 @@ import { RedisService } from "./redis/redis.service";
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-    app.enableCors({
-        origin: true,
-        credentials: true,
-    });
-
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
@@ -65,11 +60,15 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     const port: number = configService.get("SERVER_PORT");
 
-    app.useStaticAssets(join(__dirname, "..", "assets"));
+    app.useStaticAssets(join(__dirname, "..", "public"));
+
+    const redisService = app.get(RedisService);
+    const redisStore = redisService.getSessionStore();
 
     // 세션
     app.use(
         session({
+            store: redisStore,
             secret: configService.get<string>("SESSION_SECRET"),
             resave: false,
             saveUninitialized: false,
