@@ -122,8 +122,8 @@ export class FriendService {
         }
 
         const [user, friend] = await Promise.all([
-            this.getUserById(requestId),
             this.getUserById(deleterId),
+            this.getUserById(requestId),
         ]);
 
         const checkFriend = user.friends.some((f) => f.id === requestId);
@@ -177,10 +177,7 @@ export class FriendService {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        const [user, userToUnblock] = await Promise.all([
-            this.getUserById(requestId),
-            this.getUserById(unblockerId),
-        ]);
+        const user = await this.getUserById(unblockerId);
 
         const isBlocked = user.blockedUsers.some(
             (blockedUser) => blockedUser.id === requestId,
