@@ -2,10 +2,14 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import IORedis from "ioredis";
+import session from "express-session";
+import connectRedis from "connect-redis";
 
 @Injectable()
 export class RedisService {
     private readonly redisClient: IORedis;
+    private redisStore: connectRedis.RedisStore;
+
     constructor(private readonly configService: ConfigService) {
         this.redisClient = new IORedis({
             host: this.configService.get<string>("REDIS_HOST"),
@@ -19,10 +23,19 @@ export class RedisService {
         this.redisClient.on("error", (err) => {
             console.error("Redis connection error:", err);
         });
+
+        const RedisStore = connectRedis(session);
+        this.redisStore = new RedisStore({
+            client: this.redisClient,
+        });
     }
 
     getRedisClient(): IORedis {
         return this.redisClient;
+    }
+
+    getSessionStore(): connectRedis.RedisStore {
+        return this.redisStore;
     }
 
     async get(key: string) {

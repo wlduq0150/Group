@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { CreateGroupDto } from "./dto/create-group.dto";
 import { Group } from "./interface/group.interface";
 import { initGroupState } from "./function/init-group-state.function";
@@ -8,12 +8,19 @@ import { checkIsUserPositionSelect } from "./function/check-position-select.func
 import { WsException } from "./exception/ws-exception.exception";
 import { RedisService } from "src/redis/redis.service";
 import Redlock from "redlock";
+import { DiscordService } from "src/discord/discord.service";
+import { UserService } from "src/user/user.service";
 
 @Injectable()
 export class GroupService {
     private redlock: Redlock;
 
-    constructor(private readonly redisService: RedisService) {
+    constructor(
+        private readonly redisService: RedisService,
+        private readonly userService: UserService,
+        @Inject(forwardRef(() => DiscordService))
+        private readonly discordService: DiscordService,
+    ) {
         this.clear();
 
         this.redlock = new Redlock([redisService.getRedisClient()], {
@@ -160,6 +167,12 @@ export class GroupService {
             const isGroupEmpty = groupState.currentUser > 0 ? false : true;
 
             if (isGroupEmpty) {
+                const discordId =
+                    await this.userService.findDiscordIdByUserId(userId);
+                await this.discordService.deleteVoiceChannelForGroup(
+                    groupId,
+                    discordId,
+                );
                 await this.removeGroup(groupId);
                 return null;
             } else {

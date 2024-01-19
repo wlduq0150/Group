@@ -11,6 +11,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import session from "express-session";
+import { RedisService } from "./redis/redis.service";
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -61,9 +62,13 @@ async function bootstrap() {
 
     app.useStaticAssets(join(__dirname, "..", "assets"));
 
+    const redisService = app.get(RedisService);
+    const redisStore = redisService.getSessionStore();
+
     // 세션
     app.use(
         session({
+            store: redisStore,
             secret: configService.get<string>("SESSION_SECRET"),
             resave: false,
             saveUninitialized: false,
