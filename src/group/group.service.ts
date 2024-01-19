@@ -26,11 +26,23 @@ export class GroupService {
         await this.redisService.clear();
     }
 
+    private generateGroupInfoKey(groupId: string) {
+        return `group:info:${groupId}`;
+    }
+
+    private generateGroupStateKey(groupId: string) {
+        return `group:state:${groupId}`;
+    }
+
+    private generateGroupLockKey(groupId: string) {
+        return `group:lock:${groupId}`;
+    }
+
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {
         const { name, mode, mic, owner, position } = createGroupDto;
 
-        const groupInfoKey = `group-${groupId}`;
-        const groupStateKey = `group-${groupId}-state`;
+        const groupInfoKey = this.generateGroupInfoKey(groupId);
+        const groupStateKey = this.generateGroupStateKey(groupId);
 
         const group: Group = { name, mode, mic, owner, open: true };
         const groupState = initGroupState(position);
@@ -44,18 +56,18 @@ export class GroupService {
     // 모든 그룹 id 반환
     async findAllGroup() {
         const redisClient = this.redisService.getRedisClient();
-        let keys = await redisClient.keys("group-*#");
-        keys = keys.map((key) => key.replace("group-", ""));
+        let keys = await redisClient.keys("group:info:*#");
+        keys = keys.map((key) => key.replace("group:info:", ""));
         return keys;
     }
 
     // 유저 아이디를 통해 해당 유저가 방장인 그룹Id를 반환(없을 경우 null 반환)
     async findGroupIdByOwner(userId: number) {
         const redisClient = this.redisService.getRedisClient();
-        const keys = await redisClient.keys("group-*#");
+        const keys = await redisClient.keys("group:info:*#");
 
         for (let key of keys) {
-            const groupId = key.replace("group-", "");
+            const groupId = key.replace("group:info:", "");
             const group = await this.findGroupInfoById(groupId);
 
             if (group.owner === userId) {
@@ -67,7 +79,7 @@ export class GroupService {
     }
 
     async findGroupInfoById(groupId: string) {
-        const groupInfoKey = `group-${groupId}`;
+        const groupInfoKey = this.generateGroupInfoKey(groupId);
         const data = await this.redisService.get(groupInfoKey);
         const group: Group = JSON.parse(data);
 
@@ -79,7 +91,7 @@ export class GroupService {
     }
 
     async findGroupStateById(groupId: string) {
-        const groupStateKey = `group-${groupId}-state`;
+        const groupStateKey = this.generateGroupStateKey(groupId);
 
         const data = await this.redisService.get(groupStateKey);
         const groupState: GroupState = JSON.parse(data);
@@ -92,8 +104,8 @@ export class GroupService {
     }
 
     async removeGroup(groupId: string) {
-        const groupInfoKey = `group-${groupId}`;
-        const groupStateKey = `group-${groupId}-state`;
+        const groupInfoKey = this.generateGroupInfoKey(groupId);
+        const groupStateKey = this.generateGroupStateKey(groupId);
 
         await this.redisService.del(groupInfoKey);
         await this.redisService.del(groupStateKey);
@@ -103,9 +115,8 @@ export class GroupService {
 
     // userId 지우기
     async joinGroup(groupId: string) {
-        const groupInfoKey = `group-${groupId}`;
-        const groupStateKey = `group-${groupId}-state`;
-        const groupStateLockkey = `Lock:group:${groupId}:state`;
+        const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupStateLockkey = this.generateGroupLockKey(groupId);
 
         const lock = await this.redlock.acquire([groupStateLockkey], 1000);
 
@@ -139,8 +150,8 @@ export class GroupService {
     }
 
     async leaveGroup(groupId: string, userId: number) {
-        const groupStateKey = `group-${groupId}-state`;
-        const groupStateLockkey = `Lock:group:${groupId}:state`;
+        const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupStateLockkey = this.generateGroupLockKey(groupId);
 
         const lock = await this.redlock.acquire([groupStateLockkey], 1000);
 
@@ -177,8 +188,8 @@ export class GroupService {
     }
 
     async selectPosition(groupId: string, userId: number, position: Position) {
-        const groupStateKey = `group-${groupId}-state`;
-        const groupStateLockkey = `Lock:group:${groupId}:state`;
+        const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupStateLockkey = this.generateGroupLockKey(groupId);
 
         const redisClient = this.redisService.getRedisClient();
 
@@ -220,7 +231,7 @@ export class GroupService {
         userId: number,
         position: Position,
     ) {
-        const groupStateKey = `group-${groupId}-state`;
+        const groupStateKey = this.generateGroupStateKey(groupId);
 
         const groupState = await this.findGroupStateById(groupId);
 

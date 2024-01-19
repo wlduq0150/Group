@@ -37,8 +37,6 @@ async function bootstrap() {
 
     app.useWebSocketAdapter(redisIoAdapter);
 
-    // app.useWebSocketAdapter(new IoAdapter(app));
-
     // Swagger
     const swaggerCustomOptions: SwaggerCustomOptions = {
         swaggerOptions: {

@@ -22,7 +22,6 @@ import { v4 as uuidv4 } from "uuid";
 @Injectable()
 export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
-    // private connections: Map<string, number> = new Map();
 
     constructor(private readonly groupService: GroupService) {}
 
