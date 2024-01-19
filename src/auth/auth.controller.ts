@@ -69,10 +69,10 @@ export class AuthController {
             session.accessToken = accessToken;
             console.log(session);
 
-            res.redirect("http://localhost:5500/public/auth-test.html");
+            res.redirect("/auth-test.html");
         } catch (err) {
             console.error("인증 실패", err);
-            res.redirect("http://localhost:5500/public/auth-test.html");
+            res.redirect("/auth-test.html");
         }
     }
 
