@@ -9,6 +9,9 @@ import { GroupModule } from "./group/group.module";
 import { DiscordModule } from "./discord/discord.module";
 import { FriendModule } from "./friend/friend.module";
 
+import { LolModule } from "./lol/lol.module";
+import { CachingModule } from "./caching/caching.module";
+
 @Module({
     imports: [
         ConfigProjectModule,
@@ -18,6 +21,8 @@ import { FriendModule } from "./friend/friend.module";
         GroupModule,
         FriendModule,
         DiscordModule,
+        LolModule,
+        CachingModule.register(),
     ],
     controllers: [AppController],
     providers: [AppService],
