@@ -78,6 +78,7 @@ export class AuthController {
 
     @Get("/session")
     getSessiondata(@Session() session: Record<string, any>) {
+        console.log("세션 데이터 호출");
         return {
             discordUserId: session.discordUserId,
             accessToken: session.accessToken,
