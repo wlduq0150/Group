@@ -1,10 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { LolServer } from "./constants/lol-server.constants";
 import { InjectRepository } from "@nestjs/typeorm";
 import { LolUser } from "src/entity/lol-user.entity";
 import { Repository } from "typeorm";
 import { LolChampion } from "src/entity/lol-champion.entity";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export class LolService {
@@ -14,6 +16,8 @@ export class LolService {
         @InjectRepository(LolChampion)
         private lolChampionRepository: Repository<LolChampion>,
         private readonly configService: ConfigService,
+        @Inject(CACHE_MANAGER)
+        private readonly cacheManager: Cache,
     ) {}
 
     //이름+태그로 유저의 승률, 티어, 챔피언의 승률, kda 가져오기
@@ -47,11 +51,28 @@ export class LolService {
     // }
 
     async findUserProfile(userId: number) {
+        const userCacheKey: string = `userCache:id${userId}`;
+        const userCache: string = await this.cacheManager.get(userCacheKey);
+        if (userCache) {
+            const userInfo = JSON.parse(userCache) as
+                | LolUser
+                | {
+                      user: LolUser;
+                      champion: LolChampion[];
+                  };
+            return userInfo;
+        }
+
         const user = await this.findUserInfo(userId);
         const champion = await this.lolChampionRepository.find({
             where: { lolUserId: userId },
             order: { total: "DESC" },
         });
+        await this.cacheManager.set(
+            userCacheKey,
+            JSON.stringify({ user, champion }),
+            50000,
+        );
         return { user, champion };
     }
 
@@ -66,7 +87,7 @@ export class LolService {
         const userPuuid = await this.findUserPuuid(name, tag);
 
         const userLolInfo = await this.findTier(userPuuid.puuid);
-
+        console.log(userLolInfo);
         await this.lolUserRepository.save({
             gameName: name,
             gameTag: tag,
@@ -168,7 +189,7 @@ export class LolService {
         );
 
         const user = await response.json();
-
+        console.log(user);
         return user;
     }
 
@@ -273,52 +294,71 @@ export class LolService {
         const updaeUserInfo = await this.findTier(userInfo.puuid);
         const newTotal: number =
             updaeUserInfo[0].wins + updaeUserInfo[0].losses;
-
-        //if (newTotal > preTotal) {
-        await this.lolUserRepository.update(
-            { id: userId },
-            {
-                tier: updaeUserInfo[0].tier,
-                rank: updaeUserInfo[0].rank,
-                leaguePoints: updaeUserInfo[0].leaguePoints,
-                wins: updaeUserInfo[0].wins,
-                losses: updaeUserInfo[0].losses,
-            },
-        );
-
-        const count = 3;
-
-        const newMatchIds = await this.findMatchIds(userInfo.puuid, count);
-        const newChampions = await this.allMatches(
-            newMatchIds,
-            userInfo.puuid,
-            userId,
-        );
-        await this.lolUserRepository.update(
-            { id: userId },
-            { lastMatchId: newChampions.shift() },
-        );
-        const clearChampions = newChampions.filter((e) => {
-            return e != null;
-        });
-
-        for (let champ of clearChampions) {
-            const preChampion = await this.lolChampionRepository.findOneBy({
-                championId: champ.championId,
-            });
-
-            await this.lolChampionRepository.update(
-                { lolUserId: userId, championId: champ.id },
+        //새롭게 플레이 한 게임만 갱신
+        if (newTotal > preTotal) {
+            await this.lolUserRepository.update(
+                { id: userId },
                 {
-                    total: +preChampion.total + champ.wins + champ.losses,
-                    wins: +preChampion.wins + champ.wins,
-                    losses: +preChampion.losses + champ.losses,
-                    kills: +preChampion.kills + champ.kills,
-                    deaths: +preChampion.deaths + champ.deaths,
-                    assists: +preChampion.assists + champ.assists,
+                    tier: updaeUserInfo[0].tier,
+                    rank: updaeUserInfo[0].rank,
+                    leaguePoints: updaeUserInfo[0].leaguePoints,
+                    wins: updaeUserInfo[0].wins,
+                    losses: updaeUserInfo[0].losses,
                 },
             );
+
+            const count = 3;
+
+            const newMatchIds = await this.findMatchIds(userInfo.puuid, count);
+            const newChampions = await this.allMatches(
+                newMatchIds,
+                userInfo.puuid,
+                userId,
+            );
+            await this.lolUserRepository.update(
+                { id: userId },
+                { lastMatchId: newChampions.shift() },
+            );
+            const clearChampions = newChampions.filter((e) => {
+                return e != null;
+            });
+
+            for (let champ of clearChampions) {
+                //기존에 저장된 챔피언 정보
+                const preChampion = await this.lolChampionRepository.findOneBy({
+                    championId: champ.id,
+                });
+                if (preChampion) {
+                    await this.lolChampionRepository.update(
+                        { lolUserId: userId, championId: champ.id },
+                        {
+                            total:
+                                +preChampion.total + champ.wins + champ.losses,
+                            wins: +preChampion.wins + champ.wins,
+                            losses: +preChampion.losses + champ.losses,
+                            kills: +preChampion.kills + champ.kills,
+                            deaths: +preChampion.deaths + champ.deaths,
+                            assists: +preChampion.assists + champ.assists,
+                        },
+                    );
+                }
+                //새롭게 플레이 한 챔피언의 경우 롤챔피언에 생성해줌
+                else {
+                    await this.lolChampionRepository.save({
+                        championId: champ.id,
+                        championName: champ.name,
+                        total: +champ.wins + champ.losses,
+                        wins: champ.wins,
+                        losses: champ.losses,
+                        kills: champ.kills,
+                        deaths: champ.deaths,
+                        assists: champ.assists,
+                        lolUserId: userId,
+                    });
+                }
+            }
         }
-        // }
     }
+
+    async findUserInforById(userId) {}
 }

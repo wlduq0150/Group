@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Post, Put } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Get,
+    Post,
+    Put,
+    UseInterceptors,
+} from "@nestjs/common";
 
 import { LolhDto } from "./dto/lol.dto";
 import { LolService } from "./lol.service";
 import { LolUserIdDto } from "./dto/lol-userId.dto";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
+// @UseInterceptors(CacheInterceptor)
 @Controller("lol")
 export class LolController {
     constructor(private readonly lolService: LolService) {}

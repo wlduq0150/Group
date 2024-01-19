@@ -39,7 +39,9 @@ export class LolChampion {
     @Column({ type: "bigint" })
     assists: number;
 
-    @ManyToOne(() => LolUser, (lolUser) => lolUser.lolChampions)
+    @ManyToOne(() => LolUser, (lolUser) => lolUser.lolChampions, {
+        onDelete: "CASCADE",
+    })
     @JoinColumn({ name: "lolUserId" })
     lolUser: LolUser;
 
