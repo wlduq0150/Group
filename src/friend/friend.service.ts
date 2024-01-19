@@ -87,8 +87,9 @@ export class FriendService {
         ]);
 
         accepter.friends = [...accepter.friends, requester];
+        requester.friends = [...requester.friends, accepter];
 
-        await this.userRepository.save(accepter);
+        await this.userRepository.save([accepter, requester]);
 
         await this.redisService.del(key);
     }
@@ -122,19 +123,19 @@ export class FriendService {
         }
 
         const [user, friend] = await Promise.all([
-            this.getUserById(requestId),
             this.getUserById(deleterId),
+            this.getUserById(requestId),
         ]);
 
-        const checkFriend = user.friends.some((f) => f.id === deleterId);
+        const checkFriend = user.friends.some((f) => f.id === requestId);
 
         if (!checkFriend) {
             throw new NotFoundException("이미 친구가 아닙니다.");
         }
 
-        user.friends = user.friends.filter((f) => f.id !== deleterId);
+        user.friends = user.friends.filter((f) => f.id !== requestId);
 
-        friend.friends = friend.friends.filter((u) => u.id !== requestId);
+        friend.friends = friend.friends.filter((u) => u.id !== deleterId);
 
         await this.userRepository.save([user, friend]);
     }
@@ -150,12 +151,12 @@ export class FriendService {
         }
 
         const [user, userToBlock] = await Promise.all([
-            this.getUserById(requestId),
             this.getUserById(blockerId),
+            this.getUserById(requestId),
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === blockerId,
+            (blockedUser) => blockedUser.id === requestId,
         );
 
         if (!isBlocked) {
@@ -163,7 +164,7 @@ export class FriendService {
 
             await this.userRepository.save(user);
         } else {
-            throw new NotFoundException("이미 차단된 사용자입니다.");
+            throw new ConflictException("이미 차단된 사용자입니다.");
         }
     }
 
@@ -178,12 +179,12 @@ export class FriendService {
         }
 
         const [user, userToUnblock] = await Promise.all([
-            this.getUserById(requestId),
             this.getUserById(unblockerId),
+            this.getUserById(requestId),
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === unblockerId,
+            (blockedUser) => blockedUser.id === requestId,
         );
 
         if (!isBlocked) {
@@ -191,7 +192,7 @@ export class FriendService {
         }
 
         user.blockedUsers = user.blockedUsers.filter(
-            (blockedUser) => blockedUser.id !== unblockerId,
+            (blockedUser) => blockedUser.id !== requestId,
         );
 
         await this.userRepository.save(user);
@@ -200,6 +201,8 @@ export class FriendService {
     async getFriendList(myDiscordId: string) {
         const myId = (await this.userService.findOneByDiscordId(myDiscordId))
             .id;
+
+        console.log("친구 조회하는 사람 id: ", myId);
 
         if (!myId) {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
@@ -230,6 +233,8 @@ export class FriendService {
                 reportedUsers: true,
             },
         });
+
+        console.log(user);
 
         if (!user) {
             throw new NotFoundException("해당하는 사용자를 찾을 수 없습니다.");
