@@ -119,7 +119,7 @@ export class FriendController {
     }
 
     // 유저 차단 해제
-    @Post("/:requestId/unblock")
+    @Delete("/:requestId/unblock")
     async unblockUser(
         @Req() req,
         @Param("requestId") requestId: number,

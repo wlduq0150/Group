@@ -126,6 +126,12 @@ export class FriendService {
             this.getUserById(deleterId),
         ]);
 
+        const checkFriend = user.friends.some((f) => f.id === deleterId);
+
+        if (!checkFriend) {
+            throw new NotFoundException("이미 친구가 아닙니다.");
+        }
+
         user.friends = user.friends.filter((f) => f.id !== deleterId);
 
         friend.friends = friend.friends.filter((u) => u.id !== requestId);
@@ -149,7 +155,7 @@ export class FriendService {
         ]);
 
         const isBlocked = user.blockedUsers.some(
-            (blockedUser) => blockedUser.id === +myDiscordId,
+            (blockedUser) => blockedUser.id === blockerId,
         );
 
         if (!isBlocked) {
@@ -191,13 +197,29 @@ export class FriendService {
         await this.userRepository.save(user);
     }
 
-    async getFriendList(requestId: number) {
-        const user = await this.getUserById(requestId);
+    async getFriendList(myDiscordId: string) {
+        const unblockerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!unblockerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const user = await this.getUserById(+myDiscordId);
         return user.friends;
     }
 
-    async getBlockedUsers(requestId: number) {
-        const user = await this.getUserById(requestId);
+    async getBlockedUsers(myDiscordId: string) {
+        const unblockerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!unblockerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const user = await this.getUserById(+myDiscordId);
         return user.blockedUsers;
     }
 
