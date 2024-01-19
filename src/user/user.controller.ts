@@ -1,27 +1,18 @@
-import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-    UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Get, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
 import { accessTokenGuard } from "src/auth/guard/access-token.guard";
 import { UserId } from "src/auth/decorators/userId.decorator";
 import { ApiBearerAuth } from "@nestjs/swagger";
+import { GetUserDto } from "./dto/get-user.dto";
 
 @Controller("user")
 export class UserController {
-    constructor(private readonly userService: UserService) {}
+    constructor(private readonly userService: UserService) {
+    }
 
     @ApiBearerAuth("accessToken")
     @UseGuards(accessTokenGuard)
-    @Get("")
+    @Get("All")
     findAll() {
         return this.userService.findAll();
     }
@@ -31,5 +22,10 @@ export class UserController {
     @Get("me")
     findUserById(@UserId() id: string) {
         return this.userService.findUserById(+id);
+    }
+
+    @Get("")
+    findUserByName(@Body() getData: GetUserDto) {
+        return this.userService.findUserByName(getData);
     }
 }

@@ -7,13 +7,18 @@ import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { RedisModule } from "./redis/redis.module";
 
+import { LolModule } from "./lol/lol.module";
+import { CachingModule } from "./caching/caching.module";
+
 @Module({
     imports: [
         ConfigProjectModule,
         TypeormModule.forRoot(),
-        AuthModule,
-        UserModule,
+        //AuthModule,
+        //UserModule,
         RedisModule,
+        LolModule,
+        CachingModule.register(),
     ],
     controllers: [AppController],
     providers: [AppService],
