@@ -22,4 +22,11 @@ export class UserService {
 
         return user;
     }
+
+    async findDiscordIdByUserId(userId: number): Promise<string> {
+        const user = await this.userRepository.findOneBy({
+            id: userId,
+        });
+        return user.discordId;
+    }
 }
