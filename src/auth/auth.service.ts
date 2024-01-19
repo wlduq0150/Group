@@ -1,113 +1,174 @@
 import {
-    BadRequestException,
+    HttpException,
     Injectable,
-    NotFoundException,
+    InternalServerErrorException,
     UnauthorizedException,
 } from "@nestjs/common";
-import { UserService } from "src/user/user.service";
-import { SignupUserDto } from "./dto/signup-user.dto";
-import { LoginUserDto } from "./dto/login-user.dto";
 import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
-import * as bcrypt from "bcrypt";
+import {
+    DiscordAuthResponse,
+    DiscordConfig,
+    DiscordUser,
+    GuildMember,
+} from "./interfaces/discord.interface";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/entity/user.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class AuthService {
+    private readonly clientId: string;
+    private readonly clientSecret: string;
+    private readonly redirectUri: string;
+    private readonly scope: string;
+    private readonly guildId: string;
+    private readonly botToken: string;
+
     constructor(
         private readonly configService: ConfigService,
-        private readonly userService: UserService,
-        private readonly jwtService: JwtService,
-    ) {}
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) {
+        const discordConfig: DiscordConfig = this.configService.get("discord");
 
-    /// 회원가입
-    async signup(singupUserDto: SignupUserDto) {
-        const { checkPassword, ...createUserDto } = singupUserDto;
+        this.clientId = discordConfig.clientId;
+        this.clientSecret = discordConfig.clientSecret;
+        this.redirectUri = discordConfig.redirectUri;
+        this.scope = discordConfig.scope;
+        this.guildId = discordConfig.guildId;
+        this.botToken = discordConfig.botToken;
+    }
 
-        if (createUserDto.password !== checkPassword) {
-            throw new BadRequestException(
-                "비밀번호와 확인 비밀번호가 일치하지 않습니다.",
+    getDiscordAuthURL(): string {
+        const redirectUriEncoded: string = encodeURIComponent(this.redirectUri);
+
+        return `https://discord.com/api/oauth2/authorize?client_id=${this.clientId}&redirect_uri=${redirectUriEncoded}&response_type=code&scope=${this.scope}`;
+    }
+
+    async getAccessToken(code: string): Promise<DiscordAuthResponse> {
+        const params = new URLSearchParams({
+            client_id: this.clientId,
+            client_secret: this.clientSecret,
+            grant_type: "authorization_code",
+            code,
+            redirect_uri: this.redirectUri,
+            scope: this.scope,
+        });
+
+        try {
+            const response = await fetch(
+                "https://discord.com/api/oauth2/token",
+                {
+                    method: "POST",
+                    body: params,
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                },
+            );
+
+            if (!response.ok) {
+                throw new UnauthorizedException("인증에 실패했습니다.");
+            }
+
+            return response.json();
+        } catch (err) {
+            throw new InternalServerErrorException(
+                "서버 내부 오류가 발생했습니다.",
+            );
+        }
+    }
+
+    async getDiscordUser(accessToken: string): Promise<DiscordUser> {
+        const response = await fetch("https://discord.com/api/users/@me", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new UnauthorizedException("인증에 실패했습니다.");
+        }
+
+        return response.json();
+    }
+
+    async addUserToGuild(
+        accessToken: string,
+        userId: string,
+    ): Promise<GuildMember> {
+        const response = await fetch(
+            `https://discord.com/api/guilds/${this.guildId}/members/${userId}`,
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bot ${this.botToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    access_token: accessToken,
+                }),
+            },
+        );
+
+        if (!response.ok) {
+            const errorCode: number = response.status;
+            const errorText: string = await response.text();
+
+            throw new HttpException(
+                `사용자를 채널에 추가하는데 실패했습니다.: ${errorText}`,
+                errorCode,
             );
         }
 
-        const saltRounds = +this.configService.get<number>("SALT_ROUNDS");
-        const salt = await bcrypt.genSalt(saltRounds);
-
-        const hashPassword = await bcrypt.hash(createUserDto.password, salt);
-
-        const userId = await this.userService.create({
-            ...createUserDto,
-            password: hashPassword,
-        });
-
-        return userId;
+        return response.json();
     }
 
-    /// 로그인
-    async login(loginUserDto: LoginUserDto) {
-        const { email, password } = loginUserDto;
+    async isUserInGuild(userId: string): Promise<Boolean> {
+        try {
+            const response = await fetch(
+                `https://discord.com/api/guilds/${this.guildId}/members/${userId}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bot ${this.botToken}`,
+                    },
+                },
+            );
 
-        const user = await this.userService.findUserByEmail(email);
+            if (!response.ok && response.status === 404) {
+                return false;
+            }
+
+            return response.ok;
+        } catch (err) {
+            throw new Error(
+                "사용자가 채널에 속해있는지 확인하는데 실패했습니다.",
+            );
+        }
+    }
+
+    async saveDiscordUser(discordUser: DiscordUser): Promise<User> {
+        let user = await this.userRepository.findOneBy({
+            discordId: discordUser.id,
+        });
+
         if (!user) {
-            throw new NotFoundException("회원가입되지 않은 이메일입니다.");
+            user = this.userRepository.create({
+                discordId: discordUser.id,
+                username: discordUser.username,
+                avatar:
+                    discordUser.avatar !== undefined
+                        ? discordUser.avatar
+                        : null,
+            });
+        } else {
+            user.avatar =
+                discordUser.avatar !== undefined
+                    ? discordUser.avatar
+                    : user.avatar;
         }
 
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
-        if (!isPasswordCorrect) {
-            throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
-        }
-
-        const accessToken = this.generateAccessToken(user.id, user.name);
-        const refreshToken = this.generateRefreshToken(user.id);
-
-        await this.userService.update(user.id, {
-            currentRefreshToken: refreshToken,
-        });
-
-        return {
-            accessToken,
-            refreshToken,
-        };
-    }
-
-    /// 토큰 재발급
-    async refresh(id: number) {
-        const user = await this.userService.findUserById(id);
-
-        const accessToken = this.generateAccessToken(id, user.name);
-
-        return accessToken;
-    }
-
-    /// 로그아웃
-    async logout(id: number) {
-        await this.userService.update(id, {
-            currentRefreshToken: null,
-        });
-
-        return true;
-    }
-
-    /// access 토큰 발급 (private)
-    private generateAccessToken(id: number, name: string) {
-        const payload = { userId: id, userName: name };
-
-        const accessToken = this.jwtService.sign(payload, {
-            secret: this.configService.get<string>("JWT_ACCESS_TOKEN_SECRET"),
-            expiresIn: this.configService.get<string>("JWT_ACCESS_TOKEN_EXP"),
-        });
-
-        return accessToken;
-    }
-
-    /// refresh 토큰 발급 (private)
-    private generateRefreshToken(id: number) {
-        const payload = { userId: id };
-
-        const refreshToken = this.jwtService.sign(payload, {
-            secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
-            expiresIn: this.configService.get<string>("JWT_REFRESH_TOKEN_EXP"),
-        });
-
-        return refreshToken;
+        return this.userRepository.save(user);
     }
 }
