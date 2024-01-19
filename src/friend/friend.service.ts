@@ -198,28 +198,26 @@ export class FriendService {
     }
 
     async getFriendList(myDiscordId: string) {
-        const unblockerId = (
-            await this.userService.findOneByDiscordId(myDiscordId)
-        ).id;
+        const myId = (await this.userService.findOneByDiscordId(myDiscordId))
+            .id;
 
-        if (!unblockerId) {
+        if (!myId) {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        const user = await this.getUserById(+myDiscordId);
+        const user = await this.getUserById(myId);
         return user.friends;
     }
 
     async getBlockedUsers(myDiscordId: string) {
-        const unblockerId = (
-            await this.userService.findOneByDiscordId(myDiscordId)
-        ).id;
+        const myId = (await this.userService.findOneByDiscordId(myDiscordId))
+            .id;
 
-        if (!unblockerId) {
+        if (!myId) {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        const user = await this.getUserById(+myDiscordId);
+        const user = await this.getUserById(myId);
         return user.blockedUsers;
     }
 
