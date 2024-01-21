@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>group-setting</title>
+    <link rel="stylesheet" href="./css/group-setting.css">
+    <script>
+        // 비공개 체크시 활성 혹은 비활성
+        function togglePasswordInput() {
+            let privateCheckbox = document.getElementById('private');
+            let passwordInput = document.getElementById('password');
+
+            passwordInput.disabled = !privateCheckbox.checked;
+        }
+    </script>
+</head>
+
+<body>
+    <div id='create-group-box'>
+        <div id='header'>그룹 설정</div>
+        <div id='middle'>
+            <form class='form-group'>
+                <div class="form-row">
+                    <div class="label-input-group">
+                        <label for="title">제목</label>
+                        <input type="text" id="title" name="title">
+                    </div>
+                    <div class="label-input-group">
+                        <label for="mode">모드</label>
+                        <select id="mode" name="mode">
+                            <option value="mode1">솔로 랭크</option>
+                            <option value="mode1">자유 랭크</option>
+                            <option value="mode2">일반 게임</option>
+                            <option value="mode2">칼바람 나락</option>
+                            <option value="mode2">기타</option>
+                        </select>
+                    </div>
+                    <div class="label-input-group">
+                        <label for="tier">티어</label>
+                        <select id="tier" name="tier">
+                            <option value="tier1">아이언</option>
+                            <option value="tier2">브론즈</option>
+                            <option value="tier3">실버</option>
+                            <option value="tier4">골드</option>
+                            <option value="tier5">플레</option>
+                            <option value="tier5">에메랄드</option>
+                            <option value="tier6">다이아</option>
+                            <option value="tier7">마스터</option>
+                            <option value="tier8">그랜드마스터</option>
+                            <option value="tier9">챌린저</option>
+                        </select>
+                    </div>
+                    <div class="label-input-group">
+                        <label for="max">인원</label>
+                        <select id="max" name="max">
+                            <option value="max1">1</option>
+                            <option value="max2">2</option>
+                            <option value="max3">3</option>
+                            <option value="max4">4</option>
+                            <option value="max5">5</option>
+                        </select>
+                    </div>
+
+                    <div class="label-input-group private-checkbox-group">
+                        <label for="private" class="private-label">비공개</label>
+                        <input type="checkbox" id="private" name="private" onclick="togglePasswordInput()">
+                    </div>
+                    <div class="label-input-group password-group">
+                        <input type="password" id="password" name="password" disabled placeholder="비밀번호를 입력해 주세요.">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
