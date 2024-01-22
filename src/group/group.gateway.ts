@@ -16,6 +16,7 @@ import { checkIsUserAlreadyGroupJoin } from "./function/check-user-group-join.fu
 import { WsException } from "./exception/ws-exception.exception";
 import { WsExceptionFilter } from "./filter/ws-exception.filter";
 import { v4 as uuidv4 } from "uuid";
+import { UpdateGroupDto } from "./dto/update-group.dto";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -93,6 +94,31 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server
             .to(client.id)
             .emit("positionSelect", { groupId, groupInfo, groupState });
+    }
+
+    @SubscribeMessage("groupUpdate")
+    async groupUpdate(
+        client: Socket,
+        updateGroupDto: UpdateGroupDto,
+    ): Promise<void> {
+        const { groupId } = updateGroupDto;
+        const userId = +client["userId"];
+        if (!userId) {
+            throw new WsException("로그인이 필요합니다.");
+        }
+
+        if (!checkIsUserAlreadyGroupJoin(client, groupId)) {
+            throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
+        }
+
+        const { groupInfo, groupState } = await this.groupService.updateGroup(
+            groupId,
+            updateGroupDto,
+        );
+
+        this.server
+            .to(groupId)
+            .emit("groupUpdate", { groupId, groupInfo, groupState });
     }
 
     // 클라이언트에서 그룹 참여시 발생하는 이벤트

@@ -1,6 +1,7 @@
 import { GroupState } from "../interface/group-state.interface";
+import { Position } from "../type/position.type";
 
-export function initGroupState(position: string[]): GroupState {
+export function initGroupState(position: Position[]): GroupState {
     const groupState: GroupState = {
         totalUser: position.length,
         currentUser: 0,

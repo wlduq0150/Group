@@ -29,6 +29,7 @@
   <button onclick="setUser()">Set User</button>
   <button onclick="setGroup()">Set Group</button>
   <button onclick="createGroup()">Create Group</button>
+  <button onclick="updateGroup()">Create Group</button>
   <button onclick="joinGroup()">Join Group</button>
   <button onclick="selectPosition()">Select Position</button>
   <button onclick="deselectPosition()">Deselect Position</button>
@@ -159,6 +160,20 @@
         owner: userId,
         position: ["mid", "sup", "adc", "top", "jg"],
       });
+    }
+
+    function updateGroup() {
+      socket.emit('groupUpdate', {
+        groupId,
+        mode: "경쟁전",
+        updatePosition: {
+          "mid": true,
+          "sup": true,
+          "adc": true,
+          "top": true,
+          "jg": false
+        }
+      })
     }
 
     function joinGroup() {

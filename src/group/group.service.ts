@@ -10,6 +10,8 @@ import { RedisService } from "src/redis/redis.service";
 import Redlock from "redlock";
 import { DiscordService } from "src/discord/discord.service";
 import { UserService } from "src/user/user.service";
+import { UpdateGroupDto } from "./dto/update-group.dto";
+import { updateGroupState } from "./function/update-group-state.function";
 
 @Injectable()
 export class GroupService {
@@ -60,12 +62,40 @@ export class GroupService {
         return group;
     }
 
+    async updateGroup(groupId: string, updateGroupDto: UpdateGroupDto) {
+        const groupInfoKey = this.generateGroupInfoKey(groupId);
+        const groupStateKey = this.generateGroupStateKey(groupId);
+
+        let groupInfo = await this.findGroupInfoById(groupId);
+        let groupState = await this.findGroupStateById(groupId);
+
+        for (let update of Object.keys(updateGroupDto)) {
+            if (update === "updatePosition") {
+                groupState = updateGroupState(
+                    groupState,
+                    updateGroupDto[update],
+                );
+            } else {
+                if (update in groupInfo) {
+                    groupInfo[update] = updateGroupDto[update];
+                }
+            }
+        }
+
+        await this.redisService.set(groupInfoKey, JSON.stringify(groupInfo));
+        await this.redisService.set(groupStateKey, JSON.stringify(groupState));
+
+        return { groupInfo, groupState };
+    }
+
     // 모든 그룹 id 반환
     async findAllGroup() {
         const redisClient = this.redisService.getRedisClient();
         const infoKeys = await redisClient.keys("group:info:*");
         const stateKeys = infoKeys.map((key) => key.replace("info", "state"));
         const keys = infoKeys.map((key) => key.replace("group:info:", ""));
+
+        if (keys.length === 0) return null;
 
         const [infoValues, stateValues] = await Promise.all([
             redisClient.mget(...infoKeys),
@@ -80,8 +110,6 @@ export class GroupService {
                 },
             };
         });
-
-        console.log(data);
 
         return data;
     }
