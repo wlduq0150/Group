@@ -86,6 +86,7 @@
           })
 
           if (!response.ok) {
+            console.log(response);
             throw new Error('서버 상태 오류')
           }
 
@@ -155,7 +156,7 @@
         name: "새로운 그룹",
         mode: "모드",
         mic: true,
-        owner: 4,
+        owner: userId,
         position: ["mid", "sup", "adc", "top", "jg"],
       });
     }

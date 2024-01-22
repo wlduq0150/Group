@@ -72,7 +72,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         const uniqueId = uuidv4();
-        const groupId = `group-${uniqueId}#`; // 유니큰한 값 랜덤 생성으로 바뀔 예정
+        const groupId = `group-${uniqueId}`; // 유니큰한 값 랜덤 생성으로 바뀔 예정
         const groupInfo = await this.groupService.createGroup(
             groupId,
             createGroupDto,
