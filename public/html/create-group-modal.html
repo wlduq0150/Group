@@ -1,124 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/create-group-modal.css" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="../css/create-group-modal.css" rel="stylesheet" />
     <title>그룹생성</title>
-  </head>
-  <body>
-    <div class="create-group-modal">
-      <div class="create-group-modal-bar">그룹생성 바</div>
-      <div class="select-group-box">
+</head>
+<body>
+<div class="create-group-modal">
+    <div class="create-group-modal-bar">그룹생성 바</div>
+    <div class="select-group-box">
         <div class="title-box">
-          <div class="group-title">제목</div>
-          <input
-            class="group-title-input"
-            style="width: 120px; height: 15px"
-            type="text"
-          />
+            <div class="group-title">제목</div>
+            <input
+                class="group-title-input"
+                style="width: 120px; height: 15px"
+                type="text"
+            />
         </div>
 
         <div class="mode-box">
-          <div>모드</div>
-          <select name="group-game-mode" id="lang">
-            <option value="nomal-game">일반게임</option>
-            <option value="rank-game">솔로랭크</option>
-            <option value="team-rank">자유랭크</option>
-            <option value="aram">칼바람 나락</option>
-          </select>
+            <div>모드</div>
+            <select id="lang" name="group-game-mode">
+                <option value="nomal-game">일반게임</option>
+                <option value="rank-game">솔로랭크</option>
+                <option value="team-rank">자유랭크</option>
+                <option value="aram">칼바람 나락</option>
+            </select>
         </div>
         <div class="tier-box">
-          <div>티어</div>
-          <select name="group-game-tier" id="lang">
-            <option
-              value="
+            <div>티어</div>
+            <select id="lang" name="group-game-tier">
+                <option
+                    value="
             challenger"
-            >
-              챌린저
-            </option>
-            <option value="grandmaster">그랜드마스터</option>
-            <option value="master">마스터</option>
-            <option
-              value="
+                >
+                    챌린저
+                </option>
+                <option value="grandmaster">그랜드마스터</option>
+                <option value="master">마스터</option>
+                <option
+                    value="
             diamond"
-            >
-              다이아몬드
-            </option>
-            <option value="emerald">에메랄드</option>
-            <option value="platinum">플레티넘</option>
-            <option value="gold">골드</option>
-            <option value="silver">실버</option>
-            <option value="bronze">브론즈</option>
-            <option value="iron">아이언</option>
-          </select>
+                >
+                    다이아몬드
+                </option>
+                <option value="emerald">에메랄드</option>
+                <option value="platinum">플레티넘</option>
+                <option value="gold">골드</option>
+                <option value="silver">실버</option>
+                <option value="bronze">브론즈</option>
+                <option value="iron">아이언</option>
+            </select>
         </div>
         <div class="people-box">
-          <div>인원</div>
-          <select name="group-game-people" id="lang">
-            <option value="two">2</option>
-            <option value="three">3</option>
-            <option value="four">4</option>
-            <option value="five">5</option>
-          </select>
+            <div>인원</div>
+            <select id="lang" name="group-game-people">
+                <option value="two">2</option>
+                <option value="three">3</option>
+                <option value="four">4</option>
+                <option value="five">5</option>
+            </select>
         </div>
         <div class="private-box">
-          <div>비공개 <input type="checkbox" /></div>
-          <input
-            class="private-password"
-            style="width: 100px; height: 15px"
-            placeholder="비밀번호"
-            type="text"
-          />
+            <div>비공개 <input type="checkbox" /></div>
+            <input
+                class="private-password"
+                placeholder="비밀번호"
+                style="width: 100px; height: 15px"
+                type="text"
+            />
         </div>
-      </div>
-      <hr style="color: rgb(143, 143, 143)" />
-      <div class="select-position-box">
+    </div>
+    <hr style="color: rgb(143, 143, 143)" />
+    <div class="select-position-box">
         <div class="position-jg">
-          <img
-            id="position"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
-            alt=""
-            onclick="clickDarkJg()"
-          />
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkJg()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
+            />
         </div>
         <div class="position-top">
-          <img
-            id="position"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png"
-            alt=""
-            onclick="clickDarkTop()"
-          />
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkTop()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png"
+            />
         </div>
         <div class="position-mid">
-          <img
-            id="position"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EB%AF%B8%EB%93%9C%ED%9D%91.png"
-            alt=""
-            onclick="clickDarkMid()"
-          />
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkMid()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EB%AF%B8%EB%93%9C%ED%9D%91.png"
+            />
         </div>
         <div class="position-adc">
-          <img
-            id="position"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png"
-            alt=""
-            onclick="clickDarkAdc()"
-          />
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkAdc()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png"
+            />
         </div>
         <div class="position-sup">
-          <img
-            id="position"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EC%84%9C%ED%8F%BF%ED%9D%91.png"
-            alt=""
-            onclick="clickDarkSup()"
-          />
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkSup()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EC%84%9C%ED%8F%BF%ED%9D%91.png"
+            />
         </div>
-      </div>
-      <div class="complete-btn">완료</div>
     </div>
-    <script>
-      function clickDarkJg() {
+    <div class="complete-btn" id="groupCloseButton">완료</div>
+</div>
+<script>
+    function clickDarkJg() {
         document.querySelector(".position-jg").innerHTML = `
         <img
             id="position"
@@ -127,8 +127,9 @@
             onclick="clickJg()"
           />
         `;
-      }
-      function clickJg() {
+    }
+
+    function clickJg() {
         document.querySelector(".position-jg").innerHTML = `
         <img
             id="position"
@@ -137,8 +138,9 @@
             onclick="clickDarkJg()"
           />
         `;
-      }
-      function clickDarkTop() {
+    }
+
+    function clickDarkTop() {
         document.querySelector(".position-top").innerHTML = `
         <img
             id="position"
@@ -147,8 +149,9 @@
             onclick="clickTop()"
           />
         `;
-      }
-      function clickTop() {
+    }
+
+    function clickTop() {
         document.querySelector(".position-top").innerHTML = `
         <img
             id="position"
@@ -157,8 +160,9 @@
             onclick="clickDarkTop()"
           />
         `;
-      }
-      function clickDarkMid() {
+    }
+
+    function clickDarkMid() {
         document.querySelector(".position-mid").innerHTML = `
         <img
             id="position"
@@ -167,8 +171,9 @@
             onclick="clickMid()"
           />
         `;
-      }
-      function clickMid() {
+    }
+
+    function clickMid() {
         document.querySelector(".position-mid").innerHTML = `
         <img
             id="position"
@@ -177,8 +182,9 @@
             onclick="clickDarkMid()"
           />
         `;
-      }
-      function clickDarkAdc() {
+    }
+
+    function clickDarkAdc() {
         document.querySelector(".position-adc").innerHTML = `
         <img
             id="position"
@@ -187,8 +193,9 @@
             onclick="clickAdc()"
           />
         `;
-      }
-      function clickAdc() {
+    }
+
+    function clickAdc() {
         document.querySelector(".position-adc").innerHTML = `
         <img
             id="position"
@@ -197,8 +204,9 @@
             onclick="clickDarkAdc()"
           />
         `;
-      }
-      function clickDarkSup() {
+    }
+
+    function clickDarkSup() {
         document.querySelector(".position-sup").innerHTML = `
         <img
             id="position"
@@ -207,8 +215,9 @@
             onclick="clickSup()"
           />
         `;
-      }
-      function clickSup() {
+    }
+
+    function clickSup() {
         document.querySelector(".position-sup").innerHTML = `
         <img
             id="position"
@@ -217,7 +226,7 @@
             onclick="clickDarkSup()"
           />
         `;
-      }
-    </script>
-  </body>
+    }
+</script>
+</body>
 </html>
