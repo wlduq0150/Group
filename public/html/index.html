@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>main page</title>
+    <link href="../style" rel="stylesheet">
+    <script src="../component.js"></script>
+</head>
+<body>
+<div class="user-context" id='user-context'>
+    <ul>
+        <li><a href="#">프로필</a></li>
+        <li><a href="#">친구신청</a></li>
+        <li><a href="#">차단</a></li>
+        <li><a href="#">신고</a></li>
+    </ul>
+</div>
+<header>
+    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png">
+    <nav>
+        <img>
+        stone_y
+    </nav>
+</header>
+<main>
+    <div class="main">
+        <div class="user-search">
+            <div class="refresh">
+                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png">
+            </div>
+            <div class="search">
+                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png">
+                <input placeholder="Search" type="text">
+            </div>
+            <div class="make-group">
+                그룹 생성
+            </div>
+        </div>
+
+        <table>
+            <tbody>
+            <tr>
+                <th style="table-layout:fixed" width="400px">제목</th>
+                <th style="table-layout:fixed" width="80px">인원</th>
+                <th style="table-layout:fixed" width="110px">티어</th>
+                <th style="table-layout:fixed" width="200px">그룹장</th>
+                <th>대기열</th>
+                <th colspan="5" style="table-layout:fixed" width="500px">포지션 현황</th>
+            </tr>
+
+            <tr class="user-group">
+                <td class="user-group-items">예원님의 그룹</td>
+                <td class="user-group-items">1/5</td>
+                <td class="user-group-items">
+                    <div class="user-rank">
+                        에메랄드
+                    </div>
+                </td>
+                <td class="user-group-items">예원</td>
+                <td class="user-group-items">자유 랭크</td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png">
+                </td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</main>
+<script src="./script/handleContext.js"></script>
+</body>
+</html>
