@@ -63,7 +63,7 @@ export class GroupService {
     // 모든 그룹 id 반환
     async findAllGroup() {
         const redisClient = this.redisService.getRedisClient();
-        let keys = await redisClient.keys("group:info:*#");
+        let keys = await redisClient.keys("group:info:*");
         keys = keys.map((key) => key.replace("group:info:", ""));
         return keys;
     }
@@ -71,11 +71,15 @@ export class GroupService {
     // 유저 아이디를 통해 해당 유저가 방장인 그룹Id를 반환(없을 경우 null 반환)
     async findGroupIdByOwner(userId: number) {
         const redisClient = this.redisService.getRedisClient();
-        const keys = await redisClient.keys("group:info:*#");
+        const keys = await redisClient.keys("group:info:*");
+
+        console.log(keys);
 
         for (let key of keys) {
             const groupId = key.replace("group:info:", "");
             const group = await this.findGroupInfoById(groupId);
+
+            console.log(group);
 
             if (group.owner === userId) {
                 return groupId;
