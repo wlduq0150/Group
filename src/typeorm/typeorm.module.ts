@@ -15,7 +15,7 @@ export class TypeormModule {
                 username: configService.get<string>("DATABASE_USERNAME"),
                 password: configService.get<string>("DATABASE_PASSWORD"),
                 database: configService.get<string>("DATABASE_NAME"),
-                entities: [LolChampion, LolUser],
+                entities: [User, LolChampion, LolUser],
                 synchronize: true,
                 logging: false,
             }),

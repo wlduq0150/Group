@@ -1,8 +1,15 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
+
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
 import { Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
+import { GetUserDto } from "./dto/get-user.dto";
 
 @Injectable()
 export class UserService {
