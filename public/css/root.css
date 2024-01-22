@@ -1,4 +1,5 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
 @font-face {
     font-family: 'GmarketSansMedium';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
@@ -17,6 +18,6 @@
 :root {
     --grey: #000000ac;
     --green: #1ea4ae7d;
-    --bg: #1C1C1F; 
-    --sub-bg: #80a3a5a1; 
+    --bg: #1C1C1F;
+    --sub-bg: #80a3a5a1;
 }
