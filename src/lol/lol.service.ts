@@ -89,8 +89,6 @@ export class LolService {
         const { user, profileIconId, summonerLevel } = await this.findTier(
             userPuuid.puuid,
         );
-        console.log(summonerLevel);
-        console.log(profileIconId);
         await this.lolUserRepository.save({
             gameName: name,
             gameTag: tag,
