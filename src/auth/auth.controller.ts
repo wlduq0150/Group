@@ -1,10 +1,19 @@
-import { Controller, Get, Query, Redirect, Res, Session } from "@nestjs/common";
+import {
+    BadRequestException,
+    Controller,
+    Get,
+    Query,
+    Redirect,
+    Res,
+    Session,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Response } from "express";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import {
     DiscordAuthResponse,
     DiscordUser,
+    SessionData,
 } from "./interfaces/discord.interface";
 import { User } from "src/entity/user.entity";
 
@@ -20,7 +29,7 @@ export class AuthController {
         status: 302,
         description: "디스코드 인증 페이지로 리다이렉트됩니다.",
     })
-    getDiscordAuth() {
+    getDiscordAuth(): { url: string } {
         const redirectUrl: string = this.authService.getDiscordAuthURL();
 
         return { url: redirectUrl };
@@ -43,31 +52,14 @@ export class AuthController {
         @Res() res: Response,
     ): Promise<void> {
         if (!code) {
-            res.redirect("/login?error=NoCodeProvided");
-            return;
+            throw new BadRequestException("코드가 제공되지 않았습니다.");
         }
-
         try {
-            const accessTokenResponse: DiscordAuthResponse =
-                await this.authService.getAccessToken(code);
-            const accessToken: string = accessTokenResponse.access_token;
+            const sessionData: SessionData =
+                await this.authService.handleDiscordCallback(code);
 
-            const user: DiscordUser =
-                await this.authService.getDiscordUser(accessToken);
-
-            const isMember: Boolean = await this.authService.isUserInGuild(
-                user.id,
-            );
-
-            if (!isMember) {
-                await this.authService.addUserToGuild(accessToken, user.id);
-            }
-
-            const saveUser: User = await this.authService.saveDiscordUser(user);
-
-            session.discordUserId = saveUser.discordId;
-            session.accessToken = accessToken;
-            console.log(session);
+            session.discordUserId = sessionData.discordUserId;
+            session.accessToken = sessionData.accessToken;
 
             res.redirect("/auth-test.html");
         } catch (err) {

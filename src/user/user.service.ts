@@ -4,9 +4,10 @@ import {
     Injectable,
     NotFoundException,
 } from "@nestjs/common";
+
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
-import { Like, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import { GetUserDto } from "./dto/get-user.dto";
 
