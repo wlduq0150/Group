@@ -4,9 +4,11 @@ import {
     Entity,
     JoinTable,
     ManyToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
+import { LolUser } from "./lol-user.entity";
 
 @Entity({
     name: "users", // 데이터베이스 테이블의 이름
@@ -47,4 +49,7 @@ export class User {
 
     @Column({ default: false })
     isSuspended: boolean;
+
+    @OneToOne(() => LolUser, (lolUser) => lolUser.user)
+    lolUser: LolUser;
 }
