@@ -19,8 +19,13 @@
 <header>
     <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png">
     <nav>
-        <img>
-        stone_y
+        <input type="button" value="로그인">
+        <div>
+            <img>
+            stone_y
+            <input type="button" value="로그아웃">
+        </div>
+
     </nav>
 </header>
 <main>
@@ -80,6 +85,56 @@
         </table>
     </div>
 </main>
-<script src="./script/handleContext.js"></script>
+<div class="hidden">
+    <div class="parent" id="modal">
+        <div class="nav">프로필</div>
+        <div class="no-nav">
+            <div class="profile-box">
+                <div class="lol-profile-icon">
+                    <img
+                        alt=""
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png"
+                    />
+                </div>
+                <div class="name-box">
+                    <div class="discord-name">discord name</div>
+                    <div class="lol-name-tag">lol name tag</div>
+                </div>
+            </div>
+
+            <div class="no-name-box">
+                <div class="user-comment-box">
+                    <div class="user-comment">comment</div>
+                    <div class="user-popular">♥ 0</div>
+                </div>
+                <div class="tier-box">
+                    <div class="tier-icon">
+                        <img
+                            alt=""
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/tier/Rank%3DBronze.png"
+                        />
+                    </div>
+
+                    <div class="tier-rank-leaguePoints">
+                        <div class="tier-rank">tierank</div>
+                        <div class="league-points">league points</div>
+                    </div>
+                    <div class="win-box">
+                        <div class="wins-losses">win losses</div>
+                        <div class="win-rate"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="champion-box-parent"></div>
+                </div>
+            </div>
+        </div>
+        <div class="update-btn">수정</div>
+    </div>
+</div>
+<script src="../js/constants.js"></script>
+<script src="../js/profile-modal.js"></script>
+<script src="../js"></script>
 </body>
 </html>
