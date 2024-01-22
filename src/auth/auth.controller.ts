@@ -57,10 +57,10 @@ export class AuthController {
             session.discordUserId = sessionData.discordUserId;
             session.accessToken = sessionData.accessToken;
 
-            res.redirect("/public/index.html");
+            res.redirect("/html/index.html");
         } catch (err) {
             console.error("인증 실패", err);
-            res.redirect("/public/index.html");
+            res.redirect("/html/index.html");
         }
     }
 
@@ -78,7 +78,7 @@ export class AuthController {
             }
             res.clearCookie("connect.sid");
 
-            return res.redirect("/public/index.html");
+            return res.redirect("/html/index.html");
         });
     }
 
