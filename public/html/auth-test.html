@@ -29,6 +29,7 @@
   <button onclick="setUser()">Set User</button>
   <button onclick="setGroup()">Set Group</button>
   <button id='createGroupBtn' onclick="createGroup()">Create Group</button>
+  <button onclick="updateGroup()">Update Group</button>
   <button onclick="joinGroup()">Join Group</button>
   <button onclick="selectPosition()">Select Position</button>
   <button onclick="deselectPosition()">Deselect Position</button>
@@ -36,6 +37,19 @@
   <button onclick="clearGroup()">Clear Group</button>
   <button onclick="getAllGroup()">getAll Group</button>
 
+  <div>|</div>
+  <div>|</div>
+  <div>|</div>
+
+  <input type="text" id="groupChat" placeholder="Enter Chat">
+  <button onclick="groupChat()">send</button>
+  <input type="text" id="kickedUser" placeholder="need to kick">
+  <button onclick="kickUser()">send</button>
+
+
+  <div>|</div>
+  <div>|</div>
+  <div>|</div>
   <div id="myModal" class='modal' style='display:none'>
     <div class="modal-content">
       <div id="modal-body"></div>
@@ -147,6 +161,28 @@
       },
     });
 
+    // 페이지 로딩시 로그인 체크
+    document.addEventListener('DOMContentLoaded', async function () {
+      try {
+        const response = await fetch('/user/checkLogin', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error('서버 상태 오류')
+        }
+
+        const data = await response.json();
+        console.log("유저id: ", data);
+        userId = data;
+      } catch (err) {
+        console.log("로그인 안되어있음.");
+      }
+    });
+
     function setUser() {
       userId = +(document.getElementById("userId").value);
       console.log("유저: ", userId);
@@ -154,8 +190,19 @@
     }
 
     function setGroup() {
-      groupId = allGroup[0];
+      console.log(Object.keys(allGroup[0]));
+      groupId = Object.keys(allGroup[0])[0];
       console.log("그룹id설정: ", groupId);
+    }
+
+    function groupChat() {
+      const message = document.getElementById("groupChat").value;
+      socket.emit("chat", { message });
+    }
+
+    function kickUser() {
+      const kickedUserId = +(document.getElementById("kickedUser").value);
+      socket.emit("kick", { kickedUserId });
     }
 
     function createGroup() {
@@ -166,6 +213,20 @@
         owner: userId,
         position: ["mid", "sup", "adc", "top", "jg"],
       });
+    }
+
+    function updateGroup() {
+      socket.emit('groupUpdate', {
+        groupId,
+        mode: "경쟁전",
+        updatePosition: {
+          "mid": true,
+          "sup": true,
+          "adc": true,
+          "top": true,
+          "jg": false
+        }
+      })
     }
 
     function joinGroup() {
@@ -190,7 +251,7 @@
     }
 
     function getAllGroup() {
-      socket.emit('getAll');
+      socket.emit('getAllGroup');
     }
 
     socket.on("connect", () => {
@@ -201,9 +262,22 @@
       console.log('Disconnected from the server');
     });
 
+    socket.on('chat', (data) => {
+      console.log("채팅: ", data);
+    });
+
     socket.on('groupJoin', (data) => {
       groupId = data.groupId;
       console.log("유저 그룹 참가 완료: ", data);
+    });
+
+    socket.on('groupKicked', (data) => {
+      const { kickedUserId } = data;
+
+      if (userId === kickedUserId) {
+        socket.emit('groupLeave', { groupId });
+        alert("그룹장에 의해 강제퇴장 당하였습니다.");
+      }
     });
 
     socket.on('groupLeave', () => {
@@ -239,9 +313,9 @@
       console.log(data.message);
     });
 
-    socket.on("getAll", (data) => {
-      allGroup = data.keys;
-      console.log("데이터: ", data.keys);
+    socket.on("getAllGroup", (data) => {
+      allGroup = data.groups;
+      console.log("데이터: ", data.groups);
     });
 
 

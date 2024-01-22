@@ -26,14 +26,14 @@ body {
     display: flex;
 
     border-radius: 12px 12px 0 0;
-    /* box-shadow: 0 0 6px #000000; */
+    box-shadow: inset 0px 5px 6px #fff;
     background-color: #4b767f;
 }
 
 .group_manage_header .title {
     width: 28%;
     text-align: center;
-    line-height: 65px;
+    line-height: 70px;
     font-size: 1.5rem;
     font-weight: bold;
     color: #fff;
@@ -42,7 +42,7 @@ body {
 .group_manage_header .mode {
     width: 12.5%;
     text-align: center;
-    line-height: 65px;
+    line-height: 70px;
     font-size: 0.875rem;
     color: #fff;
 }
@@ -50,7 +50,7 @@ body {
 .group_manage_header .owner {
     width: 12.5%;
     text-align: center;
-    line-height: 65px;
+    line-height: 70px;
     font-size: 1.25rem;
     font-weight: bold;
     color: #fff;
@@ -62,7 +62,7 @@ body {
 
 .group_manage_header .state_box {
     width: 22%;
-    padding: 20px 35px 20px 35px;
+    padding: 23px 35px 17px 35px;
     text-align: center;
     box-sizing: border-box;
 }

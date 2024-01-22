@@ -36,4 +36,11 @@ export class UserService {
         });
         return user.discordId;
     }
+
+    async findNameByUserId(userId: number): Promise<string> {
+        const user = await this.userRepository.findOneBy({
+            id: userId,
+        });
+        return user.username;
+    }
 }
