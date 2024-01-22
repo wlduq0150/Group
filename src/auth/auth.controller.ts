@@ -4,11 +4,12 @@ import {
     Get,
     Query,
     Redirect,
+    Req,
     Res,
     Session,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SessionData } from "./interfaces/discord.interface";
 
@@ -63,7 +64,30 @@ export class AuthController {
         }
     }
 
+    @Get("/logout")
+    @ApiOperation({ summary: "로그아웃" })
+    @ApiResponse({
+        status: 200,
+        description: "로그아웃 성공, 세션 삭제",
+    })
+    @Get("/logout")
+    logout(@Req() req: Request, @Res() res: Response) {
+        req.session.destroy((err) => {
+            if (err) {
+                console.error(err);
+            }
+            res.clearCookie("connect.sid");
+
+            return res.redirect("/public/index.html");
+        });
+    }
+
     @Get("/session")
+    @ApiOperation({ summary: "세션 데이터 조회" })
+    @ApiResponse({
+        status: 200,
+        description: "세션 데이터 반환",
+    })
     getSessiondata(@Session() session: Record<string, any>) {
         console.log("세션 데이터 호출");
         return {
