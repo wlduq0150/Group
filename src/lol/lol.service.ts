@@ -77,13 +77,17 @@ export class LolService {
     }
 
     //유저생성
-    async saveUserAllInfo(name: string, tag: string) {
-        const userInfo = await this.saveLolUser(name, tag);
+    async saveUserAllInfo(name: string, tag: string, discordUserId: number) {
+        const userInfo = await this.saveLolUser(name, tag, discordUserId);
         await this.saveChampionData(userInfo.id);
     }
 
     //유저 롤 정보 저장
-    private async saveLolUser(name: string, tag: string) {
+    private async saveLolUser(
+        name: string,
+        tag: string,
+        discordUserId: number,
+    ) {
         const userPuuid = await this.findUserPuuid(name, tag);
 
         const { user, profileIconId, summonerLevel } = await this.findTier(
@@ -101,6 +105,7 @@ export class LolService {
             leaguePoints: user[0].leaguePoints,
             wins: user[0].wins,
             losses: user[0].losses,
+            userId: discordUserId,
             lastMatchId: "no",
         });
         const thisUser = await this.lolUserRepository.findOne({

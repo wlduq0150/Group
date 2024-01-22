@@ -28,9 +28,6 @@ function getUserProfile(clickUserId) {
       document.querySelector(
         ".league-points"
       ).innerHTML = `${data.user.leaguePoints} LP`;
-      document.querySelector(
-        ".wins-losses"
-      ).innerHTML = `${data.user.wins}승 ${data.user.losses}패`;
 
       const winRate = Math.round(
         (Number(data.user.wins) /
@@ -39,9 +36,11 @@ function getUserProfile(clickUserId) {
       );
       document.querySelector(
         ".win-rate"
-      ).innerHTML = `<div class="win-rate" style="background:conic-gradient(#5383e8 0% ${winRate}%, #E84057 25% ${
+      ).innerHTML = `<div class="win-rate" onmouseenter="mouseenterHandler()" onmouseleave="mouseleaveHandler()"  style="background:conic-gradient(#5383e8 0% ${winRate}%, #E84057 25% ${
         100 - winRate
-      }%);"><span class="center">${winRate}%</span></div>`;
+      }%);"  ><span class="center" > <span id="win-rate">${winRate}% </span><span class="wins-losses" style="display:none">${
+        data.user.wins
+      }승 ${data.user.losses}패</span></div>`;
       let mostChampionsParent = document.querySelector(".champion-box-parent");
 
       for (let i = 0; i < mostChampionCount; i++) {
@@ -81,3 +80,13 @@ function getUserProfile(clickUserId) {
 }
 
 getUserProfile(clickUserId);
+
+function mouseenterHandler() {
+  document.getElementById("win-rate").style.display = "none";
+  document.querySelector(".wins-losses").style.display = "block";
+}
+
+function mouseleaveHandler() {
+  document.getElementById("win-rate").style.display = "block";
+  document.querySelector(".wins-losses").style.display = "none";
+}

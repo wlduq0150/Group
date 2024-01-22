@@ -64,4 +64,7 @@ export class LolUser {
     @OneToOne(() => User, (user) => user.lolUser)
     @JoinColumn({ name: "userId", referencedColumnName: "id" })
     user: User;
+
+    // @Column({ type: "bigint" })
+    // userId: number;
 }
