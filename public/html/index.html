@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>main page</title>
+    <link href="../style" rel="stylesheet">
+    <link href="../css/profile-modal.css" rel="stylesheet" />
+    <link href="../css/create-group-modal.css" rel="stylesheet" />
+    <script src="../component.js"></script>
+</head>
+<body>
+<div class="user-context" id='user-context'>
+    <ul>
+        <li><a href="#">프로필</a></li>
+        <li><a href="#">친구신청</a></li>
+        <li><a href="#">차단</a></li>
+        <li><a href="#">신고</a></li>
+    </ul>
+</div>
+<header>
+    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png">
+    <nav>
+        <input type="button" value="로그인">
+        <div>
+            <img>
+            stone_y
+            <input type="button" value="로그아웃">
+        </div>
+
+    </nav>
+</header>
+<main>
+    <div class="main">
+        <div class="user-search">
+            <div class="refresh">
+                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png">
+            </div>
+            <div class="search">
+                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png">
+                <input placeholder="Search" type="text">
+            </div>
+            <div class="make-group">
+                그룹 생성
+            </div>
+        </div>
+
+        <table>
+            <tbody>
+            <tr>
+                <th style="table-layout:fixed" width="400px">제목</th>
+                <th style="table-layout:fixed" width="80px">인원</th>
+                <th style="table-layout:fixed" width="110px">티어</th>
+                <th style="table-layout:fixed" width="200px">그룹장</th>
+                <th>대기열</th>
+                <th colspan="5" style="table-layout:fixed" width="500px">포지션 현황</th>
+            </tr>
+
+            <tr class="user-group">
+                <td class="user-group-items">예원님의 그룹</td>
+                <td class="user-group-items">1/5</td>
+                <td class="user-group-items">
+                    <div class="user-rank">
+                        에메랄드
+                    </div>
+                </td>
+                <td class="user-group-items">예원</td>
+                <td class="user-group-items">자유 랭크</td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
+                </td>
+                <td class="user-group-items">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png">
+                </td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</main>
+<div class="hidden">
+    <div class="parent" id="modal">
+        <div class="nav">프로필</div>
+        <div class="no-nav">
+            <div class="profile-box">
+                <div class="lol-profile-icon">
+                    <img
+                        alt=""
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png"
+                    />
+                </div>
+                <div class="name-box">
+                    <div class="discord-name">discord name</div>
+                    <div class="lol-name-tag">lol name tag</div>
+                </div>
+            </div>
+
+            <div class="no-name-box">
+                <div class="user-comment-box">
+                    <div class="user-comment">comment</div>
+                    <div class="user-popular">♥ 0</div>
+                </div>
+                <div class="tier-box">
+                    <div class="tier-icon">
+                        <img
+                            alt=""
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/tier/Rank%3DBronze.png"
+                        />
+                    </div>
+
+                    <div class="tier-rank-leaguePoints">
+                        <div class="tier-rank">tierank</div>
+                        <div class="league-points">league points</div>
+                    </div>
+                    <div class="win-box">
+                        <div class="wins-losses">win losses</div>
+                        <div class="win-rate"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="champion-box-parent"></div>
+                </div>
+            </div>
+        </div>
+        <div class="update-btn">수정</div>
+    </div>
+</div>
+
+<div class="create-group-modal">
+    <div class="create-group-modal-bar">그룹생성 바</div>
+    <div class="select-group-box">
+        <div class="title-box">
+            <div class="group-title">제목</div>
+            <input
+                class="group-title-input"
+                style="width: 120px; height: 15px"
+                type="text"
+            />
+        </div>
+
+        <div class="mode-box">
+            <div>모드</div>
+            <select id="lang" name="group-game-mode">
+                <option value="nomal-game">일반게임</option>
+                <option value="rank-game">솔로랭크</option>
+                <option value="team-rank">자유랭크</option>
+                <option value="aram">칼바람 나락</option>
+            </select>
+        </div>
+        <div class="tier-box">
+            <div>티어</div>
+            <select id="lang" name="group-game-tier">
+                <option
+                    value="
+            challenger"
+                >
+                    챌린저
+                </option>
+                <option value="grandmaster">그랜드마스터</option>
+                <option value="master">마스터</option>
+                <option
+                    value="
+            diamond"
+                >
+                    다이아몬드
+                </option>
+                <option value="emerald">에메랄드</option>
+                <option value="platinum">플레티넘</option>
+                <option value="gold">골드</option>
+                <option value="silver">실버</option>
+                <option value="bronze">브론즈</option>
+                <option value="iron">아이언</option>
+            </select>
+        </div>
+        <div class="people-box">
+            <div>인원</div>
+            <select id="lang" name="group-game-people">
+                <option value="two">2</option>
+                <option value="three">3</option>
+                <option value="four">4</option>
+                <option value="five">5</option>
+            </select>
+        </div>
+        <div class="private-box">
+            <div>비공개 <input type="checkbox" /></div>
+            <input
+                class="private-password"
+                placeholder="비밀번호"
+                style="width: 100px; height: 15px"
+                type="text"
+            />
+        </div>
+    </div>
+    <hr style="color: rgb(143, 143, 143)" />
+    <div class="select-position-box">
+        <div class="position-jg">
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkJg()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
+            />
+        </div>
+        <div class="position-top">
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkTop()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png"
+            />
+        </div>
+        <div class="position-mid">
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkMid()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EB%AF%B8%EB%93%9C%ED%9D%91.png"
+            />
+        </div>
+        <div class="position-adc">
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkAdc()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png"
+            />
+        </div>
+        <div class="position-sup">
+            <img
+                alt=""
+                id="position"
+                onclick="clickDarkSup()"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EC%84%9C%ED%8F%BF%ED%9D%91.png"
+            />
+        </div>
+    </div>
+    <div class="complete-btn">완료</div>
+</div>
+<script>
+    function clickDarkJg() {
+        document.querySelector(".position-jg").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글.png"
+            alt=""
+            onclick="clickJg()"
+          />
+        `;
+    }
+
+    function clickJg() {
+        document.querySelector(".position-jg").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
+            alt=""
+            onclick="clickDarkJg()"
+          />
+        `;
+    }
+
+    function clickDarkTop() {
+        document.querySelector(".position-top").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑.png"
+            alt=""
+            onclick="clickTop()"
+          />
+        `;
+    }
+
+    function clickTop() {
+        document.querySelector(".position-top").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+            alt=""
+            onclick="clickDarkTop()"
+          />
+        `;
+    }
+
+    function clickDarkMid() {
+        document.querySelector(".position-mid").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드.png"
+            alt=""
+            onclick="clickMid()"
+          />
+        `;
+    }
+
+    function clickMid() {
+        document.querySelector(".position-mid").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
+            alt=""
+            onclick="clickDarkMid()"
+          />
+        `;
+    }
+
+    function clickDarkAdc() {
+        document.querySelector(".position-adc").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀.png"
+            alt=""
+            onclick="clickAdc()"
+          />
+        `;
+    }
+
+    function clickAdc() {
+        document.querySelector(".position-adc").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+            alt=""
+            onclick="clickDarkAdc()"
+          />
+        `;
+    }
+
+    function clickDarkSup() {
+        document.querySelector(".position-sup").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿.png"
+            alt=""
+            onclick="clickSup()"
+          />
+        `;
+    }
+
+    function clickSup() {
+        document.querySelector(".position-sup").innerHTML = `
+        <img
+            id="position"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"
+            alt=""
+            onclick="clickDarkSup()"
+          />
+        `;
+    }
+</script>
+<script src="../js/constants.js"></script>
+<script src="../js/profile-modal.js"></script>
+<script src="../js"></script>
+</body>
+</html>
