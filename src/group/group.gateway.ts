@@ -112,6 +112,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         const { groupInfo, groupState } = await this.groupService.updateGroup(
+            userId,
             groupId,
             updateGroupDto,
         );

@@ -62,12 +62,20 @@ export class GroupService {
         return group;
     }
 
-    async updateGroup(groupId: string, updateGroupDto: UpdateGroupDto) {
+    async updateGroup(
+        userId: number,
+        groupId: string,
+        updateGroupDto: UpdateGroupDto,
+    ) {
         const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
 
         let groupInfo = await this.findGroupInfoById(groupId);
         let groupState = await this.findGroupStateById(groupId);
+
+        if (userId !== groupInfo.owner) {
+            throw new WsException("그룹장만이 그룹 설정을 변경 가능합니다.");
+        }
 
         for (let update of Object.keys(updateGroupDto)) {
             if (update === "updatePosition") {
