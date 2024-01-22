@@ -49,11 +49,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server.emit("clear", { message: "Redis 초기화 완료" });
     }
 
-    @SubscribeMessage("getAll")
+    @SubscribeMessage("getAllGroup")
     async getAll(client: Socket): Promise<void> {
         const data = await this.groupService.findAllGroup();
 
-        this.server.emit("getAll", { keys: data });
+        this.server.emit("getAllGroup", { groups: data });
     }
 
     // 클라이언트 socket 연결시 connections에 등록

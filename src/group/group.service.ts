@@ -63,9 +63,27 @@ export class GroupService {
     // 모든 그룹 id 반환
     async findAllGroup() {
         const redisClient = this.redisService.getRedisClient();
-        let keys = await redisClient.keys("group:info:*");
-        keys = keys.map((key) => key.replace("group:info:", ""));
-        return keys;
+        const infoKeys = await redisClient.keys("group:info:*");
+        const stateKeys = infoKeys.map((key) => key.replace("info", "state"));
+        const keys = infoKeys.map((key) => key.replace("group:info:", ""));
+
+        const [infoValues, stateValues] = await Promise.all([
+            redisClient.mget(...infoKeys),
+            redisClient.mget(...stateKeys),
+        ]);
+
+        const data = keys.map((key, index) => {
+            return {
+                [key]: {
+                    info: JSON.parse(infoValues[index]),
+                    state: JSON.parse(stateValues[index]),
+                },
+            };
+        });
+
+        console.log(data);
+
+        return data;
     }
 
     // 유저 아이디를 통해 해당 유저가 방장인 그룹Id를 반환(없을 경우 null 반환)

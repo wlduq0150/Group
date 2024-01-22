@@ -183,7 +183,7 @@
     }
 
     function getAllGroup() {
-      socket.emit('getAll');
+      socket.emit('getAllGroup');
     }
 
     socket.on("connect", () => {
@@ -232,9 +232,9 @@
       console.log(data.message);
     });
 
-    socket.on("getAll", (data) => {
+    socket.on("getAllGroup", (data) => {
       allGroup = data.keys;
-      console.log("데이터: ", data.keys);
+      console.log("데이터: ", data.groups);
     });
 
 
