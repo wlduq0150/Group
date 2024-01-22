@@ -1,0 +1,99 @@
+@import url("root.css");
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: var(--grey);
+    height: 60px;
+    position: relative;
+    > img {
+        align-items: center;
+        height: 40px;
+
+        position: absolute;
+    }
+    > nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        position: absolute;
+        right: 100px;
+        > img{
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background-color: #6e5b5b;
+            border-radius: 100%;
+        }
+    }
+}
+
+
+
+body {
+    width: 100vw;
+    height: 100vh;
+    
+    background-image: linear-gradient(#00000040, #00000040), url("../img/background.jpg");
+    background-size: cover;
+    /* background-position: 50%; */
+    background-repeat: no-repeat;
+}
+
+main {
+    margin-top: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > table {
+        > tbody > tr {
+            transition: all .5s;
+            &:hover {
+                filter: brightness(0.8)
+            }
+            background-color: var(--sub-bg);
+            &:first-child {
+                background-color: var(--green);
+                > section {
+                    color: var(--bg);
+                }
+            }
+
+            > th, td {
+                padding: 10px 20px;
+                text-align: center;
+            }
+            > th {
+                font-size: 20px;
+            }
+            
+            > td {
+                > img {
+                    height: 32px;
+                    &:nth-child(4) {
+                        transform: rotate(180deg);
+                    }
+                    &[on] {
+                        filter: brightness(1);
+                        backdrop-filter: blur(10px);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.user-rank {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-context {
+    position: absolute;
+    bottom: 0;
+    z-index: 9999;
+}
