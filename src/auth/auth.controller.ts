@@ -10,12 +10,7 @@ import {
 import { AuthService } from "./auth.service";
 import { Response } from "express";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
-import {
-    DiscordAuthResponse,
-    DiscordUser,
-    SessionData,
-} from "./interfaces/discord.interface";
-import { User } from "src/entity/user.entity";
+import { SessionData } from "./interfaces/discord.interface";
 
 @ApiTags("사용자 인증")
 @Controller("auth")
@@ -61,10 +56,10 @@ export class AuthController {
             session.discordUserId = sessionData.discordUserId;
             session.accessToken = sessionData.accessToken;
 
-            res.redirect("/auth-test.html");
+            res.redirect("/public/index.html");
         } catch (err) {
             console.error("인증 실패", err);
-            res.redirect("/auth-test.html");
+            res.redirect("/public/index.html");
         }
     }
 
