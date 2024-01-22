@@ -1,16 +1,11 @@
-* {
-    margin: 0;
-    padding: 0;
-}
-
-body {
+/* body {
     width: 100vw;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #ebeef1;
-}
+} */
 
 .group_manage {
     width: 720px;
@@ -18,6 +13,8 @@ body {
     border-radius: 12px;
     box-shadow: 0 10px 8px #000000;
     background-color: #fff;
+    position: fixed;
+    z-index: 5;
 }
 
 .group_manage_header {

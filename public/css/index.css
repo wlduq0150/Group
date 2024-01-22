@@ -222,3 +222,12 @@ main {
 #groupContainer.hidden {
     display: none;
 }
+
+#groupManageContainer {
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
