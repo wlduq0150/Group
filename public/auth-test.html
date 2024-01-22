@@ -29,13 +29,25 @@
   <button onclick="setUser()">Set User</button>
   <button onclick="setGroup()">Set Group</button>
   <button onclick="createGroup()">Create Group</button>
-  <button onclick="updateGroup()">Create Group</button>
+  <button onclick="updateGroup()">Update Group</button>
   <button onclick="joinGroup()">Join Group</button>
   <button onclick="selectPosition()">Select Position</button>
   <button onclick="deselectPosition()">Deselect Position</button>
   <button onclick="leaveGroup()">Leave Group</button>
   <button onclick="clearGroup()">Clear Group</button>
   <button onclick="getAllGroup()">getAll Group</button>
+
+  <div>|</div>
+  <div>|</div>
+  <div>|</div>
+
+  <input type="text" id="groupChat" placeholder="Enter Chat">
+  <button onclick="groupChat()">send</button>
+
+
+  <div>|</div>
+  <div>|</div>
+  <div>|</div>
 
   <button id='loginBtn'>
     로그인
@@ -148,8 +160,14 @@
     }
 
     function setGroup() {
-      groupId = allGroup[0];
+      console.log(Object.keys(allGroup[0]));
+      groupId = Object.keys(allGroup[0])[0];
       console.log("그룹id설정: ", groupId);
+    }
+
+    function groupChat() {
+      const message = document.getElementById("groupChat").value;
+      socket.emit("chat", { message });
     }
 
     function createGroup() {
@@ -209,6 +227,10 @@
       console.log('Disconnected from the server');
     });
 
+    socket.on('chat', (data) => {
+      console.log("채팅: ", data);
+    });
+
     socket.on('groupJoin', (data) => {
       groupId = data.groupId;
       console.log("유저 그룹 참가 완료: ", data);
@@ -248,7 +270,7 @@
     });
 
     socket.on("getAllGroup", (data) => {
-      allGroup = data.keys;
+      allGroup = data.groups;
       console.log("데이터: ", data.groups);
     });
 

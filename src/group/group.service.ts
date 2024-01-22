@@ -320,4 +320,10 @@ export class GroupService {
 
         return groupState;
     }
+
+    async createGroupChat(userId: number, message: string) {
+        const name = await this.userService.findNameByUserId(userId);
+
+        return { name, message };
+    }
 }

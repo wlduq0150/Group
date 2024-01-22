@@ -17,6 +17,7 @@ import { WsException } from "./exception/ws-exception.exception";
 import { WsExceptionFilter } from "./filter/ws-exception.filter";
 import { v4 as uuidv4 } from "uuid";
 import { UpdateGroupDto } from "./dto/update-group.dto";
+import { GroupChatDto } from "./dto/chat-group.dto";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -231,5 +232,21 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.server.to(groupId).emit("otherGroupLeave", { userId });
             this.server.to(client.id).emit("groupLeave");
         }
+    }
+
+    @SubscribeMessage("chat")
+    async groupChat(client: Socket, groupChatDto: GroupChatDto) {
+        const { message } = groupChatDto;
+
+        if (!checkIsUserAlreadyJoin(client)) {
+            throw new WsException("그룹에 참여하고 있지 않습니다.");
+        }
+
+        const groupId = client["groupId"];
+        const userId = client["userId"];
+
+        const chat = await this.groupService.createGroupChat(userId, message);
+
+        this.server.to(groupId).emit("chat", { chat });
     }
 }
