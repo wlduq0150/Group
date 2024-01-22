@@ -23,9 +23,9 @@ document
     });
 
 // 로그인 API 연동
-document
-    .querySelector("#login-btn")
-    .addEventListener("click", redirectToDiscordAuth());
+document.querySelector("#login-btn").addEventListener("click", () => {
+    window.location.href = "/auth/login";
+});
 
 function openModal(el) {
     document.getElementById(el).style.display = "block";
@@ -33,25 +33,4 @@ function openModal(el) {
 
 function closeModal(el) {
     document.getElementById(el).style.display = "none";
-}
-
-async function redirectToDiscordAuth() {
-    try {
-        const response = await fetch("/auth/login", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error("서버 에러", response.status);
-        }
-
-        const data = await response.json();
-
-        window.location.href = data.url;
-    } catch (err) {
-        console.error(err);
-    }
 }
