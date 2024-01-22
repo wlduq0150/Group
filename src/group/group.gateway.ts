@@ -18,6 +18,8 @@ import { WsExceptionFilter } from "./filter/ws-exception.filter";
 import { v4 as uuidv4 } from "uuid";
 import { UpdateGroupDto } from "./dto/update-group.dto";
 import { GroupChatDto } from "./dto/chat-group.dto";
+import { KickDto } from "./dto/kick-group.dto";
+import { RedisAdapter } from "@socket.io/redis-adapter";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -29,12 +31,13 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     handleConnection(client: Socket) {
         console.log(`[Group]client connected: ${client.id}`);
+        client["groupId"] = null;
     }
 
     async handleDisconnect(client: Socket) {
         //그룹 자동 나가기 및 유저 id 해제
         try {
-            if (client["groupId"] !== undefined) {
+            if (client["groupId"] !== null) {
                 await this.groupLeave(client, true);
             }
         } catch (e) {
@@ -220,6 +223,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         // 그룹 나가기
         client.leave(groupId);
+        client["groupId"] = null;
 
         // 그룹에 아무도 없어 그룹을 없애야 하는 경우
         if (!result) {
@@ -232,6 +236,30 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.server.to(groupId).emit("otherGroupLeave", { userId });
             this.server.to(client.id).emit("groupLeave");
         }
+    }
+
+    @SubscribeMessage("kick")
+    async kickUser(client: Socket, kickDto: KickDto): Promise<void> {
+        const { kickedUserId } = kickDto;
+
+        const groupId: string = client["groupId"];
+        const userId: number = +client["userId"];
+
+        if (!userId) {
+            throw new WsException("로그인이 필요합니다.");
+        }
+
+        if (!checkIsUserAlreadyGroupJoin(client, groupId)) {
+            throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
+        }
+
+        const groupInfo = await this.groupService.findGroupInfoById(groupId);
+
+        if (userId !== groupInfo.owner) {
+            throw new WsException("그룹장만이 강제퇴장을 할수 있습니다.");
+        }
+
+        this.server.to(groupId).emit("groupKicked", { kickedUserId });
     }
 
     @SubscribeMessage("chat")
