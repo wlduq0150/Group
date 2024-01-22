@@ -18,6 +18,6 @@ groupOpenButton.addEventListener("click", () => {
     group.classList.remove("hidden");
 });
 
-groupCloseButton.addEventListener("click", () => {
-    group.classList.add("hidden");
-});
+// groupCloseButton.addEventListener("click", () => {
+//     group.classList.add("hidden");
+// });
