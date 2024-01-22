@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>main page</title>
+
+        <link rel="stylesheet" href="../css/index.css" />
+
+        <script>
+            function loadHTML(file) {
+                const rawFile = new XMLHttpRequest();
+                rawFile.open("GET", file, false);
+                rawFile.onreadystatechange = function () {
+                    if (rawFile.readyState === 4) {
+                        if (rawFile.status === 200 || rawFile.status === 0) {
+                            const allText = rawFile.responseText;
+                            document.write(allText);
+                        }
+                    }
+                };
+                rawFile.send(null);
+            }
+        </script>
+    </head>
+    <body>
+        <div class="user-context" id="user-context">
+            <ul>
+                <li><a href="#">프로필</a></li>
+                <li><a href="#">친구신청</a></li>
+                <li><a href="#">차단</a></li>
+                <li><a href="#">신고</a></li>
+            </ul>
+        </div>
+        <header>
+            <img
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png"
+            />
+            <nav>
+                <input class="login" type="button" value="로그인" />
+            </nav>
+        </header>
+        <main>
+            <div class="main">
+                <div class="user-search">
+                    <div class="refresh">
+                        <img
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png"
+                        />
+                    </div>
+                    <div class="search">
+                        <img
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
+                        />
+                        <input placeholder="Search" type="text" />
+                    </div>
+                    <div class="make-group" id="groupOpenButton">그룹 생성</div>
+                </div>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th style="table-layout: fixed" width="20%">
+                                제목
+                            </th>
+                            <th style="table-layout: fixed" width="10%">
+                                인원
+                            </th>
+                            <th style="table-layout: fixed" width="10%">
+                                티어
+                            </th>
+                            <th style="table-layout: fixed" width="12%">
+                                그룹장
+                            </th>
+                            <th style="table-layout: fixed" width="18%">
+                                대기열
+                            </th>
+                            <th
+                                colspan="5"
+                                style="table-layout: fixed"
+                                width="30%"
+                            >
+                                포지션 현황
+                            </th>
+                        </tr>
+                        <tr class="user-group" id="profileOpenButton">
+                            <td>예원님의 그룹</td>
+                            <td>1/5</td>
+                            <td>
+                                <div class="user-rank">에메랄드</div>
+                            </td>
+                            <td>예원</td>
+                            <td>자유 랭크</td>
+                            <td>
+                                <img
+                                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
+                                />
+                            </td>
+                            <td>
+                                <img
+                                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+                                />
+                            </td>
+                            <td>
+                                <img
+                                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
+                                />
+                            </td>
+                            <td>
+                                <img
+                                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+                                />
+                            </td>
+                            <td>
+                                <img
+                                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="hidden" id="profileContainer">
+                <script>
+                    loadHTML("./profile-modal.html");
+                </script>
+            </div>
+            <div class="hidden" id="groupContainer">
+                <script>
+                    loadHTML("./create-group-modal.html");
+                </script>
+            </div>
+        </main>
+
+        <script src="../js/index.js"></script>
+        <script src="../component.js"></script>
+    </body>
+</html>
