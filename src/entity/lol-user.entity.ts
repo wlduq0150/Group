@@ -1,5 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    OneToMany,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { LolChampion } from "./lol-champion.entity";
+import { User } from "./user.entity";
 
 @Entity({
     name: "lolUsers", // 데이터베이스 테이블의 이름
@@ -44,6 +52,16 @@ export class LolUser {
     @Column({ type: "varchar" })
     lastMatchId: string;
 
+    @Column({ type: "varchar" })
+    comment: string;
+
+    @Column({ type: "bigint" })
+    popular: number;
+
     @OneToMany(() => LolChampion, (lolChampions) => lolChampions.lolUser)
     lolChampions: LolChampion[];
+
+    @OneToOne(() => User, (user) => user.lolUser)
+    @JoinColumn({ name: "userId", referencedColumnName: "id" })
+    user: User;
 }
