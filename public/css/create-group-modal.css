@@ -1,32 +1,45 @@
+#modal-container {
+    background: rgba(0, 0, 0, 0.5);
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 .create-group-modal {
+    /* display: grid;
+    place-items: center; */
     background-color: white;
-    position: relative;
-    width: 800px;
+    width: 700px;
     height: 500px;
     box-shadow: 0 10px 8px #000000;
     border-radius: 20px;
 }
+
 .create-group-modal-bar {
-    box-shadow: inset 0px 5px 10px white;
+    box-shadow: inset 0px 8px 10px white;
     font-size: 20px;
     font-weight: bold;
     color: white;
-    height: 40px;
-    padding-top: 10px;
+    height: 50px;
+    width: 700px;
     text-align: center;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     background-color: rgb(75, 118, 127);
 }
+
 .select-group-box {
-    padding: 10px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 }
+
 .select-position-box {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 }
+
 #position {
     margin-left: 25px;
     margin-top: 70px;
@@ -34,6 +47,7 @@
     width: 110px;
     cursor: pointer;
 }
+
 .complete-btn {
     font-weight: bold;
     font-size: 25px;
