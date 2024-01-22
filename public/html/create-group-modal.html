@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <link href="../css/create-group-modal.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/create-group-modal.css" />
   <title>그룹생성</title>
 </head>
 
@@ -19,7 +19,7 @@
 
       <div class="mode-box">
         <div>모드</div>
-        <select id="lang" name="group-game-mode">
+        <select name="group-game-mode" id="lang">
           <option value="nomal-game">일반게임</option>
           <option value="rank-game">솔로랭크</option>
           <option value="team-rank">자유랭크</option>
@@ -29,7 +29,7 @@
       <div class="tier-box">
         <div>
           티어
-          <select id="lang" name="group-game-tier">
+          <select name="group-game-tier" id="lang">
             <option value="
             challenger">
               챌린저
@@ -48,45 +48,87 @@
             <option value="iron">아이언</option>
           </select>
         </div>
-      </div>
-      <div class="people-box">
-        <div>인원</div>
-        <select id="lang" name="group-game-people">
-          <option value="two">2</option>
-          <option value="three">3</option>
-          <option value="four">4</option>
-          <option value="five">5</option>
-        </select>
-      </div>
-      <div class="private-box">
-        <div>비공개 <input type="checkbox" /></div>
-        <input class="private-password" placeholder="비밀번호" style="width: 100px; height: 15px" type="text" />
+        <div class="people-box">
+          <div>인원</div>
+          <select name="group-game-people" id="lang">
+            <option value="two">2</option>
+            <option value="three">3</option>
+            <option value="four">4</option>
+            <option value="five">5</option>
+          </select>
+        </div>
+        <div class="private-box">
+          <div>비공개 <input type="checkbox" /></div>
+          <input class="private-password" style="width: 100px; height: 15px" placeholder="비밀번호" type="text" />
+        </div>
       </div>
     </div>
     <hr style="color: rgb(143, 143, 143)" />
     <div class="select-position-box">
       <div class="position-jg">
-        <img alt="" id="position" onclick="clickDarkJg()"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" />
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" alt=""
+          onclick="clickDarkJg()" />
       </div>
       <div class="position-top">
-        <img alt="" id="position" onclick="clickDarkTop()"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" />
+        <img id="position"
+          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" alt=""
+          onclick="clickDarkTop()" />
       </div>
       <div class="position-mid">
-        <img alt="" id="position" onclick="clickDarkMid()"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EB%AF%B8%EB%93%9C%ED%9D%91.png" />
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EB%AF%B8%EB%93%9C%ED%9D%91.png"
+          alt="" onclick="clickDarkMid()" />
       </div>
       <div class="position-adc">
-        <img alt="" id="position" onclick="clickDarkAdc()"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" />
+        <img id="position"
+          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" alt=""
+          onclick="clickDarkAdc()" />
       </div>
       <div class="position-sup">
-        <img alt="" id="position" onclick="clickDarkSup()"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EC%84%9C%ED%8F%BF%ED%9D%91.png" />
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EC%84%9C%ED%8F%BF%ED%9D%91.png"
+          alt="" onclick="clickDarkSup()" />
       </div>
     </div>
     <div class="complete-btn">완료</div>
+  </div>
+  </div>
+  <div class="people-box">
+    <div>인원</div>
+    <select id="lang" name="group-game-people">
+      <option value="two">2</option>
+      <option value="three">3</option>
+      <option value="four">4</option>
+      <option value="five">5</option>
+    </select>
+  </div>
+  <div class="private-box">
+    <div>비공개 <input type="checkbox" /></div>
+    <input class="private-password" placeholder="비밀번호" style="width: 100px; height: 15px" type="text" />
+  </div>
+  </div>
+  <hr style="color: rgb(143, 143, 143)" />
+  <div class="select-position-box">
+    <div class="position-jg">
+      <img alt="" id="position" onclick="clickDarkJg()"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" />
+    </div>
+    <div class="position-top">
+      <img alt="" id="position" onclick="clickDarkTop()"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" />
+    </div>
+    <div class="position-mid">
+      <img alt="" id="position" onclick="clickDarkMid()"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EB%AF%B8%EB%93%9C%ED%9D%91.png" />
+    </div>
+    <div class="position-adc">
+      <img alt="" id="position" onclick="clickDarkAdc()"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" />
+    </div>
+    <div class="position-sup">
+      <img alt="" id="position" onclick="clickDarkSup()"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EC%84%9C%ED%8F%BF%ED%9D%91.png" />
+    </div>
+  </div>
+  <div class="complete-btn">완료</div>
   </div>
   <script>
     function clickDarkJg() {
@@ -99,7 +141,6 @@
           />
         `;
     }
-
     function clickJg() {
       document.querySelector(".position-jg").innerHTML = `
         <img
@@ -110,7 +151,6 @@
           />
         `;
     }
-
     function clickDarkTop() {
       document.querySelector(".position-top").innerHTML = `
         <img
@@ -121,7 +161,6 @@
           />
         `;
     }
-
     function clickTop() {
       document.querySelector(".position-top").innerHTML = `
         <img
@@ -132,7 +171,6 @@
           />
         `;
     }
-
     function clickDarkMid() {
       document.querySelector(".position-mid").innerHTML = `
         <img
@@ -143,7 +181,6 @@
           />
         `;
     }
-
     function clickMid() {
       document.querySelector(".position-mid").innerHTML = `
         <img
@@ -154,7 +191,6 @@
           />
         `;
     }
-
     function clickDarkAdc() {
       document.querySelector(".position-adc").innerHTML = `
         <img
@@ -165,7 +201,6 @@
           />
         `;
     }
-
     function clickAdc() {
       document.querySelector(".position-adc").innerHTML = `
         <img
@@ -176,7 +211,6 @@
           />
         `;
     }
-
     function clickDarkSup() {
       document.querySelector(".position-sup").innerHTML = `
         <img
@@ -187,7 +221,6 @@
           />
         `;
     }
-
     function clickSup() {
       document.querySelector(".position-sup").innerHTML = `
         <img
