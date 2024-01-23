@@ -9,8 +9,9 @@
     box-shadow: 0 10px 8px #000000;
 }
 
-.nav {
+#modal .bar {
     box-shadow: inset 0px 8px 10px white;
+    width: 500px;
     font-size: 25px;
     font-weight: bold;
     color: white;
@@ -22,57 +23,57 @@
     background-color: rgb(75, 118, 127);
 }
 
-.no-nav {
+#modal .no-nav {
     padding-top: 10px;
     padding-left: 60px;
 }
 
-.profile-box {
+#modal .profile-box {
     display: grid;
     grid-template-columns: 100px 1fr;
     margin: 10px;
 }
 
-.lol-name-tag {
+#modal .lol-name-tag {
     font-weight: bold;
 }
 
-.tier-box {
+#modal .tier-box {
     font-weight: bold;
     display: grid;
     grid-template-columns: 100px 170px 1fr 1fr;
 }
 
-.tier-rank {
+#modal .tier-rank {
     font-size: 20px;
 }
 
-.no-name-box {
+#modal .no-name-box {
     padding-left: 10px;
 }
 
-.user-comment-box {
+#modal .user-comment-box {
     width: 365px;
     height: 100px;
     background-color: rgba(239, 239, 239, 100);
 }
 
-.user-popular {
+#modal .user-popular {
     position: relative;
     top: 50px;
     text-align: right;
     vertical-align: bottom;
 }
 
-.tier-rank-leaguePoints {
+#modal .tier-rank-leaguePoints {
     margin-top: 15px;
 }
 
-.win-box {
+#modal .win-box {
     margin-top: 15px;
 }
 
-.most-champion-box {
+#modal .most-champion-box {
     width: 365px;
     display: grid;
     grid-template-columns: 100px 200px 150px;
@@ -80,31 +81,31 @@
     margin-top: 5px;
 }
 
-.champion-info-box {
+#modal .champion-info-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-.champion-name {
+#modal .champion-name {
     font-weight: bold;
 }
 
-.champ-win-box {
+#modal .champ-win-box {
     margin-right: 85px;
     text-align: right;
 }
-.wins-losses {
+#modal .wins-losses {
     display: none;
 }
 
-.win-rate {
+#modal .win-rate {
     position: relative;
     width: 80px;
     height: 80px;
     border-radius: 50%;
 }
 
-.win-rate .center {
+#modal .win-rate .center {
     text-align: center;
     position: absolute;
     top: 15px;
@@ -115,13 +116,13 @@
     border-radius: 50%;
 }
 
-img {
+#modal img {
     max-width: 90px;
     max-height: 90px;
     object-fit: cover;
 }
 
-.update-btn {
+#modal .update-btn {
     font-weight: bold;
     font-size: 20px;
     padding-top: 10px;
