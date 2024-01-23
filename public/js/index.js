@@ -1,4 +1,4 @@
-import { Enum } from "./path/to/groupInfo.constants.js";
+import { Enum } from "./constants.js";
 
 let userId;
 let groupId;
@@ -89,10 +89,14 @@ completeBtn.addEventListener("click", async function (e) {
     const title = document.querySelector(
         ".create-group-modal .group-title-input",
     ).value;
-    const mode = document.querySelector('select[name="group-game-mode"]').value;
-    const tier = document.querySelector('select[name="group-game-tier"]').value;
+    const mode = document.querySelector(
+        'select[name="create-group-game-mode"]',
+    ).value;
+    const tier = document.querySelector(
+        'select[name="create-group-game-tier"]',
+    ).value;
     const people = document.querySelector(
-        'select[name="group-game-people"]',
+        'select[name="create-group-game-people"]',
     ).value;
     const privateCheckbox = document.querySelector(
         '.private-box input[type="checkbox"]',
@@ -115,8 +119,6 @@ completeBtn.addEventListener("click", async function (e) {
         password: privateCheckbox.checked ? password : undefined,
         position: selectedPositions,
     });
-
-    console.log(positions, selectedPositions);
 
     groupContainer.classList.add("hidden");
 });
@@ -165,7 +167,6 @@ function updateGroupTable(groups) {
         tr.classList.add("user-group");
 
         groupId = group.id;
-        console.log("그룹 아이디: ", groupId);
 
         tr.innerHTML = `
         <td class="group_name">${group.info.name}</td>
@@ -223,8 +224,8 @@ chattingBtn.addEventListener("click", () => {
                 ".group_manage_header .owner",
             );
 
-            titleElement.textContent = `${group.info.name}님의 그룹`;
-            modeElement.textContent = `${group.info.mode}`;
+            titleElement.textContent = `${group.info.owner}님의 그룹`;
+            modeElement.textContent = `${Enum.Mode[group.info.mode]}`;
             memberElement.textContent = `${group.state.currentUser}/${group.state.totalUser}`;
             ownerElement.textContent = group.info.owner;
         }
@@ -291,7 +292,7 @@ socket.on("clear", (data) => {
     console.log(data.message);
 });
 
-socket.on("getAllGroup", (data) => {
-    allGroup = data.groups;
-    console.log("데이터: ", data.groups);
-});
+// socket.on("getAllGroup", (data) => {
+//     allGroup = data.groups;
+//     console.log("데이터: ", data.groups);
+// });
