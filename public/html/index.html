@@ -38,7 +38,7 @@
                     <div>
                         laetipark
                     </div>
-                    <ul id="profile-list-items">
+                    <ul class="profile-list-items">
                         <li><a href="#">프로필</a></li>
                         <li><a href="#">친구목록</a></li>
                         <li><a href="#">차단목록</a></li>
@@ -48,24 +48,6 @@
             </div>
         </nav>
     </header>
-    <div class="hidden" id="groupManageContainer">
-        <script>
-            loadHTML("./group-manage.html");
-        </script>
-    </div>
-    <div class="hidden" id="groupContainer">
-        <script>
-            loadHTML("./create-group-modal.html");
-        </script>
-    </div>
-    <div class="hidden" id="positionSelectContainer">
-        <script>
-            loadHTML("./select-position-modal.html");
-        </script>
-    </div>
-    <div class="hidden" id="profileContainer">
-        <script>loadHTML("./profile-modal.html");</script>
-    </div>
     <main>
         <div class="main main_page">
             <div class="user-search">
@@ -104,39 +86,54 @@
                         <td class="group_user"><span class="user" data-id="1">예원</span></td>
                         <td class="group_type">자유 랭크</td>
                         <td class="group_position">
-                            <div class="position_jungle">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png">
-                            </div>
-                            <div class="position_top">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
-                            </div>
-                            <div class="position_mid">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png">
-                            </div>
-                            <div class="position_bottom">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
-                            </div>
-                            <div class="position_support">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png">
+                            <div>
+                                <div class="position_jungle">
+                                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png">
+                                </div>
+                                <div class="position_top">
+                                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
+                                </div>
+                                <div class="position_mid">
+                                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png">
+                                </div>
+                                <div class="position_bottom">
+                                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png">
+                                </div>
+                                <div class="position_support">
+                                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png">
+                                </div>
                             </div>
                         </td>
                     </tr>
 
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="hidden" id="profileContainer">
-        <script>loadHTML("./html/profile-modal.html");</script>
-    </div>
-</main>
-<script src="./js/pop-up.js"></script>
-<script src="./js/constants.js"></script>
-<script src="./js/index.js"></script>
-<script src="./js/profile-modal.js"></script>
-<script src="./js/login-modal.js"></script>
-
-
+        <div class="hidden" id="groupManageContainer">
+            <script>
+                loadHTML("./group-manage.html");
+            </script>
+        </div>
+        <div class="hidden" id="groupContainer">
+            <script>
+                loadHTML("./create-group-modal.html");
+            </script>
+        </div>
+        <div class="hidden" id="positionSelectContainer">
+            <script>
+                loadHTML("./select-position-modal.html");
+            </script>
+        </div>
+        <div class="hidden" id="profileContainer">
+            <script>
+                loadHTML("./profile-modal.html");
+            </script>
+        </div>
+    </main>
+    <script src="../js/constants.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="../js/profile-modal.js"></script>
+    <script src="../js/login-modal.js"></script>
 </body>
-
 </html>

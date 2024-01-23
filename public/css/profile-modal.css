@@ -1,12 +1,17 @@
 #modal.parent {
     width: 500px;
-    height: 750px;
+    max-height: 750px;
     background-color: white;
     display: grid;
     place-items: center;
+    align-items: start;
 
     border-radius: 20px;
     box-shadow: 0 10px 8px #000000;
+}
+
+#modal > div {
+    padding: 8px;
 }
 
 #modal .bar {
@@ -24,8 +29,7 @@
 }
 
 #modal .no-nav {
-    padding-top: 10px;
-    padding-left: 60px;
+    margin: 0 auto;
 }
 
 #modal .profile-box {
@@ -57,7 +61,7 @@
 }
 
 #modal .user-comment-box {
-    width: 365px;
+    width: 98%;
     height: 100px;
     background-color: rgba(239, 239, 239, 100);
 }
@@ -79,7 +83,7 @@
 }
 
 #modal .most-champion-box {
-    width: 365px;
+    width: 100%;
     display: grid;
     grid-template-columns: 100px 200px 150px;
     background-color: rgba(235, 238, 241, 100);
