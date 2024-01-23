@@ -2,44 +2,51 @@
     width: 500px;
     height: 750px;
     background-color: white;
-    position: absolute;
-    top: 100px;
-    left: 500px;
+    display: grid;
+    place-items: center;
+
     border-radius: 20px;
-    box-shadow: 5px 5px 5px;
+    box-shadow: 0 10px 8px #000000;
 }
+
 .nav {
-    box-shadow: inset 0px 5px 8px white;
+    box-shadow: inset 0px 8px 10px white;
     font-size: 25px;
     font-weight: bold;
     color: white;
     height: 50px;
     padding-top: 15px;
     text-align: center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
     background-color: rgb(75, 118, 127);
 }
+
 .no-nav {
     padding-top: 10px;
     padding-left: 60px;
 }
+
 .profile-box {
     display: grid;
     grid-template-columns: 100px 1fr;
     margin: 10px;
 }
+
 .lol-name-tag {
     font-weight: bold;
 }
+
 .tier-box {
     font-weight: bold;
     display: grid;
     grid-template-columns: 100px 170px 1fr 1fr;
 }
+
 .tier-rank {
     font-size: 20px;
 }
+
 .no-name-box {
     padding-left: 10px;
 }
@@ -49,18 +56,22 @@
     height: 100px;
     background-color: rgba(239, 239, 239, 100);
 }
+
 .user-popular {
     position: relative;
     top: 50px;
     text-align: right;
     vertical-align: bottom;
 }
+
 .tier-rank-leaguePoints {
     margin-top: 15px;
 }
+
 .win-box {
     margin-top: 15px;
 }
+
 .most-champion-box {
     width: 365px;
     display: grid;
@@ -73,41 +84,50 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
+
 .champion-name {
     font-weight: bold;
 }
+
 .champ-win-box {
     margin-right: 85px;
     text-align: right;
 }
+.wins-losses {
+    display: none;
+}
+
 .win-rate {
     position: relative;
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
 }
+
 .win-rate .center {
     text-align: center;
     position: absolute;
     top: 15px;
     left: 15px;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     background: #ffffff;
     border-radius: 50%;
 }
-img {
-    width: 90px;
-    height: 90px;
+
+.profile-box img {
+    max-width: 90px;
+    max-height: 90px;
     object-fit: cover;
 }
+
 .update-btn {
     font-weight: bold;
     font-size: 20px;
     padding-top: 10px;
     text-align: center;
     margin: 0 auto;
-    color: white;
+    color: rgb(255, 255, 255);
     background-color: rgba(106, 106, 106);
     width: 90px;
     height: 40px;
