@@ -51,9 +51,9 @@ loginBtn.addEventListener("click", async () => {
                 credentials: "include",
             });
 
-            // if (response.ok) {
-            //     window.location.reload();
-            // }
+            if (response.ok) {
+                loginBtn.value = "로그인";
+            }
         } catch (err) {
             console.error(err);
         }
@@ -181,6 +181,7 @@ function updateGroupTable(groups) {
             silver: "실버",
             gold: "골드",
             platinum: "플래티넘",
+            emerald: "에메랄드",
             diamond: "다이아몬드",
             master: "마스터",
             grandmaster: "그랜드마스터",
@@ -207,21 +208,19 @@ function updateGroupTable(groups) {
         }</span></td>
         <td class="group_type">${modeMap[group.info.mode]}</td>
         <td class="group_position">
-            ${["jg", "top", "mid", "adc", "sup"]
-                .map(
-                    (pos) =>
-                        `<div class="${
-                            positionClassMap[pos]
-                        }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
-                            positionMap[pos]
-                        }${
-                            group.state[pos] && group.state[pos].isActive
-                                ? ""
-                                : "흑"
-                        }.png" /></div>`,
-                )
-                .join("")}
-        </td>`;
+        ${["jg", "top", "mid", "adc", "sup"]
+            .map(
+                (pos) =>
+                    `<div class="${
+                        positionClassMap[pos]
+                    }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
+                        group.state[pos] && group.state[pos].isActive
+                            ? `${positionMap[pos]}흑`
+                            : "금지흑"
+                    }.png" /></div>`,
+            )
+            .join("")}
+    </td>`;
 
         tableBody.appendChild(tr);
     });
