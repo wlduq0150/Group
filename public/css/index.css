@@ -310,6 +310,7 @@ aaa .login {
     position: absolute;
 }
 
+#updateGroupContainer.hidden,
 #groupContainer.hidden,
 #groupManageContainer.hidden,
 #positionSelectContainer.hidden {

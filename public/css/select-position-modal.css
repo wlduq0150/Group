@@ -1,4 +1,6 @@
 .select-position-parent {
+    position: absolute;
+    top: 50px;
     width: 800px;
     height: 400px;
     box-shadow: 0 10px 8px #000000;

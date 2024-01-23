@@ -1,3 +1,10 @@
+const xImg = `<img
+style="visibility:hidden"
+id="click1out"
+class="out-btn"
+src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
+alt=""
+/>`;
 const firstOut = document.getElementById("click1out");
 firstOut.addEventListener("click", (e) => {
     const userName = document.getElementById("1user").innerText;
@@ -84,153 +91,166 @@ const outAgree = document.querySelector(".out-agree-btn");
 outAgree.addEventListener("click", (e) => {
     noneBlockOutModal();
     const positionClassName = document.querySelector(".out-box").id;
-    const children = document.querySelector(`.${positionClassName}`).childNodes;
-    children[3].innerHTML = "";
+    const children = document.querySelector(
+        `.update-select-position-box .${positionClassName}`,
+    ).childNodes;
+    children[3].style.visibility = "hidden";
     noneBlockX(children[5].id);
 });
 
 function noneBlockX(xBtnId) {
-    document.getElementById(`${xBtnId}`).style.display = "none";
+    document.getElementById(`${xBtnId}`).style.visibility = "hidden";
 }
 
-function clickJg() {
+function clickUpdateJg() {
     if (document.getElementById("1user").innerText) {
         return;
     } else {
-        document.querySelector(".position-jg").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-jg",
+        ).innerHTML = `
     <img
-      id="position"
+      id="updatePosition"
       src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
       alt=""
-      onclick="clickDarkJg()"
-    /><div id="1user" class="user-name"></div>${xImg}`;
+      onclick="clickUpdateDarkJg()"
+    /><div id="1user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickDarkJg() {
+function clickUpdateDarkJg() {
     if (document.getElementById("1user").innerText) {
         return;
     } else {
-        document.querySelector(".position-jg").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-jg",
+        ).innerHTML = `
           <img
-            id="position"
+            id="updatePosition"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글.png"
             alt=""
-            onclick="clickJg()"
-          /><div id="1user" class="user-name"></div>${xImg}`;
+            onclick="clickUpdateJg()"
+          /><div id="1user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickTop() {
+function clickUpdateTop() {
     if (document.getElementById("2user").innerText) {
         return;
     } else {
-        document.querySelector(".position-top").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-top",
+        ).innerHTML = `
       <img
-        id="position"
-        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+        id="updatePosition"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png"
         alt=""
-        onclick="clickDarkTop()"
-      /><div id="2user" class="user-name"></div>${xImg}`;
+        onclick="clickUpdateDarkTop()"
+      /><div id="2user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickDarkTop() {
+function clickUpdateDarkTop() {
     if (document.getElementById("2user").innerText) {
         return;
     } else {
-        document.querySelector(".position-top").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-top",
+        ).innerHTML = `
             <img
-              id="position"
+              id="updatePosition"
               src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑.png"
               alt=""
-              onclick="clickTop()"
-            /><div id="2user" class="user-name"></div>${xImg}`;
+              onclick="clickUpdateTop()"
+            /><div id="2user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickMid() {
+function clickUpdateMid() {
     if (document.getElementById("3user").innerText) {
+        console.log("실행");
         return;
     } else {
-        document.querySelector(".position-mid").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-mid",
+        ).innerHTML = `
         <img
-          id="position"
+          id="updatePosition"
           src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
           alt=""
-          onclick="clickDarkMid()"
-        /><div id="3user" class="user-name"></div>${xImg}`;
+          onclick="clickUpdateDarkMid()"
+        /><div id="3user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickDarkMid() {
+function clickUpdateDarkMid() {
     if (document.getElementById("3user").innerText) {
         return;
     } else {
-        document.querySelector(".position-mid").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-mid",
+        ).innerHTML = `
               <img
-                id="position"
+                id="updatePosition"
                 src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드.png"
                 alt=""
-                onclick="clickMid()"
-              /><div id="3user" class="user-name"></div>${xImg}`;
+                onclick="clickUpdateMid()"
+              /><div id="3user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickAdc() {
+function clickUpdateAdc() {
     if (document.getElementById("4user").innerText) {
         return;
     } else {
-        document.querySelector(".position-adc").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-adc",
+        ).innerHTML = `
         <img
-          id="position"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+          id="updatePosition"
+          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png"
           alt=""
-          onclick="clickDarkAdc()"
-        /><div id="4user" class="user-name"></div> ${xImg}
+          onclick="clickUpdateDarkAdc()"
+        /><div id="4user" class="user-name" style="visibility:hidden">이름</div> ${xImg}
       `;
     }
 }
-function clickDarkAdc() {
+function clickUpdateDarkAdc() {
     if (document.getElementById("4user").innerText) {
         return;
     } else {
-        document.querySelector(".position-adc").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-adc",
+        ).innerHTML = `
               <img
-                id="position"
+                id="updatePosition"
                 src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀.png"
                 alt=""
-                onclick="clickAdc()"
-              /><div id="4user" class="user-name"></div>${xImg}`;
+                onclick="clickUpdateAdc()"
+              /><div id="4user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickSup() {
+function clickUpdateSup() {
     if (document.getElementById("5user").innerText) {
         return;
     } else {
-        document.querySelector(".position-sup").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-sup",
+        ).innerHTML = `
         <img
-          id="position"
+          id="updatePosition"
           src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"
           alt=""
-          onclick="clickDarkSup()"
-        /><div id="5user" class="user-name"></div><img
-        id="click5out"
-        class="out-btn"
-        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
-        alt=""
-      />`;
+          onclick="clickUpdateDarkSup()"
+        /><div id="5user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
-function clickDarkSup() {
+function clickUpdateDarkSup() {
     if (document.getElementById("5user").innerText) {
         return;
     } else {
-        document.querySelector(".position-sup").innerHTML = `
+        document.querySelector(
+            ".update-select-position-box .position-sup",
+        ).innerHTML = `
               <img
-                id="position"
+                id="updatePosition"
                 src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿.png"
                 alt=""
-                onclick="clickSup()"
-              /><div id="5user" class="user-name"></div><img
-              id="click5out"
-              class="out-btn"
-              src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
-              alt=""
-            />`;
+                onclick="clickUpdateSup()"
+              /><div id="5user" class="user-name" style="visibility:hidden">이름</div>${xImg}`;
     }
 }
