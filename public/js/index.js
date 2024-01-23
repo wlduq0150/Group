@@ -64,7 +64,7 @@ loginBtn.addEventListener("click", async () => {
 const makeGroupBtn = document.querySelector(".make-group");
 const groupContainer = document.querySelector("#groupContainer");
 const createGroupForm = document.querySelector(".create-group-modal");
-const completeBtn = document.querySelector(".complete-btn");
+const completeBtn = document.querySelector("..create-group-modal complete-btn");
 const refreshBtn = document.querySelector(".refresh");
 
 makeGroupBtn.addEventListener("click", () => {
@@ -82,7 +82,9 @@ makeGroupBtn.addEventListener("click", () => {
 completeBtn.addEventListener("click", async function (e) {
     e.preventDefault();
 
-    const title = document.querySelector(".group-title-input").value;
+    const title = document.querySelector(
+        ".create-group-modal .group-title-input",
+    ).value;
     const mode = document.querySelector('select[name="group-game-mode"]').value;
     const tier = document.querySelector('select[name="group-game-tier"]').value;
     const people = document.querySelector(
