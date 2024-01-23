@@ -310,13 +310,13 @@ aaa .login {
     position: absolute;
 }
 
+#profileContainer.hidden,
 #groupContainer.hidden,
 #groupManageContainer.hidden,
 #positionSelectContainer.hidden {
     display: none;
 }
 
-#profileContainer.hidden,
 #login.hidden,
 #profile.hidden {
     display: none;

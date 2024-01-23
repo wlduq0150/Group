@@ -1,5 +1,5 @@
 function getUserProfile(clickUserId) {
-    fetch(`${mainServer}lol/user/${clickUserId}`, {
+    fetch(`/lol/user/${clickUserId}`, {
         method: "GET",
     })
         .then((res) => {
@@ -61,8 +61,8 @@ function getUserProfile(clickUserId) {
                 mostChampionsParent.appendChild(mostChampionsChild);
 
                 mostChampionsChild.innerHTML = `
-        <div class="most-champion-box" >
-        <div >
+        <div class="most-champion-box">
+        <div class="champion-icon-box">
         <img
         class="champion-icon"
           src="https://with-lol.s3.ap-northeast-2.amazonaws.com/champions/${
@@ -74,7 +74,7 @@ function getUserProfile(clickUserId) {
         <div class="champion-info-box">
             <div class="champion-name">${data.champion[i].championName}</div>
             </div>
-            <div class="champion-kda">${champKda}:1 평점
+            <div class="champion-kda"><div><span class="kda">${champKda}:1 평점</span></div>
             <div class="champion-kills-deaths-assists">
             <span>${(data.champion[i].kills / totalGame).toFixed(1)}/</span>
             <span>${(data.champion[i].deaths / totalGame).toFixed(1)}/</span>
@@ -84,15 +84,17 @@ function getUserProfile(clickUserId) {
         </div>
         <div class="champ-win-box">
           <div>${winRate}%</div>
-          <div>${totalGame} 게임</div>
+          <span>${totalGame} 게임</span>
          </div>
-        
-        </div> <hr style="color: rgb(143, 143, 143)" />`;
+        `;
             }
         });
 
     return;
 }
+
+const clickUserId = 1;
+const mostChampionCount = 3;
 
 getUserProfile(clickUserId);
 
@@ -106,9 +108,6 @@ function mouseleaveHandler() {
     document.querySelector(".wins-losses-box").style.display = "none";
 }
 
-//인기도 올렸을때
-const upPopular = document.querySelector(".user-popular-up");
-upPopular.addEventListener("click", (e) => {});
-//내렸을 때
-const downPopular = document.querySelector(".user-popular-down");
-downPopular.addEventListener("click", (e) => {});
+document.querySelector(".close-btn").addEventListener("click", (e) => {
+    document.querySelector("#profileContainer").classList.add("hidden");
+});

@@ -1,6 +1,3 @@
-const mainServer = "http://localhost:5001/";
-const clickUserId = 1;
-const mostChampionCount = 3;
 const xImg = `<img
 style="display:none"
 id="click1out"
