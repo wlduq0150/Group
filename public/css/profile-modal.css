@@ -35,20 +35,24 @@
 
 .lol-name-tag {
     font-weight: bold;
+    color: black;
 }
 
 .tier-box {
     font-weight: bold;
     display: grid;
     grid-template-columns: 100px 170px 1fr 1fr;
+    color: black;
 }
 
 .tier-rank {
     font-size: 20px;
+    color: black;
 }
 
 .no-name-box {
     padding-left: 10px;
+    color: black;
 }
 
 .user-comment-box {
@@ -57,11 +61,16 @@
     background-color: rgba(239, 239, 239, 100);
 }
 
+.user-comment {
+    color: black;
+}
+
 .user-popular {
     position: relative;
     top: 50px;
     text-align: right;
     vertical-align: bottom;
+    color: black;
 }
 
 .tier-rank-leaguePoints {
@@ -78,20 +87,24 @@
     grid-template-columns: 100px 200px 150px;
     background-color: rgba(235, 238, 241, 100);
     margin-top: 5px;
+    color: black;
 }
 
 .champion-info-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    color: black;
 }
 
 .champion-name {
     font-weight: bold;
+    color: black;
 }
 
 .champ-win-box {
     margin-right: 85px;
     text-align: right;
+    color: black;
 }
 .wins-losses {
     display: none;
@@ -102,6 +115,7 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
+    color: black;
 }
 
 .win-rate .center {
