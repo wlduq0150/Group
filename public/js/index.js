@@ -23,8 +23,18 @@ window.onload = function () {
         console.log("소켓 연결");
         socket.emit("getAllGroup");
     });
-    socket.on("groupData", function (groups) {
-        updateGroupTable(groups);
+    socket.on("getAllGroup", function (data) {
+        console.log(data);
+        if (Array.isArray(data.groups)) {
+            const groups = data.groups.map((groupObj) => {
+                const keys = Object.keys(groupObj);
+                if (keys.length > 0) {
+                    return groupObj[keys[0]];
+                }
+            });
+
+            updateGroupTable(groups);
+        }
     });
 };
 
@@ -41,9 +51,9 @@ loginBtn.addEventListener("click", async () => {
                 credentials: "include",
             });
 
-            // if (response.ok) {
-            //     window.location.reload();
-            // }
+            if (response.ok) {
+                loginBtn.value = "로그인";
+            }
         } catch (err) {
             console.error(err);
         }
@@ -54,7 +64,7 @@ loginBtn.addEventListener("click", async () => {
 const makeGroupBtn = document.querySelector(".make-group");
 const groupContainer = document.querySelector("#groupContainer");
 const createGroupForm = document.querySelector(".create-group-modal");
-const completeBtn = document.querySelector(".complete-btn");
+const completeBtn = document.querySelector(".create-group-modal .complete-btn");
 const refreshBtn = document.querySelector(".refresh");
 const chattingBtn = document.querySelector(".chatting-img-btn");
 
@@ -73,7 +83,9 @@ makeGroupBtn.addEventListener("click", () => {
 completeBtn.addEventListener("click", async function (e) {
     e.preventDefault();
 
-    const title = document.querySelector(".group-title-input").value;
+    const title = document.querySelector(
+        ".create-group-modal .group-title-input",
+    ).value;
     const mode = document.querySelector('select[name="group-game-mode"]').value;
     const tier = document.querySelector('select[name="group-game-tier"]').value;
     const people = document.querySelector(
@@ -83,12 +95,11 @@ completeBtn.addEventListener("click", async function (e) {
         '.private-box input[type="checkbox"]',
     );
     const password = document.querySelector(".private-password").value;
-    const positions = document.querySelectorAll("#position.selected");
-
-    console.log(positions);
-
-    const selectedPositions = Array.from(positions).map(
-        (position) => position.id,
+    const positions = document.querySelectorAll(
+        ".position-jg.selected, .position-top.selected,.position-mid.selected,.position-adc.selected,.position-sup.selected",
+    );
+    const selectedPositions = Array.from(positions).map((position) =>
+        position.className.split(" ")[0].replace("position-", ""),
     );
 
     socket.emit("groupCreate", {
@@ -96,16 +107,20 @@ completeBtn.addEventListener("click", async function (e) {
         mode: mode,
         tier: tier,
         people: people,
+        owner: userId,
         private: privateCheckbox.checked,
         password: privateCheckbox.checked ? password : undefined,
         position: selectedPositions,
-        owner: userId,
     });
 
-    // window.location.reload();
+    console.log(positions, selectedPositions);
+
+    groupContainer.classList.add("hidden");
 });
 
-refreshBtn.addEventListener("click", updateGroupTable());
+refreshBtn.addEventListener("click", () => {
+    socket.emit("getAllGroup");
+});
 
 // 로그인 상태 업데이트
 async function updateLoginStatus() {
@@ -116,7 +131,6 @@ async function updateLoginStatus() {
         const data = await response.json();
         userId = data.userId;
 
-        console.log(data.userId);
         if (data.userId) {
             loginBtn.value = "로그아웃";
             socket.emit("connectWithUserId", data.userId);
@@ -137,7 +151,7 @@ function updateGroupTable(groups) {
 
     existingRows.forEach((row) => row.remove());
 
-    if (!groups) {
+    if (!groups || !Array.isArray(groups)) {
         console.error("No groups data to display.");
         return;
     }
@@ -145,16 +159,71 @@ function updateGroupTable(groups) {
     groups.forEach((group) => {
         const tr = document.createElement("tr");
         tr.classList.add("user-group");
+        tr.setAttribute("data-id", group.id);
+        tr.id = "profileOpenButton";
+
+        const positionMap = {
+            jg: "정글",
+            top: "탑",
+            mid: "미드",
+            adc: "바텀",
+            sup: "서폿",
+        };
+
+        const positionClassMap = {
+            jg: "position_jungle",
+            top: "position_top",
+            mid: "position_mid",
+            adc: "position_bottom",
+            sup: "position_support",
+        };
+
+        const tierMap = {
+            iron: "아이언",
+            bronze: "브론즈",
+            silver: "실버",
+            gold: "골드",
+            platinum: "플래티넘",
+            emerald: "에메랄드",
+            diamond: "다이아몬드",
+            master: "마스터",
+            grandmaster: "그랜드마스터",
+            challenger: "챌린저",
+        };
+
+        const modeMap = {
+            "nomal-game": "일반게임",
+            "rank-game": "솔로랭크",
+            "team-rank": "자유랭크",
+            aram: "칼바람 나락",
+        };
 
         tr.innerHTML = `
-        <td>${group.name}</td>
-        <td>${group.members}/${group.maxMembers}</td>
-        <td><div class="user-rank">${group.tier}</div></td>
-        <td>${group.owner}</td>
-        <td>${group.queueType}</td>
-        ${group.positions
-            .map((pos) => `<td><img src="${pos.image}" /></td>`)
-            .join("")}`;
+        <td class="group_name">${group.info.name}</td>
+        <td class="group_people">${group.state.currentUser}/${
+            group.state.totalUser
+        }</td>
+        <td class="group_tier">
+            <div class="user-rank">${tierMap[group.info.tier]}</div>
+        </td>
+        <td class="group_user"><span class="user">${
+            group.info.owner
+        }</span></td>
+        <td class="group_type">${modeMap[group.info.mode]}</td>
+        <td class="group_position">
+        ${["jg", "top", "mid", "adc", "sup"]
+            .map(
+                (pos) =>
+                    `<div class="${
+                        positionClassMap[pos]
+                    }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
+                        group.state[pos] && group.state[pos].isActive
+                            ? `${positionMap[pos]}흑`
+                            : "금지흑"
+                    }.png" /></div>`,
+            )
+            .join("")}
+    </td>`;
 
         tableBody.appendChild(tr);
     });
@@ -196,7 +265,7 @@ socket.on("otherGroupLeave", (data) => {
 
 socket.on("positionSelect", (data) => {
     console.log("포지션 선택: ", data);
-    selectPosition();
+    // selectPosition();
 });
 
 socket.on("positionSelected", (data) => {
