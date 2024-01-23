@@ -20,6 +20,7 @@ header {
         align-items: center;
         gap: 10px;
         font-size: 20px;
+        color: white;
         position: absolute;
         right: 100px;
 
@@ -48,7 +49,6 @@ body {
 main {
     width: 100vw;
     height: 100%;
-
     display: flex;
     justify-content: center;
 }
@@ -76,17 +76,20 @@ main {
 }
 
 .main {
-    width: 1080px;
+    width: 1260px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     margin-top: 120px;
 
     > table {
+        scrollbar-gutter: stable both-edges;
         width: 100%;
+        min-width: fit-content;
         border-spacing: 0 8px;
 
         > tbody > tr {
+            color: white;
             transition: all 0.5s;
 
             &:hover {
@@ -105,6 +108,12 @@ main {
 
             > th,
             td {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 16px;
+                height: 50px;
+                box-sizing: border-box;
                 padding: 10px 20px;
                 text-align: left;
             }
@@ -114,7 +123,7 @@ main {
             }
 
             > th {
-                font-size: 20px;
+                font-size: 18px;
             }
 
             > td {
@@ -191,6 +200,7 @@ main {
 }
 
 .make-group {
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -206,8 +216,19 @@ main {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
     gap: 20px;
+}
+
+.user-group {
+    color: white;
+}
+
+aaa .login {
+    color: white;
+}
+
+.logout {
+    color: white;
 }
 
 #groupOpenButton,
@@ -299,4 +320,24 @@ main {
 #login.hidden,
 #profile.hidden {
     display: none;
+}
+
+.main_page .group_position img {
+    width: 40px;
+    height: 40px;
+}
+
+.main_page .group_position {
+    display: flex;
+    justify-content: space-around;
+    padding: 0px;
+    height: 50px;
+}
+
+.main_page .group_position div {
+    width: 20%;
+    border-right: 1px solid rgba(255, 255, 255, 0.366);
+    justify-content: center;
+    display: flex;
+    align-items: center;
 }
