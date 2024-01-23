@@ -23,12 +23,7 @@ window.onload = function () {
         alert("로그아웃에 성공했습니다.");
     }
 
-    socket.on("connect", () => {
-        console.log("소켓 연결");
-        socket.emit("getAllGroup");
-    });
     socket.on("getAllGroup", function (data) {
-        console.log(data);
         if (Array.isArray(data.groups)) {
             allGroups = data.groups.map((groupObj) => {
                 const keys = Object.keys(groupObj);
@@ -37,9 +32,13 @@ window.onload = function () {
                 }
             });
 
+            console.log("그룹목록: ", allGroups);
+
             updateGroupTable(allGroups);
         }
     });
+
+    socket.emit("getAllGroup");
 };
 
 // 로그인 이벤트 처리
@@ -149,7 +148,7 @@ async function updateLoginStatus() {
 }
 
 // 그룹 테이블 업데이트
-function updateGroupTable(groups) {
+async function updateGroupTable(groups) {
     const tableBody = document
         .getElementById("groupTable")
         .querySelector("tbody");
@@ -162,9 +161,22 @@ function updateGroupTable(groups) {
         return;
     }
 
-    groups.forEach((group) => {
+    for (let group of groups) {
+        // 유저 이름 불러오기
+        let userName;
+        try {
+            const response = await fetch(`/user/${group.info.owner}`, {
+                method: "GET",
+            });
+            userName = await response.text();
+        } catch (e) {
+            console.log(e);
+        }
+
         const tr = document.createElement("tr");
         tr.classList.add("user-group");
+        tr.dataset.id = group.groupId;
+        tr.onclick = joinGroup;
 
         groupId = group.id;
 
@@ -178,7 +190,7 @@ function updateGroupTable(groups) {
         </td>
         <td class="group_user"><span class="user" data-id="${
             group.info.owner
-        }">${group.info.owner}</span></td>
+        }">${userName}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
         ${["jg", "top", "mid", "adc", "sup"]
@@ -196,43 +208,145 @@ function updateGroupTable(groups) {
     </td>`;
 
         tableBody.appendChild(tr);
-    });
+    }
+
+    groups.forEach((group) => {});
 }
 
-// 채팅 이벤트
-chattingBtn.addEventListener("click", () => {
-    const checkCatting = document.getElementById("groupManageContainer");
-    if (checkCatting.className == "hidden") {
-        checkCatting.classList.remove("hidden");
+// 그룹 참가 함수
+function joinGroup(e) {
+    const target = e.currentTarget;
+    const groupId = target.dataset.id;
+    socket.emit("groupJoin", { groupId });
+}
 
-        let group = allGroups.find((group) => group.id === groupId);
-        console.log("그룹: ", group);
+// 그룹 나가기 함수
+function leaveGroup() {
+    socket.emit("groupLeave", { groupId });
+}
 
-        if (!group) {
-            console.log("현재 사용자가 속한 그룹이 없습니다.");
-        } else {
-            const titleElement = document.querySelector(
-                ".group_manage_header .title",
-            );
-            const modeElement = document.querySelector(
-                ".group_manage_header .mode",
-            );
-            const ownerElement = document.querySelector(
-                ".group_manage_header .owner",
-            );
+// 그룹 상태 변경시 그룹 상태를 변경
+function updateMyGroupState(groupState) {
+    updateSelectPositionState(groupState);
+}
 
-            titleElement.textContent = `${group.info.name}`;
-            modeElement.innerHTML = `${
-                Enum.Mode[group.info.mode]
-            } <span class="number">${group.state.currentUser}/${
-                group.state.totalUser
-            }</span>`;
-            ownerElement.innerHTML = `${group.info.owner}<span><img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/crown.png" /></span>`;
+// 그룹 관리창 업데이트
+async function updateGroupManageState(groupInfo, groupState) {
+    const titleElement = document.querySelector(".group_manage_header .title");
+    const modeElement = document.querySelector(".group_manage_header .mode");
+    const ownerElement = document.querySelector(".group_manage_header .owner");
+
+    let ownerName;
+    try {
+        const response = await fetch(`/user/${groupInfo.owner}`, {
+            method: "GET",
+        });
+        ownerName = await response.text();
+    } catch (e) {
+        console.log(e);
+    }
+
+    titleElement.textContent = `${groupInfo.name}`;
+    modeElement.innerHTML = `${
+        Enum.Mode[groupInfo.mode]
+    } <span class="number">${groupState.currentUser}/${
+        groupState.totalUser
+    }</span>`;
+    ownerElement.innerHTML = `${ownerName}<span><img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/crown.png" /></span>`;
+}
+
+// 그룹 관리창 초기화(그룹 나갈시에 발생)
+function resetGroupManageState() {
+    const titleElement = document.querySelector(".group_manage_header .title");
+    const modeElement = document.querySelector(".group_manage_header .mode");
+    const ownerElement = document.querySelector(".group_manage_header .owner");
+    const chatList = document.querySelector(".group_manage_chat_list");
+
+    titleElement.innerHTML = "";
+    modeElement.innerHTML = "";
+    ownerElement.innerHTML = "";
+    chatList.innerHTML = "";
+}
+
+// 그룹 역할 상태 변경시 업데이트
+async function updateSelectPositionState(groupState) {
+    const positions = ["jg", "top", "mid", "adc", "sup"];
+
+    for (let pos of positions) {
+        const target = document.querySelector(
+            `.select-position-parent .position-${pos}`,
+        );
+        const { isActive, userId } = groupState[pos];
+
+        if (!isActive) {
+            setSPForbidden(target);
+            continue;
         }
+
+        if (!userId) {
+            setSPDisable(target);
+            continue;
+        }
+
+        // 유저 이름 불러오기
+        let userName;
+        try {
+            const response = await fetch(`/user/${userId}`, {
+                method: "GET",
+            });
+            userName = await response.text();
+        } catch (e) {
+            console.log(e);
+        }
+
+        setSPActive(target, userName);
+    }
+}
+
+// 그룹 역할 상태 초기화(그룹 나갈시에 발생)
+function resetSelectPositionState() {
+    const positions = ["jg", "top", "mid", "adc", "sup"];
+
+    for (let pos of positions) {
+        const target = document.querySelector(
+            `.select-position-parent .position-${pos}`,
+        );
+        setSPDisable(target);
+    }
+}
+
+// 그룹 관리창 보이기/숨기기 이벤트
+chattingBtn.addEventListener("click", () => {
+    const checkManage = document.getElementById("groupManageContainer");
+    if (checkManage.classList.contains("hidden")) {
+        showGroupManage();
     } else {
-        checkCatting.classList.add("hidden");
+        hideGroupManage();
     }
 });
+
+//그룹 나가기
+document
+    .querySelector("#groupManageContainer .leave_group_btn")
+    .addEventListener("click", (e) => {
+        leaveGroup();
+    });
+
+// 포지션 선택/해제
+document
+    .querySelectorAll(".select-position-parent #position-box")
+    .forEach((positionTarget) => {
+        positionTarget.addEventListener("click", (e) => {
+            const target = e.currentTarget;
+            const pos = target.classList[0].replace("position-", "");
+
+            if (checkIsSelected(target)) {
+                socket.emit("positionDeselect", { groupId, position: pos });
+            } else {
+                socket.emit("positionSelect", { groupId, position: pos });
+            }
+        });
+    });
 
 socket.on("connect", () => {
     socket.emit("connectWithUserId", userId);
@@ -247,8 +361,11 @@ socket.on("chat", (data) => {
 });
 
 socket.on("groupJoin", (data) => {
-    groupId = data.groupId;
     console.log("유저 그룹 참가 완료: ", data);
+    groupId = data.groupId;
+    const { groupInfo, groupState } = data;
+    updateGroupManageState(groupInfo, groupState);
+    updateMyGroupState(groupState);
 });
 
 socket.on("groupKicked", (data) => {
@@ -261,38 +378,37 @@ socket.on("groupKicked", (data) => {
 });
 
 socket.on("groupLeave", () => {
+    resetGroupManageState();
+    resetSelectPositionState();
+    hideGroupManage();
     console.log("유저 그룹 나가기 완료");
 });
 
 socket.on("otherGroupLeave", (data) => {
-    console.log("유저 그룹 나가기 완료: ", data.userId);
+    console.log("유저 그룹 나가기 완료: ", data);
+    const { groupInfo, groupState } = data;
+    updateGroupManageState(groupInfo, groupState);
 });
 
 socket.on("positionSelect", (data) => {
-    console.log("포지션 선택: ", data);
-    // selectPosition();
+    showSelectPosition();
 });
 
-socket.on("positionSelected", (data) => {
-    if (data.userId === userId) {
-        position = data.position;
-    }
-    console.log("포지션 선택완료: ", data);
+socket.on("positionSelected", async (data) => {
+    const { groupState } = data;
+    updateSelectPositionState(groupState);
 });
 
 socket.on("positionDeselected", (data) => {
-    console.log("포지션 선택해제완료: ", data);
+    const { groupState } = data;
+    updateSelectPositionState(groupState);
 });
 
 socket.on("error", (data) => {
+    console.log(data);
     alert(`[error] ${data.message}`);
 });
 
 socket.on("clear", (data) => {
     console.log(data.message);
 });
-
-// socket.on("getAllGroup", (data) => {
-//     allGroup = data.groups;
-//     console.log("데이터: ", data.groups);
-// });

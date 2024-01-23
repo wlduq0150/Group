@@ -113,6 +113,7 @@ export class GroupService {
         const data = keys.map((key, index) => {
             return {
                 [key]: {
+                    groupId: key,
                     info: JSON.parse(infoValues[index]),
                     state: JSON.parse(stateValues[index]),
                 },
