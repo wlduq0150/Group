@@ -10,17 +10,27 @@ import { DiscordModule } from "./discord/discord.module";
 import { FriendModule } from "./friend/friend.module";
 
 import { LolModule } from "./lol/lol.module";
+import { CachingModule } from "./caching/caching.module";
 
 @Module({
     imports: [
         ConfigProjectModule,
         TypeormModule.forRoot(),
+<<<<<<< HEAD
         AuthModule,
         LolModule,
+=======
+>>>>>>> 5ea7f2926348a88da7c38d0bf03ebcf8901c5050
         RedisModule,
+        LolModule,
+        CachingModule.register(),
+        AuthModule,
         GroupModule,
-        DiscordModule,
         FriendModule,
+<<<<<<< HEAD
+=======
+        DiscordModule,
+>>>>>>> 5ea7f2926348a88da7c38d0bf03ebcf8901c5050
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -45,6 +45,27 @@ export class AuthService {
         return `https://discord.com/api/oauth2/authorize?client_id=${this.clientId}&redirect_uri=${redirectUriEncoded}&response_type=code&scope=${this.scope}`;
     }
 
+    async handleDiscordCallback(code: string) {
+        const accessTokenResponse: DiscordAuthResponse =
+            await this.getAccessToken(code);
+        const accessToken: string = accessTokenResponse.access_token;
+
+        const user: DiscordUser = await this.getDiscordUser(accessToken);
+
+        const isMember: Boolean = await this.isUserInGuild(user.id);
+
+        if (!isMember) {
+            await this.addUserToGuild(accessToken, user.id);
+        }
+
+        await this.saveDiscordUser(user);
+
+        return {
+            discordUserId: user.id,
+            accessToken,
+        };
+    }
+
     async getAccessToken(code: string): Promise<DiscordAuthResponse> {
         const params = new URLSearchParams({
             client_id: this.clientId,
@@ -157,8 +178,16 @@ export class AuthService {
             user = this.userRepository.create({
                 discordId: discordUser.id,
                 username: discordUser.username,
-                avatar: discordUser.avatar,
+                avatar:
+                    discordUser.avatar !== undefined
+                        ? discordUser.avatar
+                        : null,
             });
+        } else {
+            user.avatar =
+                discordUser.avatar !== undefined
+                    ? discordUser.avatar
+                    : user.avatar;
         }
 
         return this.userRepository.save(user);

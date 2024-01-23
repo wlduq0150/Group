@@ -7,103 +7,234 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
 import { RedisService } from "src/redis/redis.service";
 import { Repository } from "typeorm";
-
+import IORedis from "ioredis";
+import { UserService } from "src/user/user.service";
+import { randomBytes } from "crypto";
 @Injectable()
 export class FriendService {
-    private readonly redisClient;
+    private readonly redisClient: IORedis;
 
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly redisService: RedisService,
+        private readonly userService: UserService,
     ) {
         this.redisClient = this.redisService.getRedisClient();
     }
 
-    async sendFriendRequest(senderId: number, friendId: number) {
-        if (senderId === friendId) {
+    // 키 확인 테스트
+    async test(key: string) {
+        try {
+            const redisClient = this.redisService.getRedisClient();
+            const data = await redisClient.get(key);
+            return data;
+        } catch (error) {
+            throw new Error("Redis에서 데이터를 가져오는 데 실패했습니다");
+        }
+    }
+
+    // 친구 요청
+    async initiateFriendRequest(myDiscordId: string, friendId: number) {
+        const senderId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (+myDiscordId == friendId) {
             throw new ConflictException("자기 자신에게 보낼 수 없습니다.");
         }
 
-        // await this.checkFriendRequestExists(senderId, friendId);
+        if (!senderId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const [user, requester] = await Promise.all([
+            this.getUserById(senderId),
+            this.getUserById(friendId),
+        ]);
 
         const friendRequestKey = this.getFriendRequestKey(senderId, friendId);
-        await this.redisClient.set(friendRequestKey, "pending", "EX", 86400);
 
-        return { senderId, friendId };
+        const friendRequest = { senderId, friendId };
+
+        const oneDaySeconds = 86400;
+
+        await this.redisClient.set(
+            friendRequestKey,
+            JSON.stringify(friendRequest),
+            "EX",
+            oneDaySeconds,
+        );
+
+        return { user, requester };
     }
 
-    async acceptFriendRequest(userId: number, requestId: number) {
-        const user = await this.getUserById(userId);
-        const requester = await this.getUserById(requestId);
+    // 친구 요청 수락
+    async acceptFriendRequest(requestId: number, myDiscordId: string) {
+        const accepterId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
 
-        user.friends.push(requester);
-        requester.friends.push(user);
+        if (!accepterId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const key = await this.checkFriendRequestExists(requestId, accepterId);
+
+        const [accepter, requester] = await Promise.all([
+            this.getUserById(requestId),
+            this.getUserById(accepterId),
+        ]);
+
+        accepter.friends = [...accepter.friends, requester];
+        requester.friends = [...requester.friends, accepter];
+
+        await this.userRepository.save([accepter, requester]);
+
+        await this.redisService.del(key);
     }
 
-    async declineFriendRequest(userId: number, requestId: number) {
-        await this.checkFriendRequestExists(userId, requestId);
+    // 친구 요청 거절
+    async declineFriendRequest(requestId: number, myDiscordId: string) {
+        const declinerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
 
-        const friendRequestKey = this.getFriendRequestKey(userId, requestId);
-        await this.redisClient.del(friendRequestKey);
+        if (!declinerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const friendRequestKey = await this.checkFriendRequestExists(
+            requestId,
+            declinerId,
+        );
+
+        await this.redisService.del(friendRequestKey);
     }
 
-    async deleteFriend(userId: number, friendId: number): Promise<void> {
-        const user = await this.getUserById(userId);
-        const friend = await this.getUserById(friendId);
+    // 친구 삭제
+    async deleteFriend(requestId: number, myDiscordId: string) {
+        const deleterId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
 
-        user.friends = user.friends.filter((f) => f.id !== friendId);
+        if (!deleterId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
 
-        friend.friends = friend.friends.filter((u) => u.id !== userId);
+        const [user, friend] = await Promise.all([
+            this.getUserById(deleterId),
+            this.getUserById(requestId),
+        ]);
+
+        const checkFriend = user.friends.some((f) => f.id === requestId);
+
+        if (!checkFriend) {
+            throw new NotFoundException("이미 친구가 아닙니다.");
+        }
+
+        user.friends = user.friends.filter((f) => f.id !== requestId);
+
+        friend.friends = friend.friends.filter((u) => u.id !== deleterId);
 
         await this.userRepository.save([user, friend]);
     }
 
-    async blockUser(userId: number, userIdToBlock: number): Promise<void> {
-        const user = await this.getUserById(userId);
-        const userToBlock = await this.getUserById(userIdToBlock);
+    // 유저 차단
+    async blockUser(requestId: number, myDiscordId: string) {
+        const blockerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
 
-        user.blockedUsers.push(userToBlock);
+        if (!blockerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
 
-        await this.userRepository.save(user);
-    }
+        const [user, userToBlock] = await Promise.all([
+            this.getUserById(blockerId),
+            this.getUserById(requestId),
+        ]);
 
-    async reportUser(userId: number, reportedUserId: number): Promise<void> {
-        const user = await this.getUserById(userId);
-        const reportedUser = await this.getUserById(reportedUserId);
-
-        const alreadyReported = user.reportedUsers.some(
-            (reported) => reported.id === reportedUserId,
+        const isBlocked = user.blockedUsers.some(
+            (blockedUser) => blockedUser.id === requestId,
         );
-        if (alreadyReported) {
-            throw new ConflictException("이미 해당 사용자를 신고했습니다.");
+
+        if (!isBlocked) {
+            user.blockedUsers = [...user.blockedUsers, userToBlock];
+
+            await this.userRepository.save(user);
+        } else {
+            throw new ConflictException("이미 차단된 사용자입니다.");
+        }
+    }
+
+    // 유저 차단 해제
+    async unblockUser(requestId: number, myDiscordId: string) {
+        const unblockerId = (
+            await this.userService.findOneByDiscordId(myDiscordId)
+        ).id;
+
+        if (!unblockerId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        user.reportedUsers.push(reportedUser);
-        user.reportCount++;
+        const [user, userToUnblock] = await Promise.all([
+            this.getUserById(unblockerId),
+            this.getUserById(requestId),
+        ]);
 
-        const reportLimit = 5;
-        if (user.reportCount >= reportLimit) {
-            user.isSuspended = true;
+        const isBlocked = user.blockedUsers.some(
+            (blockedUser) => blockedUser.id === requestId,
+        );
+
+        if (!isBlocked) {
+            throw new NotFoundException("차단되어 있지 않은 사용자입니다.");
         }
+
+        user.blockedUsers = user.blockedUsers.filter(
+            (blockedUser) => blockedUser.id !== requestId,
+        );
 
         await this.userRepository.save(user);
     }
 
-    async getFriendList(userId: number): Promise<User[]> {
-        const user = await this.getUserById(userId);
+    async getFriendList(myDiscordId: string) {
+        const myId = (await this.userService.findOneByDiscordId(myDiscordId))
+            .id;
+
+        console.log("친구 조회하는 사람 id: ", myId);
+
+        if (!myId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const user = await this.getUserById(myId);
         return user.friends;
     }
 
-    async getBlockedUsers(userId: number): Promise<User[]> {
-        const user = await this.getUserById(userId);
+    async getBlockedUsers(myDiscordId: string) {
+        const myId = (await this.userService.findOneByDiscordId(myDiscordId))
+            .id;
+
+        if (!myId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const user = await this.getUserById(myId);
         return user.blockedUsers;
     }
 
-    async getUserById(userId: number) {
+    async getUserById(requestId: number) {
         const user = await this.userRepository.findOne({
-            where: { id: userId },
+            where: { id: requestId },
+            relations: {
+                friends: true,
+                blockedUsers: true,
+                reportedUsers: true,
+            },
         });
+
+        console.log(user);
 
         if (!user) {
             throw new NotFoundException("해당하는 사용자를 찾을 수 없습니다.");
@@ -112,18 +243,22 @@ export class FriendService {
         return user;
     }
 
+    // 친구 요청 키 체크
     async checkFriendRequestExists(senderId: number, friendId: number) {
         const friendRequestKey = this.getFriendRequestKey(senderId, friendId);
+
         const friendRequestExists =
-            await this.redisClient.exists(friendRequestKey);
+            await this.redisService.get(friendRequestKey);
 
         if (!friendRequestExists) {
             throw new NotFoundException(
                 "해당하는 친구 신청이 존재하지 않습니다.",
             );
         }
+        return friendRequestKey;
     }
 
+    // 친구 요청 키 생성
     private getFriendRequestKey(senderId: number, friendId: number) {
         return `friend-request:${senderId}:${friendId}`;
     }
