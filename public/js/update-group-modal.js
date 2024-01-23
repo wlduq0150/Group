@@ -2,7 +2,7 @@ const xImg = `<img
 style="visibility:hidden"
 id="click1out"
 class="out-btn"
-src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
+src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스흑.png"
 alt=""
 />`;
 const firstOut = document.getElementById("click1out");
