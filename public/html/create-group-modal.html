@@ -92,8 +92,12 @@
     <div class="complete-btn">완료</div>
   </div>
   <script>
+    let imgElement = document.querySelector("#position");
+
     function cg_clickDarkJg() {
-      document.querySelector(".create-group-modal .position-jg").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-jg")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글.png"
@@ -103,7 +107,9 @@
         `;
     }
     function cg_clickJg() {
-      document.querySelector(".create-group-modal .position-jg").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-jg")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
@@ -113,7 +119,9 @@
         `;
     }
     function cg_clickDarkTop() {
-      document.querySelector(".create-group-modal .position-top").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-top")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑.png"
@@ -123,7 +131,9 @@
         `;
     }
     function cg_clickTop() {
-      document.querySelector(".create-group-modal .position-top").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-top")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
@@ -133,7 +143,9 @@
         `;
     }
     function cg_clickDarkMid() {
-      document.querySelector(".create-group-modal .position-mid").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-mid")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드.png"
@@ -143,7 +155,9 @@
         `;
     }
     function cg_clickMid() {
-      document.querySelector(".create-group-modal .position-mid").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-mid")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
@@ -153,7 +167,9 @@
         `;
     }
     function cg_clickDarkAdc() {
-      document.querySelector(".create-group-modal .position-adc").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-adc")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀.png"
@@ -163,7 +179,9 @@
         `;
     }
     function cg_clickAdc() {
-      document.querySelector(".create-group-modal .position-adc").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-adc")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
@@ -173,7 +191,9 @@
         `;
     }
     function cg_clickDarkSup() {
-      document.querySelector(".create-group-modal .position-sup").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-sup")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿.png"
@@ -183,7 +203,9 @@
         `;
     }
     function cg_clickSup() {
-      document.querySelector(".create-group-modal .position-sup").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-sup")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"
