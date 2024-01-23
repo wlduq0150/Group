@@ -30,7 +30,7 @@
     <header>
         <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png">
         <nav>
-            <div class="hidden" id="login">
+            <div id="login">
                 <input class="login" type="button" value="로그인">
             </div>
             <div id="profile">
@@ -44,7 +44,6 @@
                         <li><a href="#">차단목록</a></li>
                     </ul>
                 </div>
-                <input class="logout" type="button" value="로그아웃">
             </div>
         </nav>
     </header>
@@ -81,7 +80,7 @@
                 </div>
             </div>
 
-            <table>
+            <table id='groupTable'>
                 <tbody>
                     <tr>
                         <th class="title_room" width="36%">제목</th>
@@ -127,7 +126,8 @@
         </div>
     </main>
     <!-- <script src="../js/pop-up.js"></script> -->
-    <script src="../js/constants.js"></script>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="../js/index.js"></script>
     <!-- <script src="../js/login-modal.js"></script> -->
 

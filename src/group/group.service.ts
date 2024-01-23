@@ -48,12 +48,12 @@ export class GroupService {
     }
 
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {
-        const { name, mode, mic, owner, position } = createGroupDto;
+        const { name, mode, tier, mic, owner, position } = createGroupDto;
 
         const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
 
-        const group: Group = { name, mode, mic, owner, open: true };
+        const group: Group = { name, mode, tier, mic, owner, open: true };
         const groupState = initGroupState(position);
 
         await this.redisService.set(groupInfoKey, JSON.stringify(group));

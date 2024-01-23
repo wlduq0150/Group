@@ -59,5 +59,6 @@ export interface GuildMember {
 
 export interface SessionData {
     discordUserId: string;
+    userId: number;
     accessToken: string;
 }

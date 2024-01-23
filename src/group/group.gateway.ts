@@ -73,6 +73,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         createGroupDto: CreateGroupDto,
     ): Promise<void> {
+        console.log(createGroupDto);
         const userId = +client["userId"];
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");

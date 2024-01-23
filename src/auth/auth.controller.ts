@@ -55,6 +55,7 @@ export class AuthController {
                 await this.authService.handleDiscordCallback(code);
 
             session.discordUserId = sessionData.discordUserId;
+            session.userId = sessionData.userId;
             session.accessToken = sessionData.accessToken;
 
             res.redirect("/html/index.html");
@@ -74,7 +75,7 @@ export class AuthController {
                     "로그아웃 실패",
                 );
             } else {
-                res.redirect("html/index.html?logout=success");
+                res.redirect("/html/index.html?logout=success");
             }
         });
     }
@@ -86,9 +87,9 @@ export class AuthController {
         description: "세션 데이터 반환 성공",
     })
     getSessiondata(@Session() session: Record<string, any>) {
-        console.log("세션 데이터 호출");
         return {
             discordUserId: session.discordUserId,
+            userId: session.userId,
             accessToken: session.accessToken,
         };
     }
