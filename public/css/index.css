@@ -311,6 +311,7 @@ aaa .login {
 }
 
 #profileContainer.hidden,
+#updateGroupContainer.hidden,
 #groupContainer.hidden,
 #groupManageContainer.hidden,
 #positionSelectContainer.hidden {
