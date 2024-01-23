@@ -57,25 +57,7 @@ export class AuthController {
             session.discordUserId = sessionData.discordUserId;
             session.accessToken = sessionData.accessToken;
 
-<<<<<<< HEAD
-            const isMember: Boolean = await this.authService.isUserInGuild(
-                user.id,
-            );
-
-            if (!isMember) {
-                await this.authService.addUserToGuild(accessToken, user.id);
-            }
-
-            const saveUser: User = await this.authService.saveDiscordUser(user);
-
-            session.discordUserId = saveUser.discordId;
-            session.accessToken = accessToken;
-            console.log(session);
-
-            res.redirect("http://localhost:5500/public/auth-test.html");
-=======
             res.redirect("html/index.html");
->>>>>>> 5ea7f2926348a88da7c38d0bf03ebcf8901c5050
         } catch (err) {
             console.error("인증 실패", err);
             res.redirect("html/index.html?login=fail");

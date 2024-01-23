@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-import { Injectable, NotFoundException } from "@nestjs/common";
-=======
 import {
     BadRequestException,
     ConflictException,
@@ -8,15 +5,11 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 
->>>>>>> 5ea7f2926348a88da7c38d0bf03ebcf8901c5050
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
 import { Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
-<<<<<<< HEAD
-=======
 import { GetUserDto } from "./dto/get-user.dto";
->>>>>>> 5ea7f2926348a88da7c38d0bf03ebcf8901c5050
 
 @Injectable()
 export class UserService {
@@ -35,8 +28,6 @@ export class UserService {
         }
 
         return user;
-<<<<<<< HEAD
-=======
     }
 
     async findDiscordIdByUserId(userId: number): Promise<string> {
@@ -51,6 +42,5 @@ export class UserService {
             id: userId,
         });
         return user.username;
->>>>>>> 5ea7f2926348a88da7c38d0bf03ebcf8901c5050
     }
 }
