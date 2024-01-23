@@ -1,169 +1,116 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="../css/update-group-modal.css" />
-        <title>그룹수정</title>
-    </head>
-    <body>
-        <div class="create-group-modal">
-            <div class="create-group-modal-bar">그룹 수정</div>
-            <div class="select-group-box">
-                <div class="title-box">
-                    <div class="group-title">제목</div>
-                    <input
-                        class="group-title-input"
-                        style="width: 120px; height: 15px"
-                        type="text"
-                    />
-                </div>
 
-                <div class="mode-box">
-                    <div>모드</div>
-                    <select name="group-game-mode" id="lang">
-                        <option value="nomal-game">일반게임</option>
-                        <option value="rank-game">솔로랭크</option>
-                        <option value="team-rank">자유랭크</option>
-                        <option value="aram">칼바람 나락</option>
-                    </select>
-                </div>
-                <div class="tier-box">
-                    <div>티어</div>
-                    <select name="group-game-tier" id="lang">
-                        <option
-                            value="
-            challenger"
-                        >
-                            챌린저
-                        </option>
-                        <option value="grandmaster">그랜드마스터</option>
-                        <option value="master">마스터</option>
-                        <option
-                            value="
-            diamond"
-                        >
-                            다이아몬드
-                        </option>
-                        <option value="emerald">에메랄드</option>
-                        <option value="platinum">플레티넘</option>
-                        <option value="gold">골드</option>
-                        <option value="silver">실버</option>
-                        <option value="bronze">브론즈</option>
-                        <option value="iron">아이언</option>
-                    </select>
-                </div>
-                <div class="people-box">
-                    <div>인원</div>
-                    <select name="group-game-people" id="lang">
-                        <option value="two">2</option>
-                        <option value="three">3</option>
-                        <option value="four">4</option>
-                        <option value="five">5</option>
-                    </select>
-                </div>
-                <div class="private-box">
-                    <div>비공개 <input type="checkbox" /></div>
-                    <input
-                        class="private-password"
-                        style="width: 100px; height: 15px"
-                        placeholder="비밀번호"
-                        type="text"
-                    />
-                </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/update-group-modal.css" />
+    <title>그룹수정</title>
+</head>
+
+<body>
+    <div class="update-group-modal">
+        <div class="update-group-modal-bar">그룹 수정</div>
+        <div class="select-group-box">
+            <div class="title-box group-box-item">
+                <div class="group-title">제목</div>
+                <input class="group-title-input group-box-item-input" type="text" />
             </div>
-            <hr style="color: rgb(143, 143, 143)" />
-            <div class="select-position-box">
-                <div class="position-jg">
-                    <img
-                        id="position"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글.png"
-                        alt=""
-                        onclick="clickJg()"
-                    />
-                    <div id="1user" class="user-name">나</div>
-                    <img
-                        id="click1out"
-                        class="out-btn"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
-                        alt=""
-                    />
-                </div>
-                <div class="position-top">
-                    <img
-                        id="position"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑.png"
-                        alt=""
-                        onclick="clickTop()"
-                    />
-                    <div id="2user" class="user-name">강퇴 a</div>
-                    <img
-                        id="click2out"
-                        class="out-btn"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
-                        alt=""
-                    />
-                </div>
-                <div class="position-mid">
-                    <img
-                        id="position"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드.png"
-                        alt=""
-                        onclick="clickMid()"
-                    />
-                    <div id="3user" class="user-name">강퇴 c</div>
 
-                    <img
-                        id="click3out"
-                        class="out-btn"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
-                        alt=""
-                    />
-                </div>
-                <div class="position-adc">
-                    <img
-                        id="position"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀.png"
-                        alt=""
-                        onclick="clickAdc()"
-                    />
-                    <div id="4user" class="user-name">강퇴 b</div>
-
-                    <img
-                        id="click4out"
-                        class="out-btn"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
-                        alt=""
-                    />
-                </div>
-                <div class="position-sup">
-                    <img
-                        id="position"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿.png"
-                        alt=""
-                        onclick="clickSup()"
-                    />
-                    <div id="5user" class="user-name">강퇴 d</div>
-
-                    <img
-                        id="click5out"
-                        class="out-btn"
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png"
-                        alt=""
-                    />
-                </div>
+            <div class="mode-box group-box-item">
+                <div>모드</div>
+                <select class="group-box-item-input" name="group-game-mode" id="lang">
+                    <option value="nomal-game">일반게임</option>
+                    <option value="rank-game">솔로랭크</option>
+                    <option value="team-rank">자유랭크</option>
+                    <option value="aram">칼바람 나락</option>
+                </select>
             </div>
-            <div class="complete-btn">완료</div>
-        </div>
-        <div class="out-box" style="display: none">
-            <div class="out-user-name">유저이름</div>
-            강퇴 하시겠습니까?
-            <div class="out-question-box">
-                <div class="out-agree-btn">강퇴</div>
-                <div class="out-cancel-btn">취소</div>
+            <div class="tier-box group-box-item">
+                <div>티어</div>
+                <select class="group-box-item-input" name="group-game-tier" id="lang">
+                    <option value="challenger">
+                        챌린저
+                    </option>
+                    <option value="grandmaster">그랜드마스터</option>
+                    <option value="master">마스터</option>
+                    <option value="diamond">
+                        다이아몬드
+                    </option>
+                    <option value="emerald">에메랄드</option>
+                    <option value="platinum">플레티넘</option>
+                    <option value="gold">골드</option>
+                    <option value="silver">실버</option>
+                    <option value="bronze">브론즈</option>
+                    <option value="iron">아이언</option>
+                </select>
+            </div>
+            <div class="people-box group-box-item">
+                <div>인원</div>
+                <select class="group-box-item-input" name="group-game-people" id="lang">
+                    <option value="two">2</option>
+                    <option value="three">3</option>
+                    <option value="four">4</option>
+                    <option value="five">5</option>
+                </select>
+            </div>
+            <div class="private-box group-box-item">
+                <div>비공개 <input type="checkbox" /></div>
+                <input class="private-password group-box-item-input" placeholder="비밀번호" type="text" />
             </div>
         </div>
-        <script src="../js/constants.js"></script>
-        <script src="../js/update-group-modal.js"></script>
-    </body>
+        <hr style="color: rgb(143, 143, 143)" />
+        <div class="select-position-box">
+            <div class="position-jg">
+                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글.png" alt=""
+                    onclick="clickJg()" />
+                <div id="1user" class="user-name">나</div>
+                <img id="click1out" class="out-btn"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png" alt="" />
+            </div>
+            <div class="position-top">
+                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑.png" alt=""
+                    onclick="clickTop()" />
+                <div id="2user" class="user-name">강퇴 a</div>
+                <img id="click2out" class="out-btn"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png" alt="" />
+            </div>
+            <div class="position-mid">
+                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드.png" alt=""
+                    onclick="clickMid()" />
+                <div id="3user" class="user-name">강퇴 c</div>
+
+                <img id="click3out" class="out-btn"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png" alt="" />
+            </div>
+            <div class="position-adc">
+                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀.png" alt=""
+                    onclick="clickAdc()" />
+                <div id="4user" class="user-name">강퇴 b</div>
+
+                <img id="click4out" class="out-btn"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png" alt="" />
+            </div>
+            <div class="position-sup">
+                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿.png" alt=""
+                    onclick="clickSup()" />
+                <div id="5user" class="user-name">강퇴 d</div>
+
+                <img id="click5out" class="out-btn"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/엑스.png" alt="" />
+            </div>
+        </div>
+        <div class="complete-btn">완료</div>
+    </div>
+    <div class="out-box" style="display: none">
+        <div class="out-user-name">유저이름</div>
+        강퇴 하시겠습니까?
+        <div class="out-question-box">
+            <div class="out-agree-btn">강퇴</div>
+            <div class="out-cancel-btn">취소</div>
+        </div>
+    </div>
+    <script src="../js/update-group-modal.js"></script>
+</body>
+
 </html>

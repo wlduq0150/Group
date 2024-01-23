@@ -5,10 +5,31 @@
     <meta charset="UTF-8">
     <title>Grouo Manage</title>
     <link rel="stylesheet" href="../css/group-manage.css">
+    <script>
+        function loadHTML(file) {
+            const rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4) {
+                    if (rawFile.status === 200 || rawFile.status === 0) {
+                        const allText = rawFile.responseText;
+                        document.write(allText);
+                    }
+                }
+            };
+            rawFile.send(null);
+        }
+    </script>
 </head>
 
 <body>
     <div class="group_manage">
+
+        <div class="hidden" id="updateGroupContainer">
+            <script>
+                loadHTML("./update-group-modal.html");
+            </script>
+        </div>
 
         <div class="group_manage_header">
             <div class="title">예원님의 그룹</div>
