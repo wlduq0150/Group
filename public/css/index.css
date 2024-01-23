@@ -42,18 +42,29 @@ body {
     background-size: cover;
     /* background-position: 50%; */
     background-repeat: no-repeat;
+    overflow: hidden;
 }
 
 main {
     width: 100vw;
-    height: 60%;
+    height: 100%;
 
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    padding: 6px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgb(106, 106, 106, 0.5);
+}
+
+.logout {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,6 +80,7 @@ main {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    margin-top: 120px;
 
     > table {
         width: 100%;
@@ -108,9 +120,9 @@ main {
             > td {
                 > img {
                     height: 32px;
-
+                    /* 
                     &:nth-child(4) {
-                    }
+                    } */
 
                     &[on] {
                         filter: brightness(1);
@@ -135,6 +147,7 @@ main {
             td:nth-child(n + 2) {
                 border-left: solid 1px rgba(255, 255, 255, 0.366);
             }
+
         }
     }
 }
@@ -198,27 +211,82 @@ main {
     gap: 20px;
 }
 
-#groupOpenButton,
-#groupCloseButton,
-#profileOpenButton,
-#profileCloseButton {
+#groupOpenButton, #groupCloseButton,
+#profileOpenButton, #profileCloseButton {
     cursor: pointer;
 }
 
-#profileContainer,
 #groupContainer {
     width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
     background: rgba(0, 0, 0, 0.5);
 }
 
+#profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    #profile-list {
+        display: flex;
+        flex-direction: column;
+
+        & > div:hover ~ #profile-list-items,
+        #profile-list-items:hover {
+            display: flex;
+            flex-direction: column;
+            animation: fade-in 0.3s;
+            animation-fill-mode: forwards;
+        }
+
+        #profile-list-items {
+            display: none;
+            position: absolute;
+            top: 30px;
+            list-style: none;
+        }
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#groupManageContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+#positionSelectContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+#groupContainer.hidden,
+#groupManageContainer.hidden,
+#positionSelectContainer.hidden {
+    display: none;
+}
+
 #profileContainer.hidden,
-#groupContainer.hidden {
+#login.hidden,
+#profile.hidden {
     display: none;
 }

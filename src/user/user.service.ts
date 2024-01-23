@@ -7,7 +7,7 @@ import {
 
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
-import { Like, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import { GetUserDto } from "./dto/get-user.dto";
 
@@ -35,5 +35,12 @@ export class UserService {
             id: userId,
         });
         return user.discordId;
+    }
+
+    async findNameByUserId(userId: number): Promise<string> {
+        const user = await this.userRepository.findOneBy({
+            id: userId,
+        });
+        return user.username;
     }
 }
