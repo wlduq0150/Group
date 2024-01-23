@@ -1,4 +1,8 @@
+import { Enum } from "./path/to/groupInfo.constants.js";
+
 let userId;
+let groupId;
+let allGroups = [];
 const socket = io("http://localhost:5001/group", {
     transports: ["websocket"],
     cors: {
@@ -26,14 +30,14 @@ window.onload = function () {
     socket.on("getAllGroup", function (data) {
         console.log(data);
         if (Array.isArray(data.groups)) {
-            const groups = data.groups.map((groupObj) => {
+            allGroups = data.groups.map((groupObj) => {
                 const keys = Object.keys(groupObj);
                 if (keys.length > 0) {
                     return groupObj[keys[0]];
                 }
             });
 
-            updateGroupTable(groups);
+            updateGroupTable(allGroups);
         }
     });
 };
@@ -63,7 +67,6 @@ loginBtn.addEventListener("click", async () => {
 // 그룹 생성 이벤트 처리
 const makeGroupBtn = document.querySelector(".make-group");
 const groupContainer = document.querySelector("#groupContainer");
-const createGroupForm = document.querySelector(".create-group-modal");
 const completeBtn = document.querySelector(".create-group-modal .complete-btn");
 const refreshBtn = document.querySelector(".refresh");
 const chattingBtn = document.querySelector(".chatting-img-btn");
@@ -118,6 +121,7 @@ completeBtn.addEventListener("click", async function (e) {
     groupContainer.classList.add("hidden");
 });
 
+// 새로고침 이벤트 처리
 refreshBtn.addEventListener("click", () => {
     socket.emit("getAllGroup");
 });
@@ -159,44 +163,9 @@ function updateGroupTable(groups) {
     groups.forEach((group) => {
         const tr = document.createElement("tr");
         tr.classList.add("user-group");
-        tr.setAttribute("data-id", group.id);
-        tr.id = "profileOpenButton";
 
-        const positionMap = {
-            jg: "정글",
-            top: "탑",
-            mid: "미드",
-            adc: "바텀",
-            sup: "서폿",
-        };
-
-        const positionClassMap = {
-            jg: "position_jungle",
-            top: "position_top",
-            mid: "position_mid",
-            adc: "position_bottom",
-            sup: "position_support",
-        };
-
-        const tierMap = {
-            iron: "아이언",
-            bronze: "브론즈",
-            silver: "실버",
-            gold: "골드",
-            platinum: "플래티넘",
-            emerald: "에메랄드",
-            diamond: "다이아몬드",
-            master: "마스터",
-            grandmaster: "그랜드마스터",
-            challenger: "챌린저",
-        };
-
-        const modeMap = {
-            "nomal-game": "일반게임",
-            "rank-game": "솔로랭크",
-            "team-rank": "자유랭크",
-            aram: "칼바람 나락",
-        };
+        groupId = group.id;
+        console.log("그룹 아이디: ", groupId);
 
         tr.innerHTML = `
         <td class="group_name">${group.info.name}</td>
@@ -204,21 +173,21 @@ function updateGroupTable(groups) {
             group.state.totalUser
         }</td>
         <td class="group_tier">
-            <div class="user-rank">${tierMap[group.info.tier]}</div>
+            <div class="user-rank">${Enum.Tier[group.info.tier]}</div>
         </td>
-        <td class="group_user"><span class="user">${
+        <td class="group_user"><span class="user" data-id="${
             group.info.owner
-        }</span></td>
-        <td class="group_type">${modeMap[group.info.mode]}</td>
+        }">${group.info.owner}</span></td>
+        <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
         ${["jg", "top", "mid", "adc", "sup"]
             .map(
                 (pos) =>
                     `<div class="${
-                        positionClassMap[pos]
+                        Enum.PositionClass[pos]
                     }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
                         group.state[pos] && group.state[pos].isActive
-                            ? `${positionMap[pos]}흑`
+                            ? `${Enum.Position[pos]}흑`
                             : "금지흑"
                     }.png" /></div>`,
             )
@@ -228,6 +197,41 @@ function updateGroupTable(groups) {
         tableBody.appendChild(tr);
     });
 }
+
+// 채팅 이벤트
+chattingBtn.addEventListener("click", () => {
+    const checkCatting = document.getElementById("groupManageContainer");
+    if (checkCatting.className == "hidden") {
+        checkCatting.classList.remove("hidden");
+
+        let group = allGroups.find((group) => group.id === groupId);
+        console.log("그룹: ", group);
+
+        if (!group) {
+            console.log("현재 사용자가 속한 그룹이 없습니다.");
+        } else {
+            const titleElement = document.querySelector(
+                ".group_manage_header .title",
+            );
+            const modeElement = document.querySelector(
+                ".group_manage_header .mode",
+            );
+            const memberElement = document.querySelector(
+                ".group_manage_header .number",
+            );
+            const ownerElement = document.querySelector(
+                ".group_manage_header .owner",
+            );
+
+            titleElement.textContent = `${group.info.name}님의 그룹`;
+            modeElement.textContent = `${group.info.mode}`;
+            memberElement.textContent = `${group.state.currentUser}/${group.state.totalUser}`;
+            ownerElement.textContent = group.info.owner;
+        }
+    } else {
+        checkCatting.classList.add("hidden");
+    }
+});
 
 socket.on("connect", () => {
     socket.emit("connectWithUserId", userId);
@@ -290,13 +294,4 @@ socket.on("clear", (data) => {
 socket.on("getAllGroup", (data) => {
     allGroup = data.groups;
     console.log("데이터: ", data.groups);
-});
-
-chattingBtn.addEventListener("click", (e) => {
-    const checkCatting = document.getElementById("groupManageContainer");
-    if (checkCatting.className == "hidden") {
-        checkCatting.classList.remove("hidden");
-    } else {
-        checkCatting.classList.add("hidden");
-    }
 });
