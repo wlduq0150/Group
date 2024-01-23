@@ -10,8 +10,13 @@ function getUserProfile(clickUserId) {
       src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/${data.user.profileIconId}.png"
       alt=""
     />`;
+
             document.querySelector(".lol-name-tag").innerHTML =
                 `${data.user.gameName}#${data.user.gameTag}`;
+            document.querySelector(".user-comment").innerHTML =
+                `${data.user.comment}`;
+            document.querySelector(".user-popular-score").innerHTML =
+                `♥${data.user.popular}`;
             let tier = data.user.tier;
             let tierFirst = tier.charAt(0);
             let others = tier.slice(1).toLowerCase();
@@ -33,7 +38,7 @@ function getUserProfile(clickUserId) {
             document.querySelector(".win-rate").innerHTML =
                 `<div class="win-rate" onmouseenter="mouseenterHandler()" onmouseleave="mouseleaveHandler()"  style="background:conic-gradient(#5383e8 0% ${winRate}%, #E84057 25% ${
                     100 - winRate
-                }%);"  ><span class="center" > <span id="win-rate">${winRate}% </span><span class="wins-losses" style="display:none">${
+                }%);"  ><span class="center" > <span id="win-rate">${winRate}% </span><span class="wins-losses-box" style="display:none">${
                     data.user.wins
                 }승 ${data.user.losses}패</span></div>`;
             let mostChampionsParent = document.querySelector(
@@ -45,7 +50,7 @@ function getUserProfile(clickUserId) {
                     (Number(data.champion[i].kills) +
                         Number(data.champion[i].assists)) /
                     Number(data.champion[i].deaths)
-                ).toFixed(1);
+                ).toFixed(2);
                 const totalGame =
                     Number(data.champion[i].wins) +
                     Number(data.champion[i].losses);
@@ -57,21 +62,32 @@ function getUserProfile(clickUserId) {
 
                 mostChampionsChild.innerHTML = `
         <div class="most-champion-box" >
-        <div class="champion-icon">
+        <div >
         <img
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/champions/${data.champion[i].championName}.png"
+        class="champion-icon"
+          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/champions/${
+              data.champion[i].championName
+          }.png"
           alt=""
         />
         </div>
         <div class="champion-info-box">
             <div class="champion-name">${data.champion[i].championName}</div>
-            <div>${champKda}</div>
+            </div>
+            <div class="champion-kda">${champKda}:1 평점
+            <div class="champion-kills-deaths-assists">
+            <span>${(data.champion[i].kills / totalGame).toFixed(1)}/</span>
+            <span>${(data.champion[i].deaths / totalGame).toFixed(1)}/</span>
+            <span>${(data.champion[i].assists / totalGame).toFixed(1)}</span>
+            
+            </div>
         </div>
         <div class="champ-win-box">
           <div>${winRate}%</div>
           <div>${totalGame} 게임</div>
          </div>
-        </div>`;
+        
+        </div> <hr style="color: rgb(143, 143, 143)" />`;
             }
         });
 
@@ -82,10 +98,17 @@ getUserProfile(clickUserId);
 
 function mouseenterHandler() {
     document.getElementById("win-rate").style.display = "none";
-    document.querySelector(".wins-losses").style.display = "block";
+    document.querySelector(".wins-losses-box").style.display = "block";
 }
 
 function mouseleaveHandler() {
     document.getElementById("win-rate").style.display = "block";
-    document.querySelector(".wins-losses").style.display = "none";
+    document.querySelector(".wins-losses-box").style.display = "none";
 }
+
+//인기도 올렸을때
+const upPopular = document.querySelector(".user-popular-up");
+upPopular.addEventListener("click", (e) => {});
+//내렸을 때
+const downPopular = document.querySelector(".user-popular-down");
+downPopular.addEventListener("click", (e) => {});
