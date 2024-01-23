@@ -56,6 +56,7 @@ const groupContainer = document.querySelector("#groupContainer");
 const createGroupForm = document.querySelector(".create-group-modal");
 const completeBtn = document.querySelector(".complete-btn");
 const refreshBtn = document.querySelector(".refresh");
+const chattingBtn = document.querySelector(".chatting-img-btn");
 
 makeGroupBtn.addEventListener("click", () => {
     if (loginBtn.value === "로그인") {
@@ -220,4 +221,13 @@ socket.on("clear", (data) => {
 socket.on("getAllGroup", (data) => {
     allGroup = data.groups;
     console.log("데이터: ", data.groups);
+});
+
+chattingBtn.addEventListener("click", (e) => {
+    const checkCatting = document.getElementById("groupManageContainer");
+    if (checkCatting.className == "hidden") {
+        checkCatting.classList.remove("hidden");
+    } else {
+        checkCatting.classList.add("hidden");
+    }
 });

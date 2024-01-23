@@ -311,7 +311,7 @@ aaa .login {
 }
 
 #groupContainer.hidden,
-/* #groupManageContainer.hidden, */
+#groupManageContainer.hidden,
 #positionSelectContainer.hidden {
     display: none;
 }
@@ -340,4 +340,12 @@ aaa .login {
     justify-content: center;
     display: flex;
     align-items: center;
+}
+.chatting-img-btn {
+    position: absolute;
+    left: 50px;
+    bottom: 50px;
+    width: 4%;
+    height: 8%;
+    cursor: pointer;
 }
