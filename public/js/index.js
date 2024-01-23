@@ -64,7 +64,7 @@ loginBtn.addEventListener("click", async () => {
 const makeGroupBtn = document.querySelector(".make-group");
 const groupContainer = document.querySelector("#groupContainer");
 const createGroupForm = document.querySelector(".create-group-modal");
-const completeBtn = document.querySelector("..create-group-modal complete-btn");
+const completeBtn = document.querySelector(".create-group-modal .complete-btn");
 const refreshBtn = document.querySelector(".refresh");
 
 makeGroupBtn.addEventListener("click", () => {
