@@ -315,6 +315,12 @@ function resetSelectPositionState() {
     }
 }
 
+// 그룹 설정 상태 변경시 업데이트
+async function updateGroupUpdateState(groupInfo, groupState) {}
+
+// 그룹 설정 상태 초기화(그룹 나갈시에 발생)
+function resetGroupUpdateState() {}
+
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
@@ -348,6 +354,17 @@ document
         });
     });
 
+// 채팅 보내기
+document
+    .querySelector("#groupManageContainer .chat_send")
+    .addEventListener("click", (e) => {
+        const message = document.querySelector(
+            "#groupManageContainer .chat_input",
+        ).value;
+
+        socket.emit("chat", { message });
+    });
+
 socket.on("connect", () => {
     socket.emit("connectWithUserId", userId);
 });
@@ -357,7 +374,8 @@ socket.on("disconnect", () => {
 });
 
 socket.on("chat", (data) => {
-    console.log("채팅: ", data);
+    const { chat } = data;
+    createChatMessage(userId, chat.userId, chat.name, chat.message);
 });
 
 socket.on("groupJoin", (data) => {
@@ -365,6 +383,7 @@ socket.on("groupJoin", (data) => {
     groupId = data.groupId;
     const { groupInfo, groupState } = data;
     updateGroupManageState(groupInfo, groupState);
+    updateGroupUpdateState(groupInfo, groupState);
     updateMyGroupState(groupState);
 });
 
@@ -380,6 +399,7 @@ socket.on("groupKicked", (data) => {
 socket.on("groupLeave", () => {
     resetGroupManageState();
     resetSelectPositionState();
+    resetGroupUpdateState();
     hideGroupManage();
     console.log("유저 그룹 나가기 완료");
 });
@@ -397,18 +417,16 @@ socket.on("positionSelect", (data) => {
 socket.on("positionSelected", async (data) => {
     const { groupState } = data;
     updateSelectPositionState(groupState);
+    updateGroupUpdateState(null, groupState);
 });
 
 socket.on("positionDeselected", (data) => {
     const { groupState } = data;
     updateSelectPositionState(groupState);
+    updateGroupUpdateState(null, groupState);
 });
 
 socket.on("error", (data) => {
     console.log(data);
     alert(`[error] ${data.message}`);
-});
-
-socket.on("clear", (data) => {
-    console.log(data.message);
 });
