@@ -57,10 +57,10 @@ export class AuthController {
             session.discordUserId = sessionData.discordUserId;
             session.accessToken = sessionData.accessToken;
 
-            res.redirect("html/index.html");
+            res.redirect("/html/index.html");
         } catch (err) {
             console.error("인증 실패", err);
-            res.redirect("html/index.html?login=fail");
+            res.redirect("/html/index.html?login=fail");
         }
     }
 

@@ -22,15 +22,15 @@ groupOpenButton.addEventListener("click", () => {
 //     group.classList.add("hidden");
 // });
 
-// // 외부 영역 클릭 시 모달 닫기
-// window.addEventListener("click", event => {
+// 외부 영역 클릭 시 모달 닫기
+// window.addEventListener("click", (event) => {
 //     if (event.target === profile) {
 //         profile.classList.add("hidden");
 //     }
 // });
 
 // // 외부 영역 클릭 시 모달 닫기
-// window.addEventListener("click", event => {
+// window.addEventListener("click", (event) => {
 //     if (event.target === group) {
 //         group.classList.add("hidden");
 //     }

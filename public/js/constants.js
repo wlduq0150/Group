@@ -1,5 +1,5 @@
 const mainServer = "http://localhost:5001/";
-const clickUserId = 36;
+const clickUserId = 1;
 const mostChampionCount = 3;
 const xImg = `<img
 style="display:none"
