@@ -147,7 +147,6 @@ main {
             td:nth-child(n + 2) {
                 border-left: solid 1px rgba(255, 255, 255, 0.366);
             }
-
         }
     }
 }
@@ -211,8 +210,10 @@ main {
     gap: 20px;
 }
 
-#groupOpenButton, #groupCloseButton,
-#profileOpenButton, #profileCloseButton {
+#groupOpenButton,
+#groupCloseButton,
+#profileOpenButton,
+#profileCloseButton {
     cursor: pointer;
 }
 
@@ -271,6 +272,15 @@ main {
 }
 
 #positionSelectContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+#profileContainer {
     width: 100%;
     height: 100vh;
     display: flex;
