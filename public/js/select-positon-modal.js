@@ -11,7 +11,7 @@ src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
 alt="" onclick="clickDarkJg()"/><div id="userName" class="jg-user-name"><br></div>`;
 document.querySelector(".select-position-parent .position-top").innerHTML = `
 <img id="position"
-src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png"
 alt="" onclick="clickDarkTop()"/><div id="userName" class="top-user-name"><br></div>`;
 document.querySelector(".select-position-parent .position-mid").innerHTML = `
 <img id="position"
@@ -19,7 +19,7 @@ src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
 alt="" onclick="clickDarkMid()"/><div id="userName" class="mid-user-name"><br></div>`;
 document.querySelector(".select-position-parent .position-adc").innerHTML = `
 <img id="position"
-src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png"
 alt="" onclick="clickDarkAdc()"/><div id="userName" class="adc-user-name"><br></div>`;
 document.querySelector(".select-position-parent .position-sup").innerHTML = `
 <img id="position"
@@ -61,7 +61,7 @@ function clickTop() {
         `
     <img
         id="position"
-        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png"
         alt=""
         onclick="clickDarkTop()"
       /><div id="userName" class="top-user-name"><br></div>
@@ -105,7 +105,7 @@ function clickAdc() {
         `
     <img
         id="position"
-        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
+        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png"
         alt=""
         onclick="clickDarkAdc()"
       /><div id="userName" class="adc-user-name"><br></div>
