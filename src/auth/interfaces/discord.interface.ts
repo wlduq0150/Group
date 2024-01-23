@@ -56,3 +56,8 @@ export interface GuildMember {
     pending?: boolean;
     permissions?: string;
 }
+
+export interface SessionData {
+    discordUserId: string;
+    accessToken: string;
+}

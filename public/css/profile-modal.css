@@ -2,23 +2,23 @@
     width: 500px;
     height: 750px;
     background-color: white;
-    position: absolute;
-    top: 100px;
-    left: 500px;
+    display: grid;
+    place-items: center;
+
     border-radius: 20px;
-    box-shadow: 5px 5px 5px;
+    box-shadow: 0 10px 8px #000000;
 }
 
 .nav {
-    box-shadow: inset 0px 5px 8px white;
+    box-shadow: inset 0px 8px 10px white;
     font-size: 25px;
     font-weight: bold;
     color: white;
     height: 50px;
     padding-top: 15px;
     text-align: center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
     background-color: rgb(75, 118, 127);
 }
 
@@ -106,11 +106,14 @@
     text-align: right;
     color: black;
 }
+.wins-losses {
+    display: none;
+}
 
 .win-rate {
     position: relative;
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     color: black;
 }
@@ -120,13 +123,13 @@
     position: absolute;
     top: 15px;
     left: 15px;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     background: #ffffff;
     border-radius: 50%;
 }
 
-img {
+.profile-box img {
     max-width: 90px;
     max-height: 90px;
     object-fit: cover;
@@ -138,7 +141,7 @@ img {
     padding-top: 10px;
     text-align: center;
     margin: 0 auto;
-    color: white;
+    color: rgb(255, 255, 255);
     background-color: rgba(106, 106, 106);
     width: 90px;
     height: 40px;

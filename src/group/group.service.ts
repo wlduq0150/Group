@@ -10,6 +10,8 @@ import { RedisService } from "src/redis/redis.service";
 import Redlock from "redlock";
 import { DiscordService } from "src/discord/discord.service";
 import { UserService } from "src/user/user.service";
+import { UpdateGroupDto } from "./dto/update-group.dto";
+import { updateGroupState } from "./function/update-group-state.function";
 
 @Injectable()
 export class GroupService {
@@ -60,12 +62,64 @@ export class GroupService {
         return group;
     }
 
+    async updateGroup(
+        userId: number,
+        groupId: string,
+        updateGroupDto: UpdateGroupDto,
+    ) {
+        const groupInfoKey = this.generateGroupInfoKey(groupId);
+        const groupStateKey = this.generateGroupStateKey(groupId);
+
+        let groupInfo = await this.findGroupInfoById(groupId);
+        let groupState = await this.findGroupStateById(groupId);
+
+        if (userId !== groupInfo.owner) {
+            throw new WsException("그룹장만이 그룹 설정을 변경 가능합니다.");
+        }
+
+        for (let update of Object.keys(updateGroupDto)) {
+            if (update === "updatePosition") {
+                groupState = updateGroupState(
+                    groupState,
+                    updateGroupDto[update],
+                );
+            } else {
+                if (update in groupInfo) {
+                    groupInfo[update] = updateGroupDto[update];
+                }
+            }
+        }
+
+        await this.redisService.set(groupInfoKey, JSON.stringify(groupInfo));
+        await this.redisService.set(groupStateKey, JSON.stringify(groupState));
+
+        return { groupInfo, groupState };
+    }
+
     // 모든 그룹 id 반환
     async findAllGroup() {
         const redisClient = this.redisService.getRedisClient();
-        let keys = await redisClient.keys("group:info:*");
-        keys = keys.map((key) => key.replace("group:info:", ""));
-        return keys;
+        const infoKeys = await redisClient.keys("group:info:*");
+        const stateKeys = infoKeys.map((key) => key.replace("info", "state"));
+        const keys = infoKeys.map((key) => key.replace("group:info:", ""));
+
+        if (keys.length === 0) return null;
+
+        const [infoValues, stateValues] = await Promise.all([
+            redisClient.mget(...infoKeys),
+            redisClient.mget(...stateKeys),
+        ]);
+
+        const data = keys.map((key, index) => {
+            return {
+                [key]: {
+                    info: JSON.parse(infoValues[index]),
+                    state: JSON.parse(stateValues[index]),
+                },
+            };
+        });
+
+        return data;
     }
 
     // 유저 아이디를 통해 해당 유저가 방장인 그룹Id를 반환(없을 경우 null 반환)
@@ -265,5 +319,11 @@ export class GroupService {
         await this.redisService.set(groupStateKey, JSON.stringify(groupState));
 
         return groupState;
+    }
+
+    async createGroupChat(userId: number, message: string) {
+        const name = await this.userService.findNameByUserId(userId);
+
+        return { name, message };
     }
 }

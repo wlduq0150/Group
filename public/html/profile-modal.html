@@ -1,67 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <link href="../css/profile-modal.css" rel="stylesheet" />
-    <title>Document</title>
-</head>
-<body>
-<div class="parent" id="modal">
-    <div class="nav">프로필</div>
-    <div class="no-nav">
-        <div class="profile-box">
-            <div class="lol-profile-icon">
-                <img
-                    alt=""
-                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png"
-                />
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../css/profile-modal.css" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="modal" class="parent">
+            <div class="nav">프로필</div>
+            <div class="no-nav">
+                <div class="profile-box">
+                    <div class="lol-profile-icon">
+                        <img
+                            alt=""
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png"
+                        />
+                    </div>
+                    <div class="name-box">
+                        <div class="discord-name">discord name</div>
+                        <div class="lol-name-tag">lol name tag</div>
+                    </div>
+                </div>
+
+                <div class="no-name-box">
+                    <div class="user-comment-box">
+                        <div class="user-comment">comment</div>
+                        <div class="user-popular">♥ 0</div>
+                    </div>
+                    <div class="tier-box">
+                        <div class="tier-icon">
+                            <img
+                                alt=""
+                                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/tier/Rank%3DBronze.png"
+                            />
+                        </div>
+
+                        <div class="tier-rank-leaguePoints">
+                            <div class="tier-rank">tierank</div>
+                            <div class="league-points">league points</div>
+                        </div>
+                        <div class="win-box">
+                            <div class="wins-losses">win losses</div>
+                            <div class="win-rate"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="champion-box-parent"></div>
+                    </div>
+                </div>
             </div>
-            <div class="name-box">
-                <div class="discord-name">discord name</div>
-                <div class="lol-name-tag">lol name tag</div>
-            </div>
+            <div class="update-btn" id="profileCloseButton">수정</div>
         </div>
-
-        <div class="no-name-box">
-            <div class="user-comment-box">
-                <div class="user-comment">comment</div>
-                <div class="user-popular">♥ 0</div>
-            </div>
-            <div class="tier-box">
-                <div class="tier-icon">
-                    <img
-                        alt=""
-                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/tier/Rank%3DBronze.png"
-                    />
-                </div>
-
-                <div class="tier-rank-leaguePoints">
-                    <div class="tier-rank">tierank</div>
-                    <div class="league-points">league points</div>
-                </div>
-                <div class="win-box">
-                    <div class="wins-losses">win losses</div>
-                    <div class="win-rate"></div>
-                </div>
-            </div>
-
-            <div>
-                <div class="champion-box-parent"></div>
-            </div>
-        </div>
-    </div>
-    <div class="update-btn" id="profileCloseButton">수정</div>
-    <!--<div class="group">
-        <ul>
-            <li><a href="#">프로필</a></li>
-            <li><a href="#">친구신청</a></li>
-            <li><a href="#">차단</a></li>
-            <li><a href="#">신고</a></li>
-        </ul>
-    </div>-->
-</div>
-<script src="../js/constants.js"></script>
-<script src="../js/profile-modal.js"></script>
-</body>
+        <script src="../js/constants.js"></script>
+        <script src="../js/profile-modal.js"></script>
+    </body>
 </html>

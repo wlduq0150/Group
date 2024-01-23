@@ -1,18 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>main page</title>
-    <link href="./css/index.css" rel="stylesheet">
-    <link href="./css/profile-modal.css" rel="stylesheet" />
-    <link href="./css/create-group-modal.css" rel="stylesheet" />
-    <script src="./component.js"></script>
+    <script src="../component.js"></script>
+    <link rel="stylesheet" href="../css/index.css" />
     <script>
         function loadHTML(file) {
             const rawFile = new XMLHttpRequest();
             rawFile.open("GET", file, false);
-            rawFile.onreadystatechange = function() {
+            rawFile.onreadystatechange = function () {
                 if (rawFile.readyState === 4) {
                     if (rawFile.status === 200 || rawFile.status === 0) {
                         const allText = rawFile.responseText;
@@ -48,6 +47,21 @@
         </div>
     </nav>
 </header>
+  <div class="hidden" id="groupManageContainer">
+        <script>
+            loadHTML("./group-manage.html");
+        </script>
+    </div>
+    <div class="hidden" id="groupContainer">
+        <script>
+            loadHTML("./create-group-modal.html");
+        </script>
+    </div>
+    <div class="hidden" id="positionSelectContainer">
+        <script>
+            loadHTML("./select-position-modal.html");
+        </script>
+    </div>
 <main>
     <div class="main">
         <div class="user-search">
@@ -136,9 +150,6 @@
     <div class="hidden" id="profileContainer">
         <script>loadHTML("./html/profile-modal.html");</script>
     </div>
-    <div class="hidden" id="groupContainer">
-        <script>loadHTML("./html/create-group-modal.html");</script>
-    </div>
 </main>
 <script src="./js/pop-up.js"></script>
 <script src="./js/constants.js"></script>
@@ -146,5 +157,7 @@
 <script src="./js/profile-modal.js"></script>
 <script src="./js/login-modal.js"></script>
 
+
 </body>
+
 </html>
