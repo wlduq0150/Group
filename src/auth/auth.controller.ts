@@ -2,6 +2,7 @@ import {
     BadRequestException,
     Controller,
     Get,
+    HttpStatus,
     Query,
     Redirect,
     Res,
@@ -10,12 +11,7 @@ import {
 import { AuthService } from "./auth.service";
 import { Response } from "express";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
-import {
-    DiscordAuthResponse,
-    DiscordUser,
-    SessionData,
-} from "./interfaces/discord.interface";
-import { User } from "src/entity/user.entity";
+import { SessionData } from "./interfaces/discord.interface";
 
 @ApiTags("사용자 인증")
 @Controller("auth")
@@ -61,14 +57,34 @@ export class AuthController {
             session.discordUserId = sessionData.discordUserId;
             session.accessToken = sessionData.accessToken;
 
-            res.redirect("/auth-test.html");
+            res.redirect("html/index.html");
         } catch (err) {
             console.error("인증 실패", err);
-            res.redirect("/auth-test.html");
+            res.redirect("html/index.html?login=fail");
         }
     }
 
+    @Get("/logout")
+    @ApiOperation({ summary: "로그아웃" })
+    @ApiResponse({ status: 200, description: "로그아웃 성공" })
+    logout(@Session() session: Record<string, any>, @Res() res: Response) {
+        session.destroy((err) => {
+            if (err) {
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(
+                    "로그아웃 실패",
+                );
+            } else {
+                res.redirect("html/index.html?logout=success");
+            }
+        });
+    }
+
     @Get("/session")
+    @ApiOperation({ summary: "세션 데이터 반환" })
+    @ApiResponse({
+        status: 200,
+        description: "세션 데이터 반환 성공",
+    })
     getSessiondata(@Session() session: Record<string, any>) {
         console.log("세션 데이터 호출");
         return {
