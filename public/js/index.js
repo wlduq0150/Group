@@ -1,14 +1,14 @@
-const profileOpenButton = document.getElementById("profileOpenButton");
-const profileCloseButton = document.getElementById("profileCloseButton");
-const profile = document.getElementById("profileContainer");
+// const profileOpenButton = document.getElementById("profileOpenButton");
+// const profileCloseButton = document.getElementById("profileCloseButton");
+// const profile = document.getElementById("profileContainer");
 
-profileOpenButton.addEventListener("click", () => {
-    profile.classList.remove("hidden");
-});
+// profileOpenButton.addEventListener("click", () => {
+//     profile.classList.remove("hidden");
+// });
 
-profileCloseButton.addEventListener("click", () => {
-    profile.classList.add("hidden");
-});
+// profileCloseButton.addEventListener("click", () => {
+//     profile.classList.add("hidden");
+// });
 
 const groupOpenButton = document.getElementById("groupOpenButton");
 const groupCloseButton = document.getElementById("groupCloseButton");

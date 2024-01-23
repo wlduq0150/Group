@@ -1,3 +1,8 @@
+/* * {
+    margin: 0;
+    padding: 0;
+} */
+
 #modal-container {
     background: rgba(0, 0, 0, 0.5);
     display: block;
@@ -12,49 +17,82 @@
     place-items: center; */
     background-color: white;
     width: 700px;
-    height: 500px;
+    height: 475px;
     box-shadow: 0 10px 8px #000000;
     border-radius: 20px;
 }
 
-.create-group-modal-bar {
-    box-shadow: inset 0px 8px 10px white;
+.create-group-modal .create-group-modal-bar {
+    box-shadow: inset 0px 5px 6px white;
     font-size: 20px;
     font-weight: bold;
     color: white;
-    height: 50px;
+    height: 60px;
     width: 700px;
     text-align: center;
+    line-height: 60px;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     background-color: rgb(75, 118, 127);
 }
 
-.select-group-box {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+.create-group-modal .select-group-box {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: space-around;
 }
 
-.select-position-box {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+.create-group-modal .group-box-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 
-#position {
-    margin-left: 25px;
-    margin-top: 70px;
+.create-group-modal .title_box {
+    width: 24%;
+}
+
+.create-group-modal .mode-box {
+    width: 17%;
+}
+
+.create-group-modal .tier-box {
+    width: 14%;
+}
+
+.create-group-modal .people-box {
+    width: 7%;
+}
+
+.create-group-modal .private-box {
+    width: 11%;
+}
+
+.create-group-modal .select-position-box {
+    height: 210px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.create-group-modal .group-box-item-input {
+    height: 25px;
+}
+
+.create-group-modal .select-position-box img {
     height: 110px;
     width: 110px;
     cursor: pointer;
 }
 
-.complete-btn {
+.create-group-modal .complete-btn {
     font-weight: bold;
     font-size: 25px;
     padding-top: 7px;
     text-align: center;
     margin: 0 auto;
-    margin-top: 50px;
     color: rgb(255, 255, 255);
     background-color: rgba(106, 106, 106);
     width: 130px;

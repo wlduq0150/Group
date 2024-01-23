@@ -26,14 +26,14 @@
 </head>
 
 <body>
-    <div class="user-context" id="user-context">
+    <!-- <div class="user-context" id="user-context">
         <ul>
             <li><a href="#">프로필</a></li>
             <li><a href="#">친구신청</a></li>
             <li><a href="#">차단</a></li>
             <li><a href="#">신고</a></li>
         </ul>
-    </div>
+    </div> -->
     <header>
         <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png" />
         <nav>
@@ -50,6 +50,12 @@
             loadHTML("./create-group-modal.html");
         </script>
     </div>
+    <div class="hidden" id="positionSelectContainer">
+        <script>
+            loadHTML("./select-position-modal.html");
+        </script>
+    </div>
+
     <main>
         <div class="main">
             <div class="user-search">
@@ -113,26 +119,11 @@
             </table>
         </div>
 
-
-
-
-
-
-
-
-
-        <div class="hidden" id="profileContainer">
-            <script>
-                loadHTML("./profile-modal.html");
-            </script>
-        </div>
-
     </main>
-
-
 
     <script src="../js/index.js"></script>
     <script src="../component.js"></script>
+
 </body>
 
 </html>
