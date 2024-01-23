@@ -217,17 +217,17 @@ chattingBtn.addEventListener("click", () => {
             const modeElement = document.querySelector(
                 ".group_manage_header .mode",
             );
-            const memberElement = document.querySelector(
-                ".group_manage_header .number",
-            );
             const ownerElement = document.querySelector(
                 ".group_manage_header .owner",
             );
 
-            titleElement.textContent = `${group.info.owner}님의 그룹`;
-            modeElement.textContent = `${Enum.Mode[group.info.mode]}`;
-            memberElement.textContent = `${group.state.currentUser}/${group.state.totalUser}`;
-            ownerElement.textContent = group.info.owner;
+            titleElement.textContent = `${group.info.name}`;
+            modeElement.innerHTML = `${
+                Enum.Mode[group.info.mode]
+            } <span class="number">${group.state.currentUser}/${
+                group.state.totalUser
+            }</span>`;
+            ownerElement.innerHTML = `${group.info.owner}<span><img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/crown.png" /></span>`;
         }
     } else {
         checkCatting.classList.add("hidden");
