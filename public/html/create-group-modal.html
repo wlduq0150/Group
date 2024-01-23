@@ -19,7 +19,7 @@
 
       <div class="mode-box group-box-item">
         <div>모드</div>
-        <select class="group-box-item-input" name="group-game-mode" id="lang">
+        <select class="group-box-item-input" name="create-group-game-mode" id="lang">
           <option value="nomal-game">일반게임</option>
           <option value="rank-game">솔로랭크</option>
           <option value="team-rank">자유랭크</option>
@@ -31,9 +31,8 @@
           <div>
             티어
           </div>
-          <select class="group-box-item-input" name="group-game-tier" id="lang">
-            <option value="
-            challenger">
+          <select class="group-box-item-input" name="create-group-game-tier" id="lang">
+            <option value="challenger">
               챌린저
             </option>
             <option value="grandmaster">그랜드마스터</option>
@@ -53,7 +52,7 @@
       </div>
       <div class="people-box group-box-item">
         <div>인원</div>
-        <select class="group-box-item-input" name="group-game-people" id="lang">
+        <select class="group-box-item-input" name="create-group-game-people" id="lang">
           <option value="two">2</option>
           <option value="three">3</option>
           <option value="four">4</option>
@@ -72,29 +71,31 @@
           onclick="cg_clickDarkJg()" />
       </div>
       <div class="position-top">
-        <img id="position"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" alt=""
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png" alt=""
           onclick="cg_clickDarkTop()" />
       </div>
       <div class="position-mid">
-        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EB%AF%B8%EB%93%9C%ED%9D%91.png"
-          alt="" onclick="cg_clickDarkMid()" />
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png" alt=""
+          onclick="cg_clickDarkMid()" />
       </div>
       <div class="position-adc">
-        <img id="position"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%ED%83%91%EB%B0%94%ED%85%80%ED%9D%91.png" alt=""
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png" alt=""
           onclick="cg_clickDarkAdc()" />
       </div>
       <div class="position-sup">
-        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/%EC%84%9C%ED%8F%BF%ED%9D%91.png"
-          alt="" onclick="cg_clickDarkSup()" />
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png" alt=""
+          onclick="cg_clickDarkSup()" />
       </div>
     </div>
     <div class="complete-btn">완료</div>
   </div>
   <script>
+    let imgElement = document.querySelector("#position");
+
     function cg_clickDarkJg() {
-      document.querySelector(".create-group-modal .position-jg").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-jg")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글.png"
@@ -104,7 +105,9 @@
         `;
     }
     function cg_clickJg() {
-      document.querySelector(".create-group-modal .position-jg").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-jg")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
@@ -114,7 +117,9 @@
         `;
     }
     function cg_clickDarkTop() {
-      document.querySelector(".create-group-modal .position-top").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-top")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑.png"
@@ -124,7 +129,9 @@
         `;
     }
     function cg_clickTop() {
-      document.querySelector(".create-group-modal .position-top").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-top")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
@@ -134,7 +141,9 @@
         `;
     }
     function cg_clickDarkMid() {
-      document.querySelector(".create-group-modal .position-mid").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-mid")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드.png"
@@ -144,7 +153,9 @@
         `;
     }
     function cg_clickMid() {
-      document.querySelector(".create-group-modal .position-mid").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-mid")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
@@ -154,7 +165,9 @@
         `;
     }
     function cg_clickDarkAdc() {
-      document.querySelector(".create-group-modal .position-adc").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-adc")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀.png"
@@ -164,7 +177,9 @@
         `;
     }
     function cg_clickAdc() {
-      document.querySelector(".create-group-modal .position-adc").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-adc")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png"
@@ -174,7 +189,9 @@
         `;
     }
     function cg_clickDarkSup() {
-      document.querySelector(".create-group-modal .position-sup").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-sup")
+      imgElement.classList.add('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿.png"
@@ -184,7 +201,9 @@
         `;
     }
     function cg_clickSup() {
-      document.querySelector(".create-group-modal .position-sup").innerHTML = `
+      const imgElement = document.querySelector(".create-group-modal .position-sup")
+      imgElement.classList.remove('selected');
+      imgElement.innerHTML = `
         <img
             id="position"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"

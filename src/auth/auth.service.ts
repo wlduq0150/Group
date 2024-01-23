@@ -14,6 +14,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
 import { Repository } from "typeorm";
+import { UserService } from "src/user/user.service";
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
         private readonly configService: ConfigService,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly userSerivce: UserService,
     ) {
         const discordConfig: DiscordConfig = this.configService.get("discord");
 
@@ -50,18 +52,22 @@ export class AuthService {
             await this.getAccessToken(code);
         const accessToken: string = accessTokenResponse.access_token;
 
-        const user: DiscordUser = await this.getDiscordUser(accessToken);
+        const discordUser: DiscordUser = await this.getDiscordUser(accessToken);
+        const user: User = await this.userSerivce.findOneByDiscordId(
+            discordUser.id,
+        );
 
-        const isMember: Boolean = await this.isUserInGuild(user.id);
+        const isMember: Boolean = await this.isUserInGuild(discordUser.id);
 
         if (!isMember) {
-            await this.addUserToGuild(accessToken, user.id);
+            await this.addUserToGuild(accessToken, discordUser.id);
         }
 
-        await this.saveDiscordUser(user);
+        await this.saveDiscordUser(discordUser);
 
         return {
-            discordUserId: user.id,
+            discordUserId: discordUser.id,
+            userId: user.id,
             accessToken,
         };
     }

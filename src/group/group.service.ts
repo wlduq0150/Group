@@ -48,12 +48,16 @@ export class GroupService {
     }
 
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {
-        const { name, mode, mic, owner, position } = createGroupDto;
+        const { name, mode, tier, mic, owner, position } = createGroupDto;
+
+        if (position.length === 0) {
+            throw new WsException("그룹원이 한명이상 필요합니다.");
+        }
 
         const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
 
-        const group: Group = { name, mode, mic, owner, open: true };
+        const group: Group = { name, mode, tier, mic, owner, open: true };
         const groupState = initGroupState(position);
 
         await this.redisService.set(groupInfoKey, JSON.stringify(group));
@@ -113,6 +117,7 @@ export class GroupService {
         const data = keys.map((key, index) => {
             return {
                 [key]: {
+                    groupId: key,
                     info: JSON.parse(infoValues[index]),
                     state: JSON.parse(stateValues[index]),
                 },
@@ -324,6 +329,6 @@ export class GroupService {
     async createGroupChat(userId: number, message: string) {
         const name = await this.userService.findNameByUserId(userId);
 
-        return { name, message };
+        return { userId, name, message };
     }
 }

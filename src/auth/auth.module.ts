@@ -5,6 +5,7 @@ import { ConfigModule } from "@nestjs/config";
 import discordConfig from "src/config/discord.config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
+import { UserModule } from "src/user/user.module";
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { User } from "src/entity/user.entity";
         ConfigModule.forRoot({
             load: [discordConfig],
         }),
+        UserModule,
     ],
     controllers: [AuthController],
     providers: [AuthService],

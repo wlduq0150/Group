@@ -78,6 +78,7 @@ export class LolService {
 
     //유저생성
     async saveUserAllInfo(name: string, tag: string, discordUserId: number) {
+        //if(!discordUserId)
         const userInfo = await this.saveLolUser(name, tag, discordUserId);
         await this.saveChampionData(userInfo.id);
     }

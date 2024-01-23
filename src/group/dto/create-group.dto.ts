@@ -8,6 +8,9 @@ export class CreateGroupDto {
     @IsString()
     mode: string;
 
+    @IsString()
+    tier: string;
+
     @IsBoolean()
     mic: boolean;
 
