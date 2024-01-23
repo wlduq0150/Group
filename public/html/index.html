@@ -11,7 +11,7 @@
         function loadHTML(file) {
             const rawFile = new XMLHttpRequest();
             rawFile.open("GET", file, false);
-            rawFile.onreadystatechange = function () {
+            rawFile.onreadystatechange = function() {
                 if (rawFile.readyState === 4) {
                     if (rawFile.status === 200 || rawFile.status === 0) {
                         const allText = rawFile.responseText;
@@ -25,25 +25,91 @@
 </head>
 
 <body>
-    <div class="user-context" id="user-context"></div>
-    <header>
-        <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png" />
-        <nav>
-            <div id="login">
-                <input class="login" type="button" value="로그인" />
-            </div>
-            <div id="profile">
-                <div id="profile-list">
-                    <div>laetipark</div>
-                    <ul id="profile-list-items">
-                        <li><a href="#">프로필</a></li>
-                        <li><a href="#">친구목록</a></li>
-                        <li><a href="#">차단목록</a></li>
-                    </ul>
+<div class="user-context" id='user-context'>
+</div>
+<header>
+    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png">
+    <nav>
+        <div class="hidden" id="login">
+            <input class="login" type="button" value="로그인">
+        </div>
+        <div id="profile">
+            <div id="profile-list">
+                <div>
+                    laetipark
                 </div>
+                <ul class="profile-list-items">
+                    <li><a href="#">프로필</a></li>
+                    <li><a href="#">친구목록</a></li>
+                    <li><a href="#">차단목록</a></li>
+                </ul>
             </div>
-        </nav>
-    </header>
+            <input class="logout" type="button" value="로그아웃">
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="main main_page">
+        <div class="user-search">
+            <div class="refresh">
+                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png">
+            </div>
+            <div class="search">
+                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png">
+                <input placeholder="Search" type="text">
+            </div>
+            <div class="make-group" id="groupOpenButton" type="button">
+                그룹 생성
+            </div>
+        </div>
+
+        <table>
+            <tbody>
+            <tr>
+                <th class="title_room" width="36%">제목</th>
+                <th class="title_people" width="4%">인원</th>
+                <th class="title_tier" width="7%">티어</th>
+                <th class="title_user" width="15%">그룹장</th>
+                <th class="title_type" width="10%">대기열</th>
+                <th class="title_position" width="27%">포지션 현황</th>
+            </tr>
+            <tr class="user-group" id="profileOpenButton">
+                <td class="group_name">
+                    예원님의 그룹
+                </td>
+                <td class="group_people">1/5</td>
+                <td class="group_tier">
+                    <div class="user-rank">
+                        에메랄드
+                    </div>
+                </td>
+                <td class="group_user"><span class="user" data-id="1">예원</span></td>
+                <td class="group_type">자유 랭크</td>
+                <td class="group_position">
+                    <div>
+                        <div class="position_jungle">
+                            <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png">
+                        </div>
+                        <div class="position_top">
+                            <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png">
+                        </div>
+                        <div class="position_mid">
+                            <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png">
+                        </div>
+                        <div class="position_bottom">
+                            <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png">
+                        </div>
+                        <div class="position_support">
+                            <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
     <div class="hidden" id="groupManageContainer">
         <script>
             loadHTML("./group-manage.html");
@@ -64,75 +130,9 @@
             loadHTML("./profile-modal.html");
         </script>
     </div>
-    <main>
-        <div class="main main_page">
-            <div class="user-search">
-                <div class="refresh">
-                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png" />
-                </div>
-                <div class="search">
-                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png" />
-                    <input placeholder="Search" type="text" />
-                </div>
-                <div class="make-group" id="groupOpenButton" type="button">
-                    그룹 생성
-                </div>
-            </div>
-
-            <table id="groupTable">
-                <tbody>
-                    <tr>
-                        <th class="title_room" width="36%">제목</th>
-                        <th class="title_people" width="4%">인원</th>
-                        <th class="title_tier" width="7%">티어</th>
-                        <th class="title_user" width="15%">그룹장</th>
-                        <th class="title_type" width="10%">대기열</th>
-                        <th class="title_position" width="27%">
-                            포지션 현황
-                        </th>
-                    </tr>
-                    <tr class="user-group" data-id="1" id="profileOpenButton">
-                        <td class="group_name">
-                            예원님의 그룹
-                        </td>
-                        <td class="group_people">1/5</td>
-                        <td class="group_tier">
-                            <div class="user-rank">에메랄드</div>
-                        </td>
-                        <td class="group_user">
-                            <span class="user" data-id="1">예원</span>
-                        </td>
-                        <td class="group_type">자유 랭크</td>
-                        <td class="group_position">
-                            <div class="position_jungle">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" />
-                            </div>
-                            <div class="position_top">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png" />
-                            </div>
-                            <div class="position_mid">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png" />
-                            </div>
-                            <div class="position_bottom">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png" />
-                            </div>
-                            <div class="position_support">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png" />
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <img class="chatting-img-btn" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png"
-            alt="" />
-    </main>
-
-    <!-- <script src="../js/pop-up.js"></script> -->
-
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <script src="../js/index.js"></script>
-    <!-- <script src="../js/login-modal.js"></script> -->
+</main>
+<script src="../js/constants.js"></script>
+<script src="../js/index.js"></script>
+<script src="../js/profile-modal.js"></script>
 </body>
-
 </html>
