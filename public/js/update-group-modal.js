@@ -97,10 +97,19 @@ outAgree.addEventListener("click", (e) => {
     children[3].style.visibility = "hidden";
     noneBlockX(children[5].id);
 });
-
+//x버튼 사라지기
 function noneBlockX(xBtnId) {
     document.getElementById(`${xBtnId}`).style.visibility = "hidden";
 }
+
+const updateComplete = document.querySelector(
+    ".update-group-modal .complete-btn",
+);
+
+//완료 버튼 눌렀을 때
+updateComplete.addEventListener("click", (e) => {
+    document.getElementById("updateGroupContainer").classList.add("hidden");
+});
 
 function clickUpdateJg() {
     if (document.getElementById("1user").innerText) {

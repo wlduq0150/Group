@@ -1,3 +1,10 @@
+const selectComplete = document.querySelector(
+    ".select-position-parent .complete-btn",
+);
+
+selectComplete.addEventListener("click", (e) => {
+    document.getElementById("positionSelectContainer").classList.add("hidden");
+});
 document.querySelector(".select-position-parent .position-jg").innerHTML = `
 <img id="position"
 src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
