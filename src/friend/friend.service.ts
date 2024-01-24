@@ -10,6 +10,7 @@ import { Repository } from "typeorm";
 import IORedis from "ioredis";
 import { UserService } from "src/user/user.service";
 import { randomBytes } from "crypto";
+import { NoticeService } from "src/notice/notice.service";
 @Injectable()
 export class FriendService {
     private readonly redisClient: IORedis;
@@ -19,6 +20,7 @@ export class FriendService {
         private readonly userRepository: Repository<User>,
         private readonly redisService: RedisService,
         private readonly userService: UserService,
+        private readonly noticeService: NoticeService,
     ) {
         this.redisClient = this.redisService.getRedisClient();
     }
@@ -65,6 +67,9 @@ export class FriendService {
             "EX",
             oneDaySeconds,
         );
+
+        // 친구 신청 알림 발송
+        this.noticeService.emitEvent(senderId, friendId);
 
         return { user, requester };
     }

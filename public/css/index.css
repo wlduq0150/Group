@@ -310,6 +310,7 @@ aaa .login {
     position: absolute;
 }
 
+#friendRequestContainer.hidden,
 #profileContainer.hidden,
 #updateGroupContainer.hidden,
 #groupContainer.hidden,
