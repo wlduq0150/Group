@@ -2,7 +2,7 @@ import { Enum } from "./constants.js";
 
 let userId;
 let groupId;
-let eventSource;
+const friendSocket = io("/friend");
 let allGroups = [];
 const socket = io("http://localhost:5001/group", {
     transports: ["websocket"],
@@ -157,28 +157,18 @@ async function updateLoginStatus() {
         }
 
         if (userId) {
-            eventSource = new EventSource(`/notice/${userId}`);
+            friendSocket.on("connect", () => {
+                socket.emit("connectWithUserId", userId);
+                console.log("friend 소켓 연결");
+            });
 
-            eventSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log("Received data:", data);
-                showFriendRequest(data.sender);
-            };
+            socket.on("disconnect", () => {
+                console.log("friend 소켓 연결 해제");
+            });
 
-            // SSE 연결이 열렸을 때
-            eventSource.onopen = () => {
-                console.log("SSE connection opened");
-            };
-
-            // SSE 연결이 닫혔을 때
-            eventSource.onclose = () => {
-                console.log("SSE connection closed");
-            };
-
-            // SSE 연결 에러가 발생했을 때
-            eventSource.onerror = (error) => {
-                console.error("SSE connection error:", error);
-            };
+            socket.on("friendRequest", (data) => {
+                showFriendRequest(data.user);
+            });
         }
     } catch (err) {
         console.error(err);

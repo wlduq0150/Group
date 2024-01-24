@@ -7,6 +7,7 @@ import { RedisModule } from "src/redis/redis.module";
 import { RedisService } from "src/redis/redis.service";
 import { UserModule } from "src/user/user.module";
 import { NoticeModule } from "src/notice/notice.module";
+import { FriendGateway } from "./friend.gateway";
 
 @Module({
     imports: [
@@ -16,7 +17,7 @@ import { NoticeModule } from "src/notice/notice.module";
         NoticeModule,
     ],
     controllers: [FriendController],
-    providers: [FriendService, RedisService],
+    providers: [FriendService, FriendGateway],
     exports: [FriendService],
 })
 export class FriendModule {}

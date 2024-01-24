@@ -9,10 +9,14 @@ import {
     Session,
 } from "@nestjs/common";
 import { FriendService } from "./friend.service";
+import { FriendGateway } from "./friend.gateway";
 
 @Controller("friend")
 export class FriendController {
-    constructor(private readonly friendService: FriendService) {}
+    constructor(
+        private readonly friendService: FriendService,
+        private readonly friendGateway: FriendGateway,
+    ) {}
 
     // 키 확인 테스트
     @Get("test/:key")
@@ -29,16 +33,12 @@ export class FriendController {
     ) {
         const discordId = session.discordUserId;
 
-        const send = await this.friendService.initiateFriendRequest(
-            discordId,
-            friendId,
-        );
+        const { sender, requester } =
+            await this.friendService.initiateFriendRequest(discordId, friendId);
 
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: "친구 신청이 성공적으로 전송되었습니다.",
-            data: send,
-        };
+        this.friendGateway.emitEvent({ sender, accepterId: requester.id });
+
+        return true;
     }
 
     // 친구 요청 수락

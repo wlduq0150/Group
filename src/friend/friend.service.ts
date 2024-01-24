@@ -50,7 +50,7 @@ export class FriendService {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        const [user, requester] = await Promise.all([
+        const [sender, requester] = await Promise.all([
             this.getUserById(senderId),
             this.getUserById(friendId),
         ]);
@@ -68,10 +68,7 @@ export class FriendService {
             oneDaySeconds,
         );
 
-        // 친구 신청 알림 발송
-        this.noticeService.emitEvent(senderId, friendId);
-
-        return { user, requester };
+        return { sender, requester };
     }
 
     // 친구 요청 수락
