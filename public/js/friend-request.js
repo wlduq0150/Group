@@ -1,28 +1,31 @@
-// const eventSource = new EventSource(`/notice/${userId}`);
+function showFriendRequest(user) {
+    const userId = user.id;
+    const discordName = user.username;
+    let lolIcon = 1;
+    let lolName = "롤 연동 안됨";
 
-// // SSE 이벤트 수신
-// eventSource.onmessage = (event) => {
-//     const data = JSON.parse(event.data);
-//     console.log("Received data:", data);
-//     alert("친구 신청이 왔습니다!");
-// };
+    if (user.lolUser) {
+        lolIcon = user.lolUser.profileIconId;
+        lolName = `${user.lolUser.nameTag}`;
+    }
 
-// // SSE 연결이 열렸을 때
-// eventSource.onopen = () => {
-//     console.log("SSE connection opened");
-// };
+    const friendRequestModal = document.querySelector(
+        "#friendRequestContainer .friend_request_modal",
+    );
 
-// // SSE 연결이 닫혔을 때
-// eventSource.onclose = () => {
-//     console.log("SSE connection closed");
-// };
+    console.log(friendRequestModal);
 
-// // SSE 연결 에러가 발생했을 때
-// eventSource.onerror = (error) => {
-//     console.error("SSE connection error:", error);
-// };
+    const iconElement = friendRequestModal.querySelector(".sender_img_box img");
+    const discordTagElement = friendRequestModal.querySelector(
+        ".sender_discord_tag",
+    );
+    const lolTagElement = friendRequestModal.querySelector(".sender_lol_tag");
 
-function showFriendRequest() {
+    friendRequestModal.dataset.senderId = userId;
+    iconElement.src = `https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/${lolIcon}.png`;
+    discordTagElement.textContent = discordName;
+    lolTagElement.textContent = lolName;
+
     document
         .querySelector("#friendRequestContainer")
         .classList.remove("hidden");
@@ -34,10 +37,10 @@ function hideFriendRequest() {
 
 async function acceptFriendRequest() {
     const modal = document.querySelector(".friend_request_modal");
-    const senderID = modal.dataset.senderID;
+    const senderId = modal.dataset.senderId;
 
     try {
-        const response = await fetch(`/friend/${senderID}/accept`, {
+        const response = await fetch(`/friend/${senderId}/accept`, {
             method: "POST",
         });
 
@@ -52,11 +55,11 @@ async function acceptFriendRequest() {
 
 async function rejectFriendRequest() {
     const modal = document.querySelector(".friend_request_modal");
-    const senderID = modal.dataset.senderID;
+    const senderId = modal.dataset.senderId;
 
     try {
-        const response = await fetch(`/friend/${senderID}/decline`, {
-            method: "POST",
+        const response = await fetch(`/friend/${senderId}/decline`, {
+            method: "DELETE",
         });
 
         const result = await response.json();

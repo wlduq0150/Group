@@ -96,8 +96,6 @@ function getUserProfile(clickUserId) {
 const clickUserId = 1;
 const mostChampionCount = 3;
 
-getUserProfile(clickUserId);
-
 function mouseenterHandler() {
     document.getElementById("win-rate").style.display = "none";
     document.querySelector(".wins-losses-box").style.display = "block";
@@ -106,6 +104,10 @@ function mouseenterHandler() {
 function mouseleaveHandler() {
     document.getElementById("win-rate").style.display = "block";
     document.querySelector(".wins-losses-box").style.display = "none";
+}
+
+function showProfileModal() {
+    document.querySelector("#profileContainer").classList.remove("hidden");
 }
 
 document.querySelector(".close-btn").addEventListener("click", (e) => {
