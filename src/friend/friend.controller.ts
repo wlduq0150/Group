@@ -36,7 +36,10 @@ export class FriendController {
         const { sender, requester } =
             await this.friendService.initiateFriendRequest(discordId, friendId);
 
-        this.friendGateway.emitEvent({ sender, accepterId: requester.id });
+        this.friendGateway.sendFriendRequest({
+            sender,
+            accepterId: requester.id,
+        });
 
         return true;
     }
@@ -50,10 +53,13 @@ export class FriendController {
     ) {
         const discordId = session.discordUserId;
 
-        const accept = await this.friendService.acceptFriendRequest(
+        const accepterId = await this.friendService.acceptFriendRequest(
             requestId,
             discordId,
         );
+
+        this.friendGateway.sendFriendComplete(requestId, accepterId);
+
         return true;
     }
 
@@ -86,11 +92,7 @@ export class FriendController {
             requestId,
             discordId,
         );
-        return {
-            statusCode: HttpStatus.OK,
-            message: "친구를 삭제했습니다.",
-            data: deleteUser,
-        };
+        return true;
     }
 
     // 유저 차단
@@ -103,11 +105,7 @@ export class FriendController {
         const discordId = session.discordUserId;
 
         const block = await this.friendService.blockUser(requestId, discordId);
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: "사용자를 차단했습니다.",
-            data: block,
-        };
+        return true;
     }
 
     // 유저 차단 해제
@@ -123,11 +121,7 @@ export class FriendController {
             requestId,
             discordId,
         );
-        return {
-            statusCode: HttpStatus.OK,
-            message: "사용자 차단을 해제했습니다.",
-            data: unblock,
-        };
+        return true;
     }
 
     // 친구 목록 조회

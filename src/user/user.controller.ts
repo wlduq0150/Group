@@ -11,6 +11,12 @@ export class UserController {
         return userName;
     }
 
+    @Get("/detail/:id")
+    async findUserDetail(@Param("id") userId: number) {
+        const user = await this.userService.findOneById(+userId);
+        return user;
+    }
+
     @Get("/checkLogin")
     async checkLogin(@Session() session: any) {
         const discordId = session.discordUserId;

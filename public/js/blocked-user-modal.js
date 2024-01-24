@@ -1,17 +1,8 @@
-async function getBlockedUser() {
+async function getBlockedUser(users) {
     const blockedUserList = document.querySelector(
         ".blocked-user-modal .blocked-user-list-box",
     );
-    const response = await fetch(`/friend/blocked-users`, {
-        method: "GET",
-    });
-    const user = await response.json();
-    //차단한 유저가 없을 때
-    if (!user) {
-        blockedUserList.innerHTML = "";
-    }
-    console.log(user.data);
-    for (let blocked of user.data) {
+    for (let blocked of users) {
         let blockedUserBox = document.createElement("div");
         blockedUserBox.setAttribute("class", "blocked-user-box");
         blockedUserBox.setAttribute("id", `${blocked.id}`);
@@ -32,12 +23,11 @@ async function getBlockedUser() {
     }
 }
 
-getBlockedUser();
+async function showBlockedUserList() {
+    getBlockedUser(blockedUsers);
+    document.querySelector("#blockedUserContainer").classList.remove("hidden");
+}
 
-const hideBlockedUserModal = document.querySelector(
-    "#profile .blocked-user-list-btn",
-);
-//차단목록 띄우기
-hideBlockedUserModal.addEventListener("click", (e) => {
-    document.getElementById("blockedUserContainer").classList.remove("hidden");
-});
+function hideBlockedUserList() {
+    document.querySelector("#blockedUserContainer").classList.remove("hidden");
+}

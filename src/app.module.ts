@@ -11,7 +11,6 @@ import { FriendModule } from "./friend/friend.module";
 
 import { LolModule } from "./lol/lol.module";
 import { CachingModule } from "./caching/caching.module";
-import { NoticeModule } from './notice/notice.module';
 
 @Module({
     imports: [
@@ -24,7 +23,6 @@ import { NoticeModule } from './notice/notice.module';
         GroupModule,
         FriendModule,
         DiscordModule,
-        NoticeModule,
     ],
     controllers: [AppController],
     providers: [AppService],

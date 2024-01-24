@@ -37,13 +37,7 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         await this.redisService.set(`friend:${userId}`, client.id);
     }
 
-    emitEvent(friendRequestDto: FriendRequestDto) {
-        this.server.serverSideEmit("notice", friendRequestDto);
-    }
-
-    @SubscribeMessage("notice")
-    async sendNotice(client: Socket, friendRequestDto: FriendRequestDto) {
-        console.log("여기까지 옴?");
+    async sendFriendRequest(friendRequestDto: FriendRequestDto) {
         const accepterClientId = await this.redisService.get(
             `friend:${friendRequestDto.accepterId}`,
         );
@@ -51,5 +45,21 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server
             .to(accepterClientId)
             .emit("friendRequest", { user: friendRequestDto.sender });
+    }
+
+    async sendFriendComplete(senderId: number, accepterId: number) {
+        const senderClientId = await this.redisService.get(
+            `friend:${senderId}`,
+        );
+        const accepterClientId = await this.redisService.get(
+            `friend:${accepterId}`,
+        );
+
+        this.server
+            .to(accepterClientId)
+            .emit("friendComplete", { friendId: senderId });
+        this.server
+            .to(senderClientId)
+            .emit("friendComplete", { friendId: accepterId });
     }
 }
