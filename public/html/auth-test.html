@@ -150,6 +150,7 @@
     let userId;
     let position;
     let allGroup;
+    let eventSource;
 
     //http://localhost:5001/group
     //http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com
@@ -187,6 +188,31 @@
       userId = +(document.getElementById("userId").value);
       console.log("유저: ", userId);
       socket.emit('connectWithUserId', userId);
+
+      if (userId) {
+        eventSource = new EventSource(`/notice/${userId}`);
+
+        eventSource.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log("Received data:", data);
+          alert("친구 신청이 왔습니다!");
+        };
+
+        // SSE 연결이 열렸을 때
+        eventSource.onopen = () => {
+          console.log("SSE connection opened");
+        };
+
+        // SSE 연결이 닫혔을 때
+        eventSource.onclose = () => {
+          console.log("SSE connection closed");
+        };
+
+        // SSE 연결 에러가 발생했을 때
+        eventSource.onerror = (error) => {
+          console.error("SSE connection error:", error);
+        };
+      }
     }
 
     function setGroup() {
