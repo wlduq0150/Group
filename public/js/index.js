@@ -137,6 +137,13 @@ async function updateLoginStatus() {
         userId = data.userId;
 
         if (data.userId) {
+            const response = await fetch(`/user/${data.userId}`, {
+                method: "GET",
+            });
+            const userName = await response.text();
+
+            document.querySelector("#profile .discord-user-name").innerHTML =
+                `${userName}`;
             loginBtn.value = "로그아웃";
             socket.emit("connectWithUserId", data.userId);
         } else {
