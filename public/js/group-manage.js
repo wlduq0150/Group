@@ -47,6 +47,7 @@ function createChatMessage(myId, userId, name, message) {
 
 const positionSelectBtn = document.getElementById("groupPositionSelect");
 const updateGroupBtn = document.getElementById("updateGroupSetting");
+const clickModalOutSide = document.getElementById("groupManageContainer");
 
 positionSelectBtn.addEventListener("click", (e) => {
     document
@@ -56,4 +57,13 @@ positionSelectBtn.addEventListener("click", (e) => {
 
 updateGroupBtn.addEventListener("click", (e) => {
     document.getElementById("updateGroupContainer").classList.remove("hidden");
+});
+
+//모달창 밖 눌렀을 때
+clickModalOutSide.addEventListener("click", (e) => {
+    if (e.target.id == "groupManageContainer") {
+        hideGroupManage();
+        hideSelectPosition();
+        hideUpdateGroup();
+    }
 });

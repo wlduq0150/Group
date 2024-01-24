@@ -252,7 +252,7 @@ async function updateGroupManageState(groupInfo, groupState) {
     } <span class="number">${groupState.currentUser}/${
         groupState.totalUser
     }</span>`;
-    ownerElement.innerHTML = `${ownerName}<span><img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/crown.png" /></span>`;
+    ownerElement.innerHTML = `${ownerName}`;
 }
 
 // 그룹 관리창 초기화(그룹 나갈시에 발생)
@@ -364,6 +364,14 @@ document
 
         socket.emit("chat", { message });
     });
+//엔터로 채팅 보내기
+const pressEnter = document.querySelector("#groupManageContainer .chat_input");
+pressEnter.addEventListener("keypress", (e) => {
+    if (e.keyCode == 13) {
+        socket.emit("chat", { message: pressEnter.value });
+        pressEnter.value = "";
+    }
+});
 
 socket.on("connect", () => {
     socket.emit("connectWithUserId", userId);
