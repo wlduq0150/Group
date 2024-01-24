@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, Session } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { LolServer } from "./constants/lol-server.constants";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -50,6 +50,15 @@ export class LolService {
     //     };
     // }
 
+    async findUserByNameTag(name: string, tag: string, userId: number) {
+        const userInfo = await this.lolUserRepository.findOneBy({
+            nameTag: name + "#" + tag,
+        });
+        if (!userInfo) {
+            await this.saveUserAllInfo(name, tag, userId);
+        }
+    }
+
     async findUserProfile(userId: number) {
         const userCacheKey: string = `userCache:id${userId}`;
         const userCache: string = await this.cacheManager.get(userCacheKey);
@@ -78,7 +87,6 @@ export class LolService {
 
     //유저생성
     async saveUserAllInfo(name: string, tag: string, discordUserId: number) {
-        //if(!discordUserId)
         const userInfo = await this.saveLolUser(name, tag, discordUserId);
         await this.saveChampionData(userInfo.id);
     }
@@ -97,7 +105,7 @@ export class LolService {
         await this.lolUserRepository.save({
             gameName: name,
             gameTag: tag,
-            nameTag: name + tag,
+            nameTag: name + "#" + tag,
             summonerLevel: summonerLevel,
             profileIconId: profileIconId,
             puuid: userPuuid.puuid,
