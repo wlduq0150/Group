@@ -1,5 +1,3 @@
-import { Enum } from "./constants.js";
-
 function attachOutListener(id) {
     const out = document.getElementById(`click${id}out`);
     out.addEventListener("click", (e) => {
@@ -75,23 +73,46 @@ function hideUpdateGroup() {
 
 const positions = ["jg", "top", "mid", "adc", "sup"];
 
-function clickUpdate(position, isDark) {
-    const positionElement = document.querySelector(
-        `.update-select-position-box .position-${position}`,
-    );
-    const imgElement = positionElement.querySelector("img");
-    const userNameElement = positionElement.querySelector(".user-name");
+// function clickUpdate(position, isDark) {
+//     const positionElement = document.querySelector(
+//         `.update-select-position-box .position-${position}`,
+//     );
+//     const imgElement = positionElement.querySelector("img");
+//     const userNameElement = positionElement.querySelector(".user-name");
 
-    if (userNameElement && userNameElement.innerText.trim() !== "") {
-        return;
+//     if (userNameElement && userNameElement.innerText.trim() !== "") {
+//         return;
+//     }
+
+//     const color = isDark ? "" : "흑";
+//     imgElement.src = `https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${Enum.Position[position]}${color}.png`;
+
+//     if (!userNameElement || userNameElement.innerText.trim() === "") {
+//         imgElement.onclick = () => clickUpdate(position, !isDark);
+//     }
+// }
+
+function clickUpdate(e) {
+    const target = e.currentTarget;
+
+    const isPositionActive = target.classList.contains("isPositionActive");
+    const img = target.querySelector("#updatePosition");
+    const imgSrc = decodeURIComponent(img.src);
+    const imgSplit = imgSrc.split("/lane/");
+    const imgPos = imgSplit[1].replace(".png", "");
+
+    if (isPositionActive) {
+        imgSplit[1] = imgPos + "흑" + ".png";
+        target.classList.remove("isPositionActive");
+    } else {
+        console.log("흑흑");
+        imgSplit[1] = imgPos.replace("흑", "") + ".png";
+        target.classList.add("isPositionActive");
     }
 
-    const color = isDark ? "" : "흑";
-    imgElement.src = `https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${Enum.Position[position]}${color}.png`;
-
-    if (!userNameElement || userNameElement.innerText.trim() === "") {
-        imgElement.onclick = () => clickUpdate(position, !isDark);
-    }
+    const updateImgSrc = imgSplit.join("/lane/");
+    console.log(updateImgSrc);
+    img.src = updateImgSrc;
 }
 
 positions.forEach((position) => {

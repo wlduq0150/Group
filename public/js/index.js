@@ -379,9 +379,13 @@ async function updateGroupUpdateState(groupInfo, groupState) {
         const isActive = groupState[position].isActive;
         const color = isActive ? "" : "흑";
         const positionName = Enum.Position[position];
-        document.querySelector(
-            `.update-select-position-box .position-${position} img`,
-        ).src =
+        const positionTarget = document.querySelector(
+            `.update-select-position-box .position-${position}`,
+        );
+        if (isActive) {
+            positionTarget.classList.add("isPositionActive");
+        }
+        positionTarget.querySelector(`img`).src =
             `https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${positionName}${color}.png`;
     });
 
