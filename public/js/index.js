@@ -2,6 +2,7 @@ import { Enum } from "./constants.js";
 
 let userId;
 let groupId;
+let eventSource;
 let allGroups = [];
 const socket = io("http://localhost:5001/group", {
     transports: ["websocket"],
@@ -61,6 +62,11 @@ loginBtn.addEventListener("click", async () => {
             console.error(err);
         }
     }
+});
+
+// 유저 클릭 모달창
+document.querySelector("#userClickContainer").addEventListener("click", (e) => {
+    e.currentTarget.classList.add("hidden");
 });
 
 // 그룹 생성 이벤트 처리
@@ -149,6 +155,31 @@ async function updateLoginStatus() {
         } else {
             loginBtn.value = "로그인";
         }
+
+        if (userId) {
+            eventSource = new EventSource(`/notice/${userId}`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log("Received data:", data);
+                showFriendRequest(data.sender);
+            };
+
+            // SSE 연결이 열렸을 때
+            eventSource.onopen = () => {
+                console.log("SSE connection opened");
+            };
+
+            // SSE 연결이 닫혔을 때
+            eventSource.onclose = () => {
+                console.log("SSE connection closed");
+            };
+
+            // SSE 연결 에러가 발생했을 때
+            eventSource.onerror = (error) => {
+                console.error("SSE connection error:", error);
+            };
+        }
     } catch (err) {
         console.error(err);
     }
@@ -195,7 +226,7 @@ async function updateGroupTable(groups) {
         <td class="group_tier">
             <div class="user-rank">${Enum.Tier[group.info.tier]}</div>
         </td>
-        <td class="group_user"><span class="user" data-id="${
+        <td class="group_user"><span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${
             group.info.owner
         }">${userName}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
@@ -371,6 +402,7 @@ document
 
         socket.emit("chat", { message });
     });
+
 //엔터로 채팅 보내기
 const pressEnter = document.querySelector("#groupManageContainer .chat_input");
 pressEnter.addEventListener("keypress", (e) => {
