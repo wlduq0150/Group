@@ -108,8 +108,12 @@ const updateComplete = document.querySelector(
 
 //완료 버튼 눌렀을 때
 updateComplete.addEventListener("click", (e) => {
-    document.getElementById("updateGroupContainer").classList.add("hidden");
+    hideUpdateGroup();
 });
+//그룹 수정 숨기기
+function hideUpdateGroup() {
+    document.getElementById("updateGroupContainer").classList.add("hidden");
+}
 
 function clickUpdateJg() {
     if (document.getElementById("1user").innerText) {

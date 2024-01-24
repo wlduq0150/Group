@@ -1,108 +1,115 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>main page</title>
-    <script src="../component.js"></script>
-    <link href="../css/index.css" rel="stylesheet" />
-    <script>
-        function loadHTML(file) {
-            const rawFile = new XMLHttpRequest();
-            rawFile.open("GET", file, false);
-            rawFile.onreadystatechange = function () {
-                if (rawFile.readyState === 4) {
-                    if (rawFile.status === 200 || rawFile.status === 0) {
-                        const allText = rawFile.responseText;
-                        document.write(allText);
+    <head>
+        <meta charset="UTF-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>main page</title>
+        <script src="../component.js"></script>
+        <link href="../css/index.css" rel="stylesheet" />
+        <script>
+            function loadHTML(file) {
+                const rawFile = new XMLHttpRequest();
+                rawFile.open("GET", file, false);
+                rawFile.onreadystatechange = function () {
+                    if (rawFile.readyState === 4) {
+                        if (rawFile.status === 200 || rawFile.status === 0) {
+                            const allText = rawFile.responseText;
+                            document.write(allText);
+                        }
                     }
-                }
-            };
-            rawFile.send(null);
-        }
-    </script>
-</head>
+                };
+                rawFile.send(null);
+            }
+        </script>
+    </head>
 
-<body>
-    <div class="user-context" id="user-context"></div>
-    <header>
-        <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png" />
-        <nav>
-            <div id="login">
-                <input class="login" type="button" value="로그인" />
-            </div>
-            <div id="profile">
-                <div id="profile-list">
-                    <div>laetipark</div>
-                    <ul id="profile-list-items">
-                        <li><a href="#">프로필</a></li>
-                        <li><a href="#">친구목록</a></li>
-                        <li><a href="#">차단목록</a></li>
-                    </ul>
+    <body>
+        <div class="user-context" id="user-context"></div>
+        <header>
+            <img
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png"
+            />
+            <nav>
+                <div id="profile">
+                    <div id="profile-list">
+                        <div class="discord-user-name"></div>
+                        <ul id="profile-list-items">
+                            <li><a href="#">프로필</a></li>
+                            <li><a href="#">친구목록</a></li>
+                            <li><a href="#">차단목록</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="hidden" id="groupManageContainer">
-        <script>
-            loadHTML("./group-manage.html");
-        </script>
-    </div>
-    <div class="hidden" id="groupContainer">
-        <script>
-            loadHTML("./create-group-modal.html");
-        </script>
-    </div>
-    <div class="hidden" id="profileContainer">
-        <script>
-            loadHTML("./profile-modal.html");
-        </script>
-    </div>
-    <div class="hidden" id="friendRequestContainer">
-        <script>
-            loadHTML("./friend-request-modal.html");
-        </script>
-    </div>
-    <main>
-        <div class="main main_page">
-            <div class="user-search">
-                <div class="refresh">
-                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png" />
+                <div id="login">
+                    <input class="login" type="button" value="로그인" />
                 </div>
-                <div class="search">
-                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png" />
-                    <input placeholder="Search" type="text" />
-                </div>
-                <div class="make-group" id="groupOpenButton" type="button">
-                    그룹 생성
-                </div>
-            </div>
-
-            <table id="groupTable">
-                <tbody>
-                    <tr>
-                        <th class="title_room" width="36%">제목</th>
-                        <th class="title_people" width="4%">인원</th>
-                        <th class="title_tier" width="7%">티어</th>
-                        <th class="title_user" width="15%">그룹장</th>
-                        <th class="title_type" width="10%">대기열</th>
-                        <th class="title_position" width="27%">
-                            포지션 현황
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
+            </nav>
+        </header>
+        <div class="hidden" id="groupManageContainer">
+            <script>
+                loadHTML("./group-manage.html");
+            </script>
         </div>
-        <img class="chatting-img-btn" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png"
-            alt="" />
-    </main>
+        <div class="hidden" id="groupContainer">
+            <script>
+                loadHTML("./create-group-modal.html");
+            </script>
+        </div>
+        <div class="hidden" id="profileContainer">
+            <script>
+                loadHTML("./profile-modal.html");
+            </script>
+        </div>
+        <div class="hidden" id="friendRequestContainer">
+            <script>
+                loadHTML("./friend-request-modal.html");
+            </script>
+        </div>
+        <main>
+            <div class="main main_page">
+                <div class="user-search">
+                    <div class="refresh">
+                        <img
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png"
+                        />
+                    </div>
+                    <div class="search">
+                        <img
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
+                        />
+                        <input placeholder="Search" type="text" />
+                    </div>
+                    <div class="make-group" id="groupOpenButton" type="button">
+                        그룹 생성
+                    </div>
+                </div>
 
-    <!-- <script src="../js/pop-up.js"></script> -->
+                <table id="groupTable">
+                    <tbody>
+                        <tr>
+                            <th class="title_room" width="36%">제목</th>
+                            <th class="title_people" width="4%">인원</th>
+                            <th class="title_tier" width="7%">티어</th>
+                            <th class="title_user" width="15%">그룹장</th>
+                            <th class="title_type" width="10%">대기열</th>
+                            <th class="title_position" width="27%">
+                                포지션 현황
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <img
+                class="chatting-img-btn"
+                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png"
+                alt=""
+            />
+        </main>
 
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <script type='module' src="../js/index.js"></script>
-    <!-- <script src="../js/login-modal.js"></script> -->
-</body>
+        <!-- <script src="../js/pop-up.js"></script> -->
 
+        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+        <script type="module" src="../js/index.js"></script>
+        <!-- <script src="../js/login-modal.js"></script> -->
+    </body>
 </html>
