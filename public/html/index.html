@@ -36,7 +36,11 @@
                         <ul id="profile-list-items">
                             <li><a href="#">프로필</a></li>
                             <li><a href="#">친구목록</a></li>
-                            <li><a href="#">차단목록</a></li>
+                            <li>
+                                <a href="#" class="blocked-user-list-btn"
+                                    >차단목록</a
+                                >
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -63,6 +67,11 @@
         <div class="hidden" id="friendRequestContainer">
             <script>
                 loadHTML("./friend-request-modal.html");
+            </script>
+        </div>
+        <div class="hidden" id="blockedUserContainer">
+            <script>
+                loadHTML("./blocked-user-modal.html");
             </script>
         </div>
         <main>

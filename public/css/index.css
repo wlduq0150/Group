@@ -315,6 +315,7 @@ aaa .login {
     position: absolute;
 }
 
+#blockedUserContainer.hidden,
 #friendRequestContainer.hidden,
 #profileContainer.hidden,
 #updateGroupContainer.hidden,
