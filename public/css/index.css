@@ -315,9 +315,6 @@ aaa .login {
     position: absolute;
 }
 
-
-
-
 #friendRequestContainer {
     width: 100%;
     height: 100vh;
@@ -331,6 +328,14 @@ aaa .login {
     width: 100%;
     height: 100vh;
     position: absolute;
+}
+
+#blockedUserContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
 }
 
 #blockedUserContainer.hidden,

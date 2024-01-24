@@ -9,8 +9,6 @@ import { RedisService } from "src/redis/redis.service";
 import { Repository } from "typeorm";
 import IORedis from "ioredis";
 import { UserService } from "src/user/user.service";
-import { randomBytes } from "crypto";
-import { NoticeService } from "src/notice/notice.service";
 @Injectable()
 export class FriendService {
     private readonly redisClient: IORedis;
@@ -20,7 +18,6 @@ export class FriendService {
         private readonly userRepository: Repository<User>,
         private readonly redisService: RedisService,
         private readonly userService: UserService,
-        private readonly noticeService: NoticeService,
     ) {
         this.redisClient = this.redisService.getRedisClient();
     }
@@ -50,7 +47,7 @@ export class FriendService {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        const [user, requester] = await Promise.all([
+        const [sender, requester] = await Promise.all([
             this.getUserById(senderId),
             this.getUserById(friendId),
         ]);
@@ -68,10 +65,7 @@ export class FriendService {
             oneDaySeconds,
         );
 
-        // 친구 신청 알림 발송
-        this.noticeService.emitEvent(senderId, friendId);
-
-        return { user, requester };
+        return { sender, requester };
     }
 
     // 친구 요청 수락
@@ -97,6 +91,8 @@ export class FriendService {
         await this.userRepository.save([accepter, requester]);
 
         await this.redisService.del(key);
+
+        return accepterId;
     }
 
     // 친구 요청 거절
@@ -238,8 +234,6 @@ export class FriendService {
                 reportedUsers: true,
             },
         });
-
-        console.log(user);
 
         if (!user) {
             throw new NotFoundException("해당하는 사용자를 찾을 수 없습니다.");

@@ -24,6 +24,8 @@ export class UserService {
             where: { id: userId },
             relations: {
                 lolUser: true,
+                friends: true,
+                blockedUsers: true,
             },
         });
         if (!user) {
