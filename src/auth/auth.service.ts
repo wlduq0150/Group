@@ -53,9 +53,6 @@ export class AuthService {
         const accessToken: string = accessTokenResponse.access_token;
 
         const discordUser: DiscordUser = await this.getDiscordUser(accessToken);
-        const user: User = await this.userSerivce.findOneByDiscordId(
-            discordUser.id,
-        );
 
         const isMember: Boolean = await this.isUserInGuild(discordUser.id);
 
@@ -64,6 +61,10 @@ export class AuthService {
         }
 
         await this.saveDiscordUser(discordUser);
+
+        const user: User = await this.userSerivce.findOneByDiscordId(
+            discordUser.id,
+        );
 
         return {
             discordUserId: discordUser.id,

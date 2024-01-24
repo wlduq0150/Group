@@ -39,4 +39,10 @@ export const Enum = {
         "team-rank": "자유랭크",
         aram: "칼바람 나락",
     },
+    numberToEnglish: {
+        2: "two",
+        3: "three",
+        4: "four",
+        5: "five",
+    },
 };
