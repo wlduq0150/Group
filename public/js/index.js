@@ -344,10 +344,112 @@ function resetSelectPositionState() {
 }
 
 // 그룹 설정 상태 변경시 업데이트
-async function updateGroupUpdateState(groupInfo, groupState) {}
+async function updateGroupUpdateState(groupInfo, groupState) {
+    const title = document.querySelector(
+        ".update-group-modal .group-title-input",
+    );
+    const mode = document.querySelector(
+        ".update-group-modal .group-mode-input",
+    );
+    const tier = document.querySelector(
+        ".update-group-modal .group-tier-input",
+    );
+    const people = document.querySelector(
+        ".update-group-modal .group-people-input",
+    );
+    const privateCheckbox = document.querySelector(
+        '.update-group-modal .private-box input[type="checkbox"]',
+    );
+    const password = document.querySelector(
+        ".update-group-modal .private-password",
+    );
+
+    if (groupInfo !== null) {
+        title.value = groupInfo.name;
+        mode.value = groupInfo.mode;
+        tier.value = groupInfo.tier;
+        privateCheckbox.checked = !groupInfo.open;
+        password.value = groupInfo.password ? groupInfo.password : "";
+    }
+    people.value = Enum.numberToEnglish[groupState.totalUser];
+
+    const positions = ["jg", "top", "mid", "adc", "sup"];
+
+    positions.forEach((position) => {
+        const isActive = groupState[position].isActive;
+        const color = isActive ? "" : "흑";
+        const positionName = Enum.Position[position];
+        document.querySelector(
+            `.update-select-position-box .position-${position} img`,
+        ).src =
+            `https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${positionName}${color}.png`;
+    });
+
+    for (let i = 0; i < positions.length; i++) {
+        const position = positions[i];
+        const userId = groupState[position].userId;
+
+        let userName = "";
+        if (userId) {
+            try {
+                const response = await fetch(`/user/${userId}`, {
+                    method: "GET",
+                });
+                userName = await response.text();
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        document.querySelector(`.position-${position} .user-name`).textContent =
+            userName;
+    }
+
+    console.log(groupState);
+}
 
 // 그룹 설정 상태 초기화(그룹 나갈시에 발생)
-function resetGroupUpdateState() {}
+function resetGroupUpdateState() {
+    document.querySelector(".update-group-modal .group-title-input").value = "";
+    document.querySelector(".update-group-modal .group-mode-input").value = "";
+    document.querySelector(".update-group-modal .group-tier-input").value = "";
+    document.querySelector(".update-group-modal .group-people-input").value =
+        "";
+    document.querySelector(
+        '.update-private-box input[type="checkbox"]',
+    ).checked = false;
+    document.querySelector(".update-private-password").value = "";
+
+    const positions = ["jg", "top", "mid", "adc", "sup"];
+    const imgSrcBase = "https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/";
+
+    positions.forEach((position) => {
+        resetPositionImage(
+            `.update-select-position-box .position-${position} img`,
+            `${imgSrcBase}${Enum.Position[position]}흑.png`,
+        );
+        resetPositionImage(
+            `.create-group-modal .select-position-box .position-${position} img`,
+            `${imgSrcBase}${Enum.Position[position]}흑.png`,
+        );
+        document.querySelector(`.position-${position} .user-name`).textContent =
+            "";
+    });
+
+    // 그룹 생성 초기화
+    document.querySelector(".create-group-modal .group-title-input").value = "";
+    document.querySelector('select[name="create-group-game-mode"]').value = "";
+    document.querySelector('select[name="create-group-game-tier"]').value = "";
+    document.querySelector('select[name="create-group-game-people"]').value =
+        "";
+    document.querySelector('.private-box input[type="checkbox"]').checked =
+        false;
+    document.querySelector(".private-password").value = "";
+}
+
+function resetPositionImage(selector, imgSrc) {
+    document.querySelector(selector).src = imgSrc;
+}
 
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
@@ -419,6 +521,7 @@ socket.on("groupJoin", (data) => {
     console.log("유저 그룹 참가 완료: ", data);
     groupId = data.groupId;
     const { groupInfo, groupState } = data;
+    console.log(`그룹 정보: ${groupInfo}, 그룹 상태: ${groupState}`);
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState);
     updateMyGroupState(groupState);
