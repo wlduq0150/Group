@@ -39,9 +39,9 @@
                     laetipark
                 </div>
                 <ul class="profile-list-items">
-                    <li><a href="#">프로필</a></li>
-                    <li><a href="#">친구목록</a></li>
-                    <li><a href="#">차단목록</a></li>
+                    <li><button>프로필</button></li>
+                    <li><button id="friendListOpenButton">친구목록</button></li>
+                    <li><button>차단목록</button></li>
                 </ul>
             </div>
             <input class="logout" type="button" value="로그아웃">
@@ -128,6 +128,11 @@
     <div class="hidden" id="profileContainer">
         <script>
             loadHTML("./profile-modal.html");
+        </script>
+    </div>
+    <div class="hidden" id="friendListContainer">
+        <script>
+            loadHTML("./friend-list.html");
         </script>
     </div>
 </main>
