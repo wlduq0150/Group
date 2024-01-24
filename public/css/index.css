@@ -315,6 +315,9 @@ aaa .login {
     position: absolute;
 }
 
+
+
+
 #friendRequestContainer {
     width: 100%;
     height: 100vh;
@@ -330,6 +333,7 @@ aaa .login {
     position: absolute;
 }
 
+#blockedUserContainer.hidden,
 #userClickContainer.hidden,
 #friendRequestContainer.hidden,
 #profileContainer.hidden,
