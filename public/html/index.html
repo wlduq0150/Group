@@ -24,7 +24,6 @@
     </script>
 </head>
 
-
 <body>
     <div class="user-context" id="user-context"></div>
     <header>
@@ -36,7 +35,9 @@
                     <ul id="profile-list-items">
                         <li><a href="#">프로필</a></li>
                         <li><a href="#">친구목록</a></li>
-                        <li><a href="#">차단목록</a></li>
+                        <li>
+                            <a href="#" class="blocked-user-list-btn">차단목록</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -70,63 +71,23 @@
             loadHTML("./user-click-modal.html");
         </script>
     </div>
+    <div class="hidden" id="blockedUserContainer">
+        <script>
+            loadHTML("./blocked-user-modal.html");
+        </script>
+    </div>
     <main>
         <div class="main main_page">
             <div class="user-search">
                 <div class="refresh">
                     <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png" />
-
                 </div>
                 <div class="search">
                     <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png" />
                     <input placeholder="Search" type="text" />
                 </div>
-
-            </nav>
-        </header>
-        <div class="hidden" id="groupManageContainer">
-            <script>
-                loadHTML("./group-manage.html");
-            </script>
-        </div>
-        <div class="hidden" id="groupContainer">
-            <script>
-                loadHTML("./create-group-modal.html");
-            </script>
-        </div>
-        <div class="hidden" id="profileContainer">
-            <script>
-                loadHTML("./profile-modal.html");
-            </script>
-        </div>
-        <div class="hidden" id="friendRequestContainer">
-            <script>
-                loadHTML("./friend-request-modal.html");
-            </script>
-        </div>
-        <div class="hidden" id="blockedUserContainer">
-            <script>
-                loadHTML("./blocked-user-modal.html");
-            </script>
-        </div>
-        <main>
-            <div class="main main_page">
-                <div class="user-search">
-                    <div class="refresh">
-                        <img
-                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png"
-                        />
-                    </div>
-                    <div class="search">
-                        <img
-                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
-                        />
-                        <input placeholder="Search" type="text" />
-                    </div>
-                    <div class="make-group" id="groupOpenButton" type="button">
-                        그룹 생성
-                    </div>
-
+                <div class="make-group" id="groupOpenButton" type="button">
+                    그룹 생성
                 </div>
             </div>
 
