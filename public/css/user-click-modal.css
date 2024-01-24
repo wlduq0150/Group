@@ -1,0 +1,28 @@
+/* body {
+    background-color: rgb(80, 80, 80);
+} */
+
+.user_click_modal {
+    width: 90px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    box-shadow: 0 10px 8px #000000;
+    border-radius: 12px;
+    z-index: 20;
+}
+
+.user_click_modal div {
+    height: 20%;
+    display: flex;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #6a6a6a;
+    cursor: pointer;
+}
+
+.user_click_modal div:hover {
+    color: #4b767f;
+}
