@@ -54,11 +54,6 @@
             loadHTML("./create-group-modal.html");
         </script>
     </div>
-    <div class="hidden" id="positionSelectContainer">
-        <script>
-            loadHTML("./select-position-modal.html");
-        </script>
-    </div>
     <div class="hidden" id="profileContainer">
         <script>
             loadHTML("./profile-modal.html");
@@ -91,36 +86,6 @@
                             포지션 현황
                         </th>
                     </tr>
-                    <tr class="user-group" data-id="1" id="profileOpenButton">
-                        <td class="group_name">
-                            예원님의 그룹
-                        </td>
-                        <td class="group_people">1/5</td>
-                        <td class="group_tier">
-                            <div class="user-rank">에메랄드</div>
-                        </td>
-                        <td class="group_user">
-                            <span class="user" data-id="1">예원</span>
-                        </td>
-                        <td class="group_type">자유 랭크</td>
-                        <td class="group_position">
-                            <div class="position_jungle">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" />
-                            </div>
-                            <div class="position_top">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png" />
-                            </div>
-                            <div class="position_mid">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png" />
-                            </div>
-                            <div class="position_bottom">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑바텀흑.png" />
-                            </div>
-                            <div class="position_support">
-                                <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png" />
-                            </div>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -131,7 +96,7 @@
     <!-- <script src="../js/pop-up.js"></script> -->
 
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <script src="../js/index.js"></script>
+    <script type='module' src="../js/index.js"></script>
     <!-- <script src="../js/login-modal.js"></script> -->
 </body>
 

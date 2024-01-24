@@ -95,7 +95,9 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const groupState = await this.groupService.joinGroup(groupId);
 
-        this.server.to(groupId).emit("groupJoin", { groupId, userId });
+        this.server
+            .to(groupId)
+            .emit("groupJoin", { groupId, userId, groupInfo, groupState });
         this.server
             .to(client.id)
             .emit("positionSelect", { groupId, groupInfo, groupState });
@@ -149,7 +151,9 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.join(groupId);
         client["groupId"] = groupId;
 
-        this.server.to(groupId).emit("groupJoin", { groupId, userId });
+        this.server
+            .to(groupId)
+            .emit("groupJoin", { groupId, userId, groupInfo, groupState });
         this.server
             .to(client.id)
             .emit("positionSelect", { groupId, groupInfo, groupState });
@@ -220,21 +224,22 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
         }
 
-        const result = await this.groupService.leaveGroup(groupId, userId);
+        const groupInfo = await this.groupService.findGroupInfoById(groupId);
+        const groupState = await this.groupService.leaveGroup(groupId, userId);
 
         // 그룹 나가기
         client.leave(groupId);
         client["groupId"] = null;
 
         // 그룹에 아무도 없어 그룹을 없애야 하는 경우
-        if (!result) {
+        if (!groupState) {
             this.server.to(client.id).emit("groupLeave");
         } else {
             // 그룹에 남은 유저가 있는 경우
+            this.server.to(groupId).emit("positionDeselected", { groupState });
             this.server
                 .to(groupId)
-                .emit("positionDeselected", { groupState: result });
-            this.server.to(groupId).emit("otherGroupLeave", { userId });
+                .emit("otherGroupLeave", { userId, groupInfo, groupState });
             this.server.to(client.id).emit("groupLeave");
         }
     }

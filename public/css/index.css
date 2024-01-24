@@ -290,6 +290,8 @@ aaa .login {
     justify-content: center;
     align-items: center;
     position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 4;
 }
 
 #positionSelectContainer {

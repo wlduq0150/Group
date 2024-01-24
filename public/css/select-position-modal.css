@@ -62,3 +62,7 @@
     border-radius: 15px;
     cursor: pointer;
 }
+
+.select-position-parent .forbidden {
+    pointer-events: none;
+}

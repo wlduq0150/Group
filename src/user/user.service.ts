@@ -34,6 +34,9 @@ export class UserService {
         const user = await this.userRepository.findOneBy({
             id: userId,
         });
+        if (!user) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
         return user.discordId;
     }
 
@@ -41,6 +44,9 @@ export class UserService {
         const user = await this.userRepository.findOneBy({
             id: userId,
         });
+        if (!user) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
         return user.username;
     }
 }
