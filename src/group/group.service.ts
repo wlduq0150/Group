@@ -12,6 +12,7 @@ import { DiscordService } from "src/discord/discord.service";
 import { UserService } from "src/user/user.service";
 import { UpdateGroupDto } from "./dto/update-group.dto";
 import { updateGroupState } from "./function/update-group-state.function";
+import { POSITION_LIST } from "./constants/position.constants";
 
 @Injectable()
 export class GroupService {
@@ -220,11 +221,13 @@ export class GroupService {
     }
 
     async leaveGroup(groupId: string, userId: number) {
+        const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
         const groupStateLockkey = this.generateGroupLockKey(groupId);
 
         const lock = await this.redlock.acquire([groupStateLockkey], 1000);
 
+        const groupInfo = await this.findGroupInfoById(groupId);
         let groupState = await this.findGroupStateById(groupId);
 
         try {
@@ -236,6 +239,19 @@ export class GroupService {
 
             // 유저 나가기
             groupState.currentUser -= 1;
+
+            // 방장일 경우 새로운 방장으로 교체
+            if (groupInfo.owner === userId) {
+                for (let position of POSITION_LIST) {
+                    if (
+                        groupState[position].isActive &&
+                        groupState[position].userId
+                    ) {
+                        groupInfo.owner = groupState[position].userId;
+                        break;
+                    }
+                }
+            }
 
             // 해당 그룹의 지속 여부
             const isGroupEmpty = groupState.currentUser > 0 ? false : true;
@@ -250,6 +266,11 @@ export class GroupService {
                 await this.removeGroup(groupId);
                 return null;
             } else {
+                // 변화 저장
+                await this.redisService.set(
+                    groupInfoKey,
+                    JSON.stringify(groupInfo),
+                );
                 await this.redisService.set(
                     groupStateKey,
                     JSON.stringify(groupState),

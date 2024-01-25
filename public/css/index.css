@@ -382,9 +382,21 @@ aaa .login {
     position: absolute;
     left: 50px;
     bottom: 50px;
-    width: 4%;
-    height: 8%;
+    width: 100px;
+    height: 90px;
     cursor: pointer;
+}
+
+.chatting-notice-img-btn {
+    position: absolute;
+    left: 150px;
+    bottom: 140px;
+    width: 70px;
+    height: 70px;
+}
+
+.chatting-notice-img-btn.hidden {
+    display: none;
 }
 
 .user_click {
