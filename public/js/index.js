@@ -593,7 +593,7 @@ chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
     if (checkManage.classList.contains("hidden")) {
         showGroupManage();
-        hideChatNoticeIcon;
+        hideChatNoticeIcon();
     } else {
         hideGroupManage();
     }
