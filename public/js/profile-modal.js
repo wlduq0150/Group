@@ -1,4 +1,4 @@
-function getUserProfile(clickUserId) {
+async function getUserProfile(clickUserId, discordUserName) {
     fetch(`/lol/user/${clickUserId}`, {
         method: "GET",
     })
@@ -10,7 +10,8 @@ function getUserProfile(clickUserId) {
       src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/${data.user.profileIconId}.png"
       alt=""
     />`;
-
+            document.querySelector(".name-box .discord-name").innerHTML =
+                `${discordUserName}`;
             document.querySelector(".lol-name-tag").innerHTML =
                 `${data.user.gameName}#${data.user.gameTag}`;
             document.querySelector(".user-comment").innerHTML =
@@ -44,7 +45,7 @@ function getUserProfile(clickUserId) {
             let mostChampionsParent = document.querySelector(
                 ".champion-box-parent",
             );
-
+            let mostChampionsBox = "";
             for (let i = 0; i < mostChampionCount; i++) {
                 const champKda = (
                     (Number(data.champion[i].kills) +
@@ -57,10 +58,10 @@ function getUserProfile(clickUserId) {
                 const winRate = Math.round(
                     (Number(data.champion[i].wins) / totalGame) * 100,
                 );
-                let mostChampionsChild = document.createElement("div");
-                mostChampionsParent.appendChild(mostChampionsChild);
 
-                mostChampionsChild.innerHTML = `
+                mostChampionsBox =
+                    mostChampionsBox +
+                    `
         <div class="most-champion-box">
         <div class="champion-icon-box">
         <img
@@ -86,8 +87,10 @@ function getUserProfile(clickUserId) {
           <div>${winRate}%</div>
           <span>${totalGame} 게임</span>
          </div>
+         </div>
         `;
             }
+            mostChampionsParent.innerHTML = `${mostChampionsBox}`;
         });
 
     return;
@@ -95,6 +98,28 @@ function getUserProfile(clickUserId) {
 
 const clickUserId = 1;
 const mostChampionCount = 3;
+//프로필 켜기
+const clickProfileBtn = document.querySelector("#profile .my-profile-btn");
+clickProfileBtn.addEventListener("click", (e) => {
+    openProfile(userId);
+});
+//discordUserId 로 discord이름과 lolUser정보 가져오기
+async function getLolUserId(discordUserId) {
+    const res = await fetch(`/lol/discordUser/${discordUserId}`, {
+        method: "GET",
+    });
+    if (!res.redirected) {
+        return;
+    }
+    const resp = await fetch(`/user/${discordUserId}`, { method: "GET" });
+    const discordUserName = await resp.text();
+    getUserProfile(lolUser, discordUserName);
+}
+//프로필을 켰을때 작동하는 함수
+function openProfile(discordUserId) {
+    showProfileModal();
+    getLolUserId(discordUserId);
+}
 
 function mouseenterHandler() {
     document.getElementById("win-rate").style.display = "none";
@@ -105,9 +130,14 @@ function mouseleaveHandler() {
     document.getElementById("win-rate").style.display = "block";
     document.querySelector(".wins-losses-box").style.display = "none";
 }
-
+//프로필 보여주거나 감추기
 function showProfileModal() {
-    document.querySelector("#profileContainer").classList.remove("hidden");
+    const checkProfile = document.querySelector("#profileContainer");
+    if (checkProfile.className == "hidden") {
+        checkProfile.classList.remove("hidden");
+    } else {
+        checkProfile.classList.add("hidden");
+    }
 }
 
 document.querySelector(".close-btn").addEventListener("click", (e) => {

@@ -370,200 +370,10 @@ function resetSelectPositionState() {
 }
 
 // 그룹 설정 상태 변경시 업데이트
-async function updateGroupUpdateState(groupInfo, groupState) {
-    const title = document.querySelector(
-        ".update-group-modal .group-title-input",
-    );
-    const mode = document.querySelector(
-        ".update-group-modal .group-mode-input",
-    );
-    const tier = document.querySelector(
-        ".update-group-modal .group-tier-input",
-    );
-    const people = document.querySelector(
-        ".update-group-modal .group-people-input",
-    );
-    const privateCheckbox = document.querySelector(
-        '.update-group-modal .private-box input[type="checkbox"]',
-    );
-    const password = document.querySelector(
-        ".update-group-modal .private-password",
-    );
-
-    if (groupInfo !== null) {
-        title.value = groupInfo.name;
-        mode.value = groupInfo.mode;
-        tier.value = groupInfo.tier;
-        privateCheckbox.checked = !groupInfo.open;
-        password.value = groupInfo.password ? groupInfo.password : "";
-    }
-    people.value = Enum.numberToEnglish[groupState.totalUser];
-
-    const positions = ["jg", "top", "mid", "adc", "sup"];
-
-    for (let i = 0; i < positions.length; i++) {
-        const position = positions[i];
-
-        // 이미지
-        const isActive = groupState[position].isActive;
-        const color = isActive ? "" : "흑";
-        const positionName = Enum.Position[position];
-        const positionTarget = document.querySelector(
-            `.update-select-position-box .position-${position}`,
-        );
-        if (isActive) {
-            positionTarget.classList.add("isPositionActive");
-        } else {
-            positionTarget.classList.remove("isPositionActive");
-        }
-        positionTarget.querySelector(`img`).src =
-            `https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${positionName}${color}.png`;
-
-        // 유저 이름
-        const userId = +groupState[position].userId;
-        let userName = "";
-        if (userId) {
-            try {
-                const response = await fetch(`/user/${userId}`, {
-                    method: "GET",
-                });
-                userName = await response.text();
-                positionTarget.dataset.userId = userId;
-                positionTarget.classList.add("positionSelected");
-            } catch (e) {
-                console.log(e);
-            }
-        } else {
-            positionTarget.dataset.userId = "";
-            positionTarget.classList.remove("positionSelected");
-        }
-
-        positionTarget.querySelector(".user-name").textContent = userName;
-    }
-
-    console.log(groupState);
-}
-
-// 수정 완료 버튼 클릭 시
-document.querySelector("#update-complete").addEventListener("click", () => {
-    const updatePosition = {
-        mid: false,
-        sup: false,
-        adc: false,
-        top: false,
-        jg: false,
-    };
-
-    const title = document.querySelector(
-        ".update-group-modal .group-title-input",
-    ).value;
-    const mode = document.querySelector(
-        ".update-group-modal .group-mode-input",
-    ).value;
-    const tier = document.querySelector(
-        ".update-group-modal .group-tier-input",
-    ).value;
-
-    Object.keys(updatePosition).forEach((position) => {
-        const positionElement = document.querySelector(
-            `.update-select-position-box .position-${position}`,
-        );
-        console.log(positionElement);
-        if (positionElement.classList.contains("isPositionActive")) {
-            updatePosition[position] = true;
-        }
-    });
-
-    socket.emit("groupUpdate", {
-        groupId,
-        mode,
-        title,
-        tier,
-        updatePosition,
-    });
-    alert("그룹을 수정하였습니다.");
-});
-
-document.querySelectorAll(".update-group-modal .out-btn").forEach((outBtn) => {
-    outBtn.addEventListener("click", (e) => {
-        const userId = +outBtn.parentElement.dataset.userId;
-        const userName =
-            outBtn.parentElement.querySelector(".user-name").textContent;
-        console.log(userId);
-        noneBlockOutModal(userId, userName);
-    });
-});
-
-document.querySelector(".out-agree-btn").addEventListener("click", (e) => {
-    const outBox = document.querySelector(".out-box");
-    const userId = +outBox.dataset.id;
-    socket.emit("kick", { kickedUserId: userId });
-    noneBlockOutModal();
-});
-
-document.querySelector(".out-cancel-btn").addEventListener("click", (e) => {
-    noneBlockOutModal();
-});
-
-// // 강퇴 임시
-// document
-//     .querySelector(".update-group-modal .out-btn")
-//     .addEventListener("click", () => {
-//         positions.forEach((position) => {
-//             const outButton = document.querySelector(
-//                 `.position-${position} .out-btn`,
-//             );
-//             outButton.addEventListener("click", () => {
-//                 const userId = groupState[position].userId;
-//                 if (userId) {
-//                     socket.emit("kick", { kickedUserId: userId });
-//                 }
-//             });
-//         });
-//     });
+async function updateGroupUpdateState(groupInfo, groupState) {}
 
 // 그룹 설정 상태 초기화(그룹 나갈시에 발생)
-function resetGroupUpdateState() {
-    document.querySelector(".update-group-modal .group-title-input").value = "";
-    document.querySelector(".update-group-modal .group-mode-input").value = "";
-    document.querySelector(".update-group-modal .group-tier-input").value = "";
-    document.querySelector(".update-group-modal .group-people-input").value =
-        "";
-    // document.querySelector(
-    //     '.update-private-box input[type="checkbox"]',
-    // ).checked = false;
-    // document.querySelector(".update-private-password").value = "";
-
-    const positions = ["jg", "top", "mid", "adc", "sup"];
-    const imgSrcBase = "https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/";
-
-    positions.forEach((position) => {
-        resetPositionImage(
-            `.update-select-position-box .position-${position} img`,
-            `${imgSrcBase}${Enum.Position[position]}흑.png`,
-        );
-        resetPositionImage(
-            `.create-group-modal .select-position-box .position-${position} img`,
-            `${imgSrcBase}${Enum.Position[position]}흑.png`,
-        );
-        document.querySelector(`.position-${position} .user-name`).textContent =
-            "";
-    });
-
-    // 그룹 생성 초기화
-    document.querySelector(".create-group-modal .group-title-input").value = "";
-    document.querySelector('select[name="create-group-game-mode"]').value = "";
-    document.querySelector('select[name="create-group-game-tier"]').value = "";
-    document.querySelector('select[name="create-group-game-people"]').value =
-        "";
-    document.querySelector('.private-box input[type="checkbox"]').checked =
-        false;
-    document.querySelector(".private-password").value = "";
-}
-
-function resetPositionImage(selector, imgSrc) {
-    document.querySelector(selector).src = imgSrc;
-}
+function resetGroupUpdateState() {}
 
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
@@ -635,23 +445,13 @@ socket.on("groupJoin", (data) => {
     console.log("유저 그룹 참가 완료: ", data);
     groupId = data.groupId;
     const { groupInfo, groupState } = data;
-    console.log(`그룹 정보: ${groupInfo}, 그룹 상태: ${groupState}`);
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState);
-    updateMyGroupState(groupState);
-});
-
-socket.on("groupUpdate", (data) => {
-    const { groupInfo, groupState } = data;
-    updateGroupManageState(groupInfo, groupState);
-    updateGroupUpdateState(groupInfo, groupState);
-    updateSelectPositionState(groupState);
     updateMyGroupState(groupState);
 });
 
 socket.on("groupKicked", (data) => {
     const { kickedUserId } = data;
-    console.log(kickedUserId);
 
     if (userId === kickedUserId) {
         socket.emit("groupLeave", { groupId });
@@ -671,7 +471,6 @@ socket.on("otherGroupLeave", (data) => {
     console.log("유저 그룹 나가기 완료: ", data);
     const { groupInfo, groupState } = data;
     updateGroupManageState(groupInfo, groupState);
-    updateGroupUpdateState(groupInfo, groupState);
 });
 
 socket.on("positionSelect", (data) => {

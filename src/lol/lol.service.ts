@@ -20,9 +20,15 @@ export class LolService {
         private readonly cacheManager: Cache,
     ) {}
 
-    //유저 id로 롤 유저 찾기
+    //디코유저 id로 롤 유저 찾기
     async findUserByUserId(userId: number) {
-        return await this.lolUserRepository.findOneBy({ userId: userId });
+        const lolUser = await this.lolUserRepository.findOneBy({
+            userId: userId,
+        });
+        if (!lolUser) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
+        return lolUser.id;
     }
 
     //이름+태그로 롤 유저 찾아서 없으면 새로 만들기

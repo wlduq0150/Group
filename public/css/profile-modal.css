@@ -228,6 +228,7 @@ span {
     padding: 6px;
     text-align: center;
     margin: 15px auto;
+    margin-bottom: 0;
     color: rgb(255, 255, 255);
     background-color: rgba(106, 106, 106);
     width: 70px;
