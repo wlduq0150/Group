@@ -1,9 +1,9 @@
-import { Enum } from "./constants.js";
-
 let userId;
 let groupId;
-let eventSource;
 let allGroups = [];
+let blockedUsers = [];
+let friends = [];
+const friendSocket = io("/friend");
 const socket = io("http://localhost:5001/group", {
     transports: ["websocket"],
     cors: {
@@ -66,6 +66,12 @@ loginBtn.addEventListener("click", async () => {
 
 // 유저 클릭 모달창
 document.querySelector("#userClickContainer").addEventListener("click", (e) => {
+    document
+        .querySelectorAll("#userClickContainer .user_click_modal div")
+        .forEach((target) => {
+            target.classList.add("hidden");
+        });
+
     e.currentTarget.classList.add("hidden");
 });
 
@@ -143,14 +149,27 @@ async function updateLoginStatus() {
         userId = data.userId;
 
         if (data.userId) {
-            const response = await fetch(`/user/${data.userId}`, {
+            const response = await fetch(`/user/detail/${data.userId}`, {
                 method: "GET",
             });
-            const userName = await response.text();
+            const user = await response.json();
+
+            blockedUsers = user.blockedUsers.map((blockedUser) => {
+                return blockedUser.id;
+            });
+
+            console.log("차단유저: ", blockedUsers);
+
+            friends = user.friends.map((friend) => {
+                return friend.id;
+            });
+
+            console.log("친구: ", friends);
 
             document.querySelector("#profile .discord-user-name").innerHTML =
-                `${userName}`;
+                `${user.username}`;
             loginBtn.value = "로그아웃";
+            //롤 유저 확이 함수
             const res = await fetch(`/lol/discordUser/${data.userId}`, {
                 method: "GET",
             });
@@ -171,33 +190,9 @@ async function updateLoginStatus() {
             }
 
             socket.emit("connectWithUserId", data.userId);
+            friendSocket.emit("connectWithUserId", data.userId);
         } else {
             loginBtn.value = "로그인";
-        }
-
-        if (userId) {
-            eventSource = new EventSource(`/notice/${userId}`);
-
-            eventSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log("Received data:", data);
-                showFriendRequest(data.sender);
-            };
-
-            // SSE 연결이 열렸을 때
-            eventSource.onopen = () => {
-                console.log("SSE connection opened");
-            };
-
-            // SSE 연결이 닫혔을 때
-            eventSource.onclose = () => {
-                console.log("SSE connection closed");
-            };
-
-            // SSE 연결 에러가 발생했을 때
-            eventSource.onerror = (error) => {
-                console.error("SSE connection error:", error);
-            };
         }
     } catch (err) {
         console.error(err);
@@ -291,7 +286,9 @@ function updateMyGroupState(groupState) {
 async function updateGroupManageState(groupInfo, groupState) {
     const titleElement = document.querySelector(".group_manage_header .title");
     const modeElement = document.querySelector(".group_manage_header .mode");
-    const ownerElement = document.querySelector(".group_manage_header .owner");
+    const ownerElement = document.querySelector(
+        ".group_manage_header .owner_name",
+    );
 
     let ownerName;
     try {
@@ -432,7 +429,7 @@ pressEnter.addEventListener("keypress", (e) => {
 });
 
 socket.on("connect", () => {
-    socket.emit("connectWithUserId", userId);
+    console.log("group 소켓 연결");
 });
 
 socket.on("disconnect", () => {
@@ -495,4 +492,20 @@ socket.on("positionDeselected", (data) => {
 socket.on("error", (data) => {
     console.log(data);
     alert(`[error] ${data.message}`);
+});
+
+friendSocket.on("connect", () => {
+    console.log("friend 소켓 연결");
+});
+
+friendSocket.on("disconnect", () => {
+    console.log("friend 소켓 연결 해제");
+});
+
+friendSocket.on("friendRequest", (data) => {
+    showFriendRequest(data.user);
+});
+
+friendSocket.on("friendComplete", (data) => {
+    friends.push(data.friendId);
 });

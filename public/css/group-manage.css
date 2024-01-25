@@ -56,7 +56,7 @@ input {
 }
 
 .group_manage_header .owner {
-    width: 12.5%;
+    width: 17.5%;
     text-align: center;
     line-height: 70px;
     font-size: 1.25rem;
@@ -68,20 +68,14 @@ input {
     text-overflow: ellipsis;
 }
 
-.group_manage_header .crown {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
 .group_manage_header .crown img {
     width: 16px;
     height: 16px;
 }
 
 .group_manage_header .state_box {
-    width: 22%;
-    padding: 23px 35px 17px 35px;
+    width: 17%;
+    padding: 23px 25px 17px 0px;
     text-align: center;
     box-sizing: border-box;
 }

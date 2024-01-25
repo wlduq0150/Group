@@ -4,7 +4,6 @@
 
 .user_click_modal {
     width: 90px;
-    height: 160px;
     display: flex;
     flex-direction: column;
     background-color: #fff;
@@ -14,7 +13,7 @@
 }
 
 .user_click_modal div {
-    height: 20%;
+    height: 30px;
     display: flex;
     font-weight: bold;
     justify-content: center;
@@ -25,4 +24,8 @@
 
 .user_click_modal div:hover {
     color: #4b767f;
+}
+
+.user_click_modal div.hidden {
+    display: none;
 }
