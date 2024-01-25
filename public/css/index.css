@@ -35,6 +35,11 @@ header {
 }
 
 body {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/cursor+(2).cur")
+            16 16,
+        auto;
+
     width: 100vw;
     height: 100vh;
 

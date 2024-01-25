@@ -9,7 +9,7 @@ import {
     UseInterceptors,
 } from "@nestjs/common";
 
-import { LolhDto } from "./dto/lol.dto";
+import { LolDto } from "./dto/lol.dto";
 import { LolService } from "./lol.service";
 import { LolUserIdDto } from "./dto/lol-userId.dto";
 import { UserService } from "src/user/user.service";
@@ -23,7 +23,7 @@ export class LolController {
     ) {}
 
     @Post()
-    async findUser(@Body() lolDto: LolhDto, @Session() session) {
+    async findUser(@Body() lolDto: LolDto, @Session() session) {
         const discordUser = await this.userService.findOneByDiscordId(
             session.discordId,
         );
@@ -32,6 +32,20 @@ export class LolController {
             lolDto.tag,
             discordUser.id,
         );
+    }
+
+    @Post("userNameTag")
+    async findUserByNameTag(@Body() lolDto: LolDto, @Session() session) {
+        return await this.lolService.findUserByNameTag(
+            lolDto.name,
+            lolDto.tag,
+            session.userId,
+        );
+    }
+
+    @Get("discordUser/:userId")
+    async findUserByUserId(@Param("userId") userId: number) {
+        return await this.lolService.findUserByUserId(userId);
     }
 
     @Get("user/:userId")
