@@ -138,7 +138,7 @@ export class FriendController {
         };
     }
 
-    // 친구 목록 조회
+    // 친구 신청 목록 조회
     @Get("/friend-requests")
     async getFriendRequestList(@Session() session) {
         const discordId = session.discordUserId;
