@@ -29,5 +29,13 @@ async function showBlockedUserList() {
 }
 
 function hideBlockedUserList() {
-    document.querySelector("#blockedUserContainer").classList.remove("hidden");
+    document.querySelector("#blockedUserContainer").classList.add("hidden");
 }
+
+document
+    .querySelector("#blockedUserContainer")
+    .addEventListener("click", (e) => {
+        if (e.target.classList.contains("container")) {
+            hideBlockedUserList();
+        }
+    });

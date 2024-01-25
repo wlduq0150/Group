@@ -203,14 +203,42 @@ export class FriendService {
         const myId = (await this.userService.findOneByDiscordId(myDiscordId))
             .id;
 
-        console.log("친구 조회하는 사람 id: ", myId);
-
         if (!myId) {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
         const user = await this.getUserById(myId);
         return user.friends;
+    }
+
+    async getFriendRequestList(myDiscordId: string) {
+        const myId = (await this.userService.findOneByDiscordId(myDiscordId))
+            .id;
+
+        if (!myId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const requests = await this.redisClient.keys(
+            `friend-request:*:${myId}`,
+        );
+
+        const requesters = [];
+
+        for (let req of requests) {
+            const requesterId = +req
+                .replace("friend-request:", "")
+                .split(":")[0];
+
+            const requester = await this.userService.findOneById(requesterId);
+            requesters.push({
+                id: requesterId,
+                discordName: requester.username,
+                loltag: requester.lolUser ? requester.lolUser.nameTag : null,
+            });
+        }
+
+        return requesters;
     }
 
     async getBlockedUsers(myDiscordId: string) {
