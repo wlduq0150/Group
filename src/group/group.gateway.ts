@@ -58,7 +58,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     async getAll(client: Socket): Promise<void> {
         const data = await this.groupService.findAllGroup();
 
-        this.server.emit("getAllGroup", { groups: data });
+        this.server.to(client.id).emit("getAllGroup", { groups: data });
     }
 
     // 클라이언트 socket 연결시 connections에 등록
@@ -224,8 +224,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
         }
 
-        const groupInfo = await this.groupService.findGroupInfoById(groupId);
         const groupState = await this.groupService.leaveGroup(groupId, userId);
+        const groupInfo = await this.groupService.findGroupInfoById(groupId);
 
         // 그룹 나가기
         client.leave(groupId);
@@ -250,6 +250,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const groupId: string = client["groupId"];
         const userId: number = +client["userId"];
+
+        if (userId === kickedUserId) {
+            throw new WsException("본인은 강제퇴장이 불가능합니다.");
+        }
 
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");

@@ -26,7 +26,7 @@ function checkIsSelected(target) {
 function setSPActive(target, name) {
     let src = decodeURIComponent(target.querySelector("#position").src);
     const srcSplit = src.split("/lane/");
-    const pos = srcSplit[srcSplit.length - 1].replace(".png", "");
+    let pos = srcSplit[srcSplit.length - 1].replace(".png", "");
 
     if (pos[pos.length - 1] !== "흑") {
         return;
@@ -43,8 +43,14 @@ function setSPActive(target, name) {
 function setSPDisable(target) {
     let src = decodeURIComponent(target.querySelector("img").src);
     const srcSplit = src.split("/lane/");
-    const pos = srcSplit[srcSplit.length - 1].replace(".png", "");
+    let pos = srcSplit[srcSplit.length - 1].replace(".png", "");
     const isForibidden = target.classList.contains("forbidden");
+
+    if (isForibidden) {
+        pos = target.classList[0].replace("position-", "");
+        pos = Enum.Position[pos];
+        console.log(pos);
+    }
 
     if (!isForibidden && pos[pos.length - 1] === "흑") {
         return;
