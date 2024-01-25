@@ -138,6 +138,21 @@ export class FriendController {
         };
     }
 
+    // 친구 신청 목록 조회
+    @Get("/friend-requests")
+    async getFriendRequestList(@Session() session) {
+        const discordId = session.discordUserId;
+
+        const friendRequests =
+            await this.friendService.getFriendRequestList(discordId);
+
+        return {
+            statusCode: HttpStatus.OK,
+            message: "친구를 조회했습니다.",
+            data: friendRequests,
+        };
+    }
+
     // 차단 목록 조회
     @Get("/blocked-users")
     async getBlockedUsers(@Session() session) {

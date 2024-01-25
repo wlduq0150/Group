@@ -73,6 +73,7 @@
   <label for="groupId">friend ID:</label>
   <input type="text" id="friendId" placeholder="Enter Friend ID">
   <button onclick="getFriendList()">get friend List</button>
+  <button onclick="getFriendRequestList()">get friend List</button>
   <button onclick="getBlockList()">get block List</button>
   <button onclick="sendFriendRequest()">send friend request</button>
   <button onclick="acceptFriendRequest()">accept friend request</button>
@@ -519,6 +520,25 @@
 
         const data = await response.json();
         console.log("친구 목록: ", data.data);
+
+        alert(data.message);
+      } catch (err) {
+        console.log(err);
+        alert(err.message)
+      }
+    }
+
+    async function getFriendRequestList() {
+      try {
+        const response = await fetch(`/friend/friend-requests`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+
+        const data = await response.json();
+        console.log("친구 신청 목록: ", data);
 
         alert(data.message);
       } catch (err) {

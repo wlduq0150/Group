@@ -287,6 +287,7 @@ aaa .login {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -335,6 +336,15 @@ aaa .login {
     position: absolute;
 }
 
+#friendListContanier {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    position: absolute;
+}
+
 #blockedUserContainer {
     width: 100%;
     height: 100vh;
@@ -343,6 +353,7 @@ aaa .login {
     align-items: flex-start;
 }
 
+#friendListContanier.hidden,
 #blockedUserContainer.hidden,
 #userClickContainer.hidden,
 #friendRequestContainer.hidden,
@@ -378,6 +389,7 @@ aaa .login {
     display: flex;
     align-items: center;
 }
+
 .chatting-img-btn {
     position: absolute;
     left: 50px;
