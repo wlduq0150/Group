@@ -151,9 +151,25 @@ async function updateLoginStatus() {
             document.querySelector("#profile .discord-user-name").innerHTML =
                 `${userName}`;
             loginBtn.value = "로그아웃";
-            const lolName = prompt("롤 닉네임을 입력해 주세요");
-            const lolTag = prompt("롤 테그를 입력해 주세요");
-            //롤 유저이름 테그로 유저 정보 가져오기
+            const res = await fetch(`/lol/discordUser/${data.userId}`, {
+                method: "GET",
+            });
+            const checkUser = await res.json();
+            if (!checkUser) {
+                const lolName = prompt("롤 닉네임을 입력해 주세요");
+                const lolTag = prompt("롤 테그를 입력해 주세요");
+                fetch(`/lol/userNameTag`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: lolName,
+                        tag: lolTag,
+                    }),
+                }).then((e) => console.log("유저 생성이 완료 되었습니다"));
+            }
+
             socket.emit("connectWithUserId", data.userId);
         } else {
             loginBtn.value = "로그인";

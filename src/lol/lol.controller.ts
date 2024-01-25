@@ -34,16 +34,18 @@ export class LolController {
         );
     }
 
-    @Get("userNameTag")
+    @Post("userNameTag")
     async findUserByNameTag(@Body() lolDto: LolDto, @Session() session) {
-        const discordUser = await this.userService.findOneByDiscordId(
-            session.discordId,
-        );
         return await this.lolService.findUserByNameTag(
             lolDto.name,
             lolDto.tag,
-            discordUser.id,
+            session.userId,
         );
+    }
+
+    @Get("discordUser/:userId")
+    async findUserByUserId(@Param("userId") userId: number) {
+        return await this.lolService.findUserByUserId(userId);
     }
 
     @Get("user/:userId")
