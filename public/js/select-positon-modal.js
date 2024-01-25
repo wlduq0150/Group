@@ -32,7 +32,7 @@ function setSPActive(target, name) {
         return;
     }
 
-    srcSplit[srcSplit.length - 1] = `${pos.replace("흑", "")}.png`;
+    srcSplit[srcSplit.length - 1] = `${pos.replaceAll("흑", "")}.png`;
     src = srcSplit.join("/lane/");
     target.querySelector("img").src = src;
     target.querySelector("#userName").innerHTML = name;
