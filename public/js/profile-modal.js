@@ -1,5 +1,5 @@
-async function getUserProfile(clickUserId, discordUserName) {
-    fetch(`/lol/user/${clickUserId}`, {
+async function getUserProfile(discordUserId, discordUserName) {
+    fetch(`/lol/user/${discordUserId}`, {
         method: "GET",
     })
         .then((res) => {
@@ -96,29 +96,39 @@ async function getUserProfile(clickUserId, discordUserName) {
     return;
 }
 
-const clickUserId = 1;
 const mostChampionCount = 3;
 //프로필 켜기
 const clickProfileBtn = document.querySelector("#profile .my-profile-btn");
 clickProfileBtn.addEventListener("click", (e) => {
-    openProfile(userId);
+    openProfile(userId, true);
 });
 //discordUserId 로 discord이름과 lolUser정보 가져오기
-async function getLolUserId(discordUserId) {
+async function getLolUserId(discordUserId, me) {
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
         method: "GET",
     });
-    if (!res.redirected) {
+    if (res.status >= 400) {
+        noDataLolUser(me);
         return;
     }
+    const lolUser = await res.text();
     const resp = await fetch(`/user/${discordUserId}`, { method: "GET" });
+    if (resp.status >= 400) {
+        noDataLolUser(me);
+        return;
+    }
     const discordUserName = await resp.text();
     getUserProfile(lolUser, discordUserName);
 }
+
 //프로필을 켰을때 작동하는 함수
-function openProfile(discordUserId) {
+function openProfile(discordUserId, me) {
+    if (!discordUserId) {
+        return;
+    }
+
     showProfileModal();
-    getLolUserId(discordUserId);
+    getLolUserId(discordUserId, me);
 }
 
 function mouseenterHandler() {
@@ -135,11 +145,62 @@ function showProfileModal() {
     const checkProfile = document.querySelector("#profileContainer");
     if (checkProfile.className == "hidden") {
         checkProfile.classList.remove("hidden");
+
+        document.querySelector(".parent").style.display = "block";
+        document.querySelector(".not-connect-modal").style.display = "none";
     } else {
         checkProfile.classList.add("hidden");
+        document.querySelector(".not-connect-modal").style.display = "none";
     }
 }
 
-document.querySelector(".close-btn").addEventListener("click", (e) => {
+document.querySelector(".parent .close-btn").addEventListener("click", (e) => {
     document.querySelector("#profileContainer").classList.add("hidden");
 });
+
+document
+    .querySelector(".not-connect-modal .close-btn")
+    .addEventListener("click", (e) => {
+        showProfileModal();
+        document.querySelector(".not-connect-modal").style.display = "none";
+    });
+
+//유저의 롤데이터가 없을때
+function noDataLolUser(me) {
+    //내가 연동안됬을 경우
+    if (me) {
+        document.querySelector(".parent").style.display = "none";
+        document.querySelector(".not-connect-modal").style.display = "block";
+        document.querySelector(
+            ".not-connect-modal .linking-account-btn",
+        ).style.visibility = "visible";
+    } else {
+        document.querySelector(".parent").style.display = "none";
+        document.querySelector(".not-connect-modal").style.display = "block";
+        document.querySelector(
+            ".not-connect-modal .linking-account-btn",
+        ).style.visibility = "hidden";
+    }
+}
+
+//계정연동 버튼을 눌렀을 떄
+const clickLinkingBtn = document.querySelector(
+    ".not-connect-modal .linking-account-btn",
+);
+clickLinkingBtn.addEventListener("click", (e) => {
+    const lolName = prompt("롤 닉네임을 입력해주세요");
+    const lolTag = prompt("롤 테그를 입력해주세요");
+    showProfileModal();
+    document.querySelector(".not-connect-modal").style.display = "none";
+    linkingLolUser(lolName, lolTag, userId);
+});
+
+async function linkingLolUser(lolName, lolTag, userId) {
+    await fetch(`/lol`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: lolName, tag: lolTag, userId: userId }),
+    }).then((e) => {
+        console.log("계정이 연결되었어요");
+    });
+}

@@ -74,6 +74,11 @@ main {
     border: none;
     border-radius: 8px;
     background-color: rgb(106, 106, 106, 0.5);
+
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .logout {
@@ -85,6 +90,10 @@ main {
     border: none;
     border-radius: 8px;
     background-color: rgb(106, 106, 106, 0.5);
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .main {
@@ -251,7 +260,10 @@ aaa .login {
 #groupCloseButton,
 #profileOpenButton,
 #profileCloseButton {
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 #groupContainer {
@@ -390,10 +402,16 @@ aaa .login {
     bottom: 50px;
     width: 4%;
     height: 8%;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .user_click {
     z-index: 5;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
