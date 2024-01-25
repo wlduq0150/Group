@@ -1,7 +1,6 @@
 import {
     Inject,
     Injectable,
-    InternalServerErrorException,
     NotFoundException,
     OnModuleInit,
     forwardRef,
