@@ -4,6 +4,13 @@ let userId;
 let groupId;
 const friendSocket = io("/friend");
 let allGroups = [];
+let updatePosition = {
+    mid: false,
+    sup: false,
+    adc: false,
+    top: false,
+    jg: false,
+};
 const socket = io("http://localhost:5001/group", {
     transports: ["websocket"],
     cors: {
@@ -409,8 +416,55 @@ async function updateGroupUpdateState(groupInfo, groupState) {
             userName;
     }
 
+    positions.forEach((position) => {
+        const positionElement = document.querySelector(
+            `update-select-position-box .position-${position}`,
+        );
+        if (positionElement.classList.contains("positionSelected")) {
+            updatePosition[position] = true;
+        }
+    });
+
     console.log(groupState);
 }
+
+// 수정 완료 버튼 클릭 시
+document.querySelector("#update-complete").addEventListener("click", () => {
+    const title = document.querySelector(
+        ".update-group-modal .group-title-input",
+    ).value;
+    const mode = document.querySelector(
+        ".update-group-modal .group-mode-input",
+    ).value;
+    const tier = document.querySelector(
+        ".update-group-modal .group-tier-input",
+    ).value;
+
+    socket.emit("groupUpdate", {
+        groupId,
+        mode,
+        title,
+        tier,
+        updatePosition,
+    });
+});
+
+// 강퇴 임시
+document
+    .querySelector(".update-group-modal .out-btn")
+    .addEventListener("click", () => {
+        positions.forEach((position) => {
+            const outButton = document.querySelector(
+                `.position-${position} .out-btn`,
+            );
+            outButton.addEventListener("click", () => {
+                const userId = groupState[position].userId;
+                if (userId) {
+                    socket.emit("kick", { kickedUserId: userId });
+                }
+            });
+        });
+    });
 
 // 그룹 설정 상태 초기화(그룹 나갈시에 발생)
 function resetGroupUpdateState() {
