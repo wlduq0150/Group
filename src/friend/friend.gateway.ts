@@ -10,6 +10,7 @@ import { Server, Socket } from "socket.io";
 import { WsExceptionFilter } from "src/group/filter/ws-exception.filter";
 import { FriendRequestDto } from "./dto/friend-request.dto";
 import { RedisService } from "src/redis/redis.service";
+import { SendMessageDto } from "./dto/firend-message.dto";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/friend" })
@@ -61,5 +62,32 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server
             .to(senderClientId)
             .emit("friendComplete", { friendId: accepterId });
+    }
+
+    //친구에게 메세지 보내기
+    @SubscribeMessage("sendMessage")
+    async sendMessageFriend(
+        client: Socket /*,sendMessageDto: SendMessageDto*/,
+    ) {
+        try {
+            client.emit("sendMessage", { message: "Gd" });
+        } catch {
+            console.error("err");
+        }
+        // const accepterClientId = await this.redisService.get(
+        //     `friend:${sendMessageDto.accepterId}`,
+        // );
+
+        // if (accepterClientId) {
+        //     this.server.to(accepterClientId).emit("sendMessage", {
+        //         senderId: client["userId"],
+        //         message: sendMessageDto.message,
+        //     });
+
+        //     client.emit("sendMessage", {
+        //         senderId: client["userId"],
+        //         message: sendMessageDto.message,
+        //     });
+        // }
     }
 }

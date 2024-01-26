@@ -42,9 +42,11 @@ export class LolService {
         return { message: "이미 존재하는 사용자 입니다" };
     }
 
+    //롤 유저id로 롤유저 찾기
     async findUserProfile(lolUserId: number) {
         const userCacheKey: string = `userCache:id${lolUserId}`;
         const userCache: string = await this.cacheManager.get(userCacheKey);
+
         if (userCache) {
             const userInfo = JSON.parse(userCache) as
                 | LolUser
