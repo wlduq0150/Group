@@ -170,26 +170,12 @@ async function updateLoginStatus() {
 
             document.querySelector("#profile .discord-user-name").innerHTML =
                 `${user.username}`;
+            //유저 아이디 저장
+            document
+                .querySelector("#profile #profile-list")
+                .setAttribute("data-id", `${data.userId}`);
+
             loginBtn.value = "로그아웃";
-            //롤 유저 확이 함수
-            // const res = await fetch(`/lol/discordUser/${data.userId}`, {
-            //     method: "GET",
-            // });
-            // const checkUser = await res.json();
-            // if (!checkUser) {
-            //     const lolName = prompt("롤 닉네임을 입력해 주세요");
-            //     const lolTag = prompt("롤 테그를 입력해 주세요");
-            //     fetch(`/lol/userNameTag`, {
-            //         method: "POST",
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //         },
-            //         body: JSON.stringify({
-            //             name: lolName,
-            //             tag: lolTag,
-            //         }),
-            //     }).then((e) => console.log("유저 생성이 완료 되었습니다"));
-            // }
 
             socket.emit("connectWithUserId", data.userId);
             friendSocket.emit("connectWithUserId", data.userId);
@@ -512,65 +498,8 @@ document.querySelector(".out-cancel-btn").addEventListener("click", (e) => {
     noneBlockOutModal();
 });
 
-// // 강퇴 임시
-// document
-//     .querySelector(".update-group-modal .out-btn")
-//     .addEventListener("click", () => {
-//         positions.forEach((position) => {
-//             const outButton = document.querySelector(
-//                 `.position-${position} .out-btn`,
-//             );
-//             outButton.addEventListener("click", () => {
-//                 const userId = groupState[position].userId;
-//                 if (userId) {
-//                     socket.emit("kick", { kickedUserId: userId });
-//                 }
-//             });
-//         });
-//     });
-
 // 그룹 설정 상태 초기화(그룹 나갈시에 발생)
-function resetGroupUpdateState() {
-    document.querySelector(".update-group-modal .group-title-input").value = "";
-    document.querySelector(".update-group-modal .group-mode-input").value = "";
-    document.querySelector(".update-group-modal .group-tier-input").value = "";
-    document.querySelector(".update-group-modal .group-people-input").value =
-        "";
-    // document.querySelector(
-    //     '.update-private-box input[type="checkbox"]',
-    // ).checked = false;
-    // document.querySelector(".update-private-password").value = "";
-
-    const positions = ["jg", "top", "mid", "adc", "sup"];
-    const imgSrcBase = "https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/";
-
-    positions.forEach((position) => {
-        resetPositionImage(
-            `.update-select-position-box .position-${position} img`,
-            `${imgSrcBase}${Enum.Position[position]}흑.png`,
-        );
-        resetPositionImage(
-            `.create-group-modal .select-position-box .position-${position} img`,
-            `${imgSrcBase}${Enum.Position[position]}흑.png`,
-        );
-        document.querySelector(`.position-${position} .user-name`).textContent =
-            "";
-    });
-
-    // 그룹 생성 초기화
-    document.querySelector(".create-group-modal .group-title-input").value = "";
-    document.querySelector('select[name="create-group-game-mode"]').value = "";
-    document.querySelector('select[name="create-group-game-tier"]').value = "";
-    document.querySelector('select[name="create-group-game-people"]').value =
-        "";
-    document.querySelector('.private-box input[type="checkbox"]').checked =
-        false;
-    document.querySelector(".private-password").value = "";
-}
-
-function resetPositionImage(selector, imgSrc) {
-    document.querySelector(selector).src = imgSrc;
-}
+function resetGroupUpdateState() {}
 
 function showChatNoticeIcon() {
     const chatNoticeIcon = document.querySelector(".chatting-notice-img-btn");
@@ -664,7 +593,6 @@ socket.on("groupJoin", (data) => {
     console.log("유저 그룹 참가 완료: ", data);
     groupId = data.groupId;
     const { groupInfo, groupState } = data;
-    console.log(`그룹 정보: ${groupInfo}, 그룹 상태: ${groupState}`);
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState);
     updateSelectPositionState(groupState);
@@ -679,7 +607,6 @@ socket.on("groupUpdate", (data) => {
 
 socket.on("groupKicked", (data) => {
     const { kickedUserId } = data;
-    console.log(kickedUserId);
 
     if (userId === kickedUserId) {
         socket.emit("groupLeave", { groupId });
@@ -699,7 +626,6 @@ socket.on("otherGroupLeave", (data) => {
     console.log("유저 그룹 나가기 완료: ", data);
     const { groupInfo, groupState } = data;
     updateGroupManageState(groupInfo, groupState);
-    updateGroupUpdateState(groupInfo, groupState);
 });
 
 socket.on("positionSelect", (data) => {

@@ -46,7 +46,10 @@ function showUserClickModal(e) {
 }
 
 function showProfile() {
-    showProfileModal();
+    const discordUserId = document.querySelector(
+        "#userClickContainer .user_click_modal",
+    ).dataset.id;
+    openProfile(discordUserId, false);
 }
 
 async function sendFriendRequest() {

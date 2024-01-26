@@ -34,6 +34,10 @@
     margin: 10px;
 }
 
+#modal .no-name-box {
+    margin-left: 10px;
+}
+
 #modal .user-comment-box {
     position: relative;
     display: flex;
@@ -228,14 +232,92 @@ span {
     padding: 6px;
     text-align: center;
     margin: 15px auto;
+    margin-bottom: 0;
     color: rgb(255, 255, 255);
     background-color: rgba(106, 106, 106);
     width: 70px;
     height: 30px;
     border-radius: 10px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
     box-sizing: content-box;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.not-connect-modal {
+    width: 400px;
+    height: 600px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border-radius: 20px;
+    box-shadow: 0 5px 6px #000000;
+}
+
+.not-connect-modal .bar {
+    box-shadow: inset 0px 5px 6px white;
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    height: 50px;
+    padding-top: 6px;
+    text-align: center;
+    line-height: 50px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
+}
+
+.not-connect-modal .not-profile-box {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.not-connect-modal .not-linked-account {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 25px;
+    text-align: center;
+    width: 100%;
+    height: 60%;
+}
+
+.not-connect-modal .linking-account-btn-box {
+    height: 26%;
+}
+
+.not-connect-modal .close-btn {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 6px;
+    text-align: center;
+    margin: 15px auto;
+    margin-top: 0;
+
+    color: rgb(255, 255, 255);
+    background-color: rgba(106, 106, 106);
+    width: 70px;
+    height: 30px;
+    border-radius: 10px;
+
+    box-sizing: content-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }

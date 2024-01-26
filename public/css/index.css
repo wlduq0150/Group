@@ -33,13 +33,20 @@ header {
         }
     }
 }
-
-body {
+*:active {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/ccursor.cur")
+            5 5,
+        pointer;
+}
+* {
     cursor:
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/cursor+(2).cur")
-            16 16,
+            5 5,
         auto;
+}
 
+body {
     width: 100vw;
     height: 100vh;
 
@@ -67,6 +74,11 @@ main {
     border: none;
     border-radius: 8px;
     background-color: rgb(106, 106, 106, 0.5);
+
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .logout {
@@ -78,6 +90,10 @@ main {
     border: none;
     border-radius: 8px;
     background-color: rgb(106, 106, 106, 0.5);
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .main {
@@ -153,6 +169,7 @@ main {
 
             > th:last-child,
             td:last-child {
+                border-right: none;
                 border-top-right-radius: 10px;
                 border-bottom-right-radius: 10px;
             }
@@ -165,9 +182,9 @@ main {
     }
 }
 
-#groupTable .title_position {
+/* #groupTable .title_position {
     position: absolute;
-}
+} */
 
 .user-rank {
     display: flex;
@@ -244,7 +261,10 @@ aaa .login {
 #groupCloseButton,
 #profileOpenButton,
 #profileCloseButton {
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 #groupContainer {
@@ -275,7 +295,6 @@ aaa .login {
         }
 
         #profile-list-items {
-            display: none;
             position: absolute;
             top: 30px;
             list-style: none;
@@ -396,7 +415,10 @@ aaa .login {
     bottom: 50px;
     width: 100px;
     height: 90px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .chatting-notice-img-btn {
@@ -413,5 +435,8 @@ aaa .login {
 
 .user_click {
     z-index: 5;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
