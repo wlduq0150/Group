@@ -22,15 +22,13 @@ export class LolController {
         private readonly userService: UserService,
     ) {}
 
+    //유저 생성
     @Post()
-    async findUser(@Body() lolDto: LolDto, @Session() session) {
-        const discordUser = await this.userService.findOneByDiscordId(
-            session.discordId,
-        );
+    async findUser(@Body() lolDto: LolDto) {
         return await this.lolService.saveUserAllInfo(
             lolDto.name,
             lolDto.tag,
-            discordUser.id,
+            lolDto.userId,
         );
     }
 

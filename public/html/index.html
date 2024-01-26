@@ -33,7 +33,9 @@
                 <div id="profile-list">
                     <div class="discord-user-name"></div>
                     <ul id="profile-list-items">
-                        <li><a href="#">프로필</a></li>
+                        <li>
+                            <a href="#" class="my-profile-btn">프로필</a>
+                        </li>
                         <li><a href="#">친구목록</a></li>
                         <li>
                             <a href="#" class="blocked-user-list-btn">차단목록</a>
@@ -51,6 +53,7 @@
             loadHTML("./group-manage.html");
         </script>
     </div>
+    </main>
     <div class="hidden" id="groupContainer">
         <script>
             loadHTML("./create-group-modal.html");
@@ -71,12 +74,7 @@
             loadHTML("./user-click-modal.html");
         </script>
     </div>
-    <div class="hidden container" id="friendListContanier">
-        <script>
-            loadHTML("./friend-list.html");
-        </script>
-    </div>
-    <div class="hidden container" id="blockedUserContainer">
+    <div class="hidden" id="blockedUserContainer">
         <script>
             loadHTML("./blocked-user-modal.html");
         </script>
