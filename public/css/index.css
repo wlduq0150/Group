@@ -169,6 +169,7 @@ main {
 
             > th:last-child,
             td:last-child {
+                border-right: none;
                 border-top-right-radius: 10px;
                 border-bottom-right-radius: 10px;
             }
@@ -181,9 +182,9 @@ main {
     }
 }
 
-#groupTable .title_position {
+/* #groupTable .title_position {
     position: absolute;
-}
+} */
 
 .user-rank {
     display: flex;

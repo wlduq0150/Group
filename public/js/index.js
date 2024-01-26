@@ -170,6 +170,11 @@ async function updateLoginStatus() {
 
             document.querySelector("#profile .discord-user-name").innerHTML =
                 `${user.username}`;
+            //유저 아이디 저장
+            document
+                .querySelector("#profile #profile-list")
+                .setAttribute("data-id", `${data.userId}`);
+
             loginBtn.value = "로그아웃";
 
             socket.emit("connectWithUserId", data.userId);

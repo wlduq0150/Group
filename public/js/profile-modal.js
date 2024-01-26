@@ -97,11 +97,6 @@ async function getUserProfile(discordUserId, discordUserName) {
 }
 
 const mostChampionCount = 3;
-//프로필 켜기
-const clickProfileBtn = document.querySelector("#profile .my-profile-btn");
-clickProfileBtn.addEventListener("click", (e) => {
-    openProfile(userId, true);
-});
 //discordUserId 로 discord이름과 lolUser정보 가져오기
 async function getLolUserId(discordUserId, me) {
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
@@ -146,7 +141,7 @@ function showProfileModal() {
     if (checkProfile.className == "hidden") {
         checkProfile.classList.remove("hidden");
 
-        document.querySelector(".parent").style.display = "block";
+        document.querySelector(".parent").style.display = "flex";
         document.querySelector(".not-connect-modal").style.display = "none";
     } else {
         checkProfile.classList.add("hidden");
@@ -170,13 +165,13 @@ function noDataLolUser(me) {
     //내가 연동안됬을 경우
     if (me) {
         document.querySelector(".parent").style.display = "none";
-        document.querySelector(".not-connect-modal").style.display = "block";
+        document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "visible";
     } else {
         document.querySelector(".parent").style.display = "none";
-        document.querySelector(".not-connect-modal").style.display = "block";
+        document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "hidden";
