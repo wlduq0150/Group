@@ -31,19 +31,11 @@
             />
             <nav>
                 <div id="profile">
-                    <div id="profile-list">
+                    <div
+                        id="profile-list"
+                        oncontextmenu="showUserClickModal(event)"
+                    >
                         <div class="discord-user-name"></div>
-                        <ul id="profile-list-items">
-                            <li>
-                                <a href="#" class="my-profile-btn">프로필</a>
-                            </li>
-                            <li><a href="#">친구목록</a></li>
-                            <li>
-                                <a href="#" class="blocked-user-list-btn"
-                                    >차단목록</a
-                                >
-                            </li>
-                        </ul>
                     </div>
                 </div>
                 <div id="login">

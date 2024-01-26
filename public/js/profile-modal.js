@@ -146,7 +146,7 @@ function showProfileModal() {
     if (checkProfile.className == "hidden") {
         checkProfile.classList.remove("hidden");
 
-        document.querySelector(".parent").style.display = "block";
+        document.querySelector(".parent").style.display = "flex";
         document.querySelector(".not-connect-modal").style.display = "none";
     } else {
         checkProfile.classList.add("hidden");
@@ -170,13 +170,13 @@ function noDataLolUser(me) {
     //내가 연동안됬을 경우
     if (me) {
         document.querySelector(".parent").style.display = "none";
-        document.querySelector(".not-connect-modal").style.display = "block";
+        document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "visible";
     } else {
         document.querySelector(".parent").style.display = "none";
-        document.querySelector(".not-connect-modal").style.display = "block";
+        document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "hidden";
