@@ -58,8 +58,6 @@ loginBtn.addEventListener("click", async () => {
             if (response.ok) {
                 loginBtn.value = "로그인";
             }
-
-            location.reload();
         } catch (err) {
             console.error(err);
         }
@@ -215,9 +213,10 @@ async function updateGroupTable(groups) {
 
         const tr = document.createElement("tr");
         tr.classList.add("user-group");
-        tr.id = group.groupId;
         tr.dataset.id = group.groupId;
         tr.onclick = joinGroup;
+
+        groupId = group.id;
 
         tr.innerHTML = `
         <td class="group_name">${group.info.name}</td>
@@ -239,9 +238,7 @@ async function updateGroupTable(groups) {
                         Enum.PositionClass[pos]
                     }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
                         group.state[pos] && group.state[pos].isActive
-                            ? group.state[pos].userId
-                                ? `${Enum.Position[pos]}`
-                                : `${Enum.Position[pos]}흑`
+                            ? `${Enum.Position[pos]}흑`
                             : "금지흑"
                     }.png" /></div>`,
             )
@@ -250,14 +247,8 @@ async function updateGroupTable(groups) {
 
         tableBody.appendChild(tr);
     }
-}
 
-// 그룹 테이블의 그룹 포지션 상태 업데이트
-function updateGroupStateFromTable(groupId, groupState) {
-    const groupElement = document.getElementById(groupId);
-
-    const positions = ["jg", "top", "mid", "adc", "sup"];
-    positions.map((pos) => {});
+    groups.forEach((group) => {});
 }
 
 // 그룹 참가 함수
@@ -273,9 +264,9 @@ function leaveGroup() {
 }
 
 // 그룹 상태 변경시 그룹 상태를 변경
-// function updateMyGroupState(groupState) {
-//     updateSelectPositionState(groupState);
-// }
+function updateMyGroupState(groupState) {
+    updateSelectPositionState(groupState);
+}
 
 // 그룹 관리창 업데이트
 async function updateGroupManageState(groupInfo, groupState) {
@@ -365,164 +356,16 @@ function resetSelectPositionState() {
 }
 
 // 그룹 설정 상태 변경시 업데이트
-async function updateGroupUpdateState(groupInfo, groupState) {
-    const title = document.querySelector(
-        ".update-group-modal .group-title-input",
-    );
-    const mode = document.querySelector(
-        ".update-group-modal .group-mode-input",
-    );
-    const tier = document.querySelector(
-        ".update-group-modal .group-tier-input",
-    );
-    const people = document.querySelector(
-        ".update-group-modal .group-people-input",
-    );
-    const privateCheckbox = document.querySelector(
-        '.update-group-modal .private-box input[type="checkbox"]',
-    );
-    const password = document.querySelector(
-        ".update-group-modal .private-password",
-    );
-
-    if (groupInfo !== null) {
-        title.value = groupInfo.name;
-        mode.value = groupInfo.mode;
-        tier.value = groupInfo.tier;
-        privateCheckbox.checked = !groupInfo.open;
-        password.value = groupInfo.password ? groupInfo.password : "";
-    }
-    people.value = Enum.numberToEnglish[groupState.totalUser];
-
-    const positions = ["jg", "top", "mid", "adc", "sup"];
-
-    for (let i = 0; i < positions.length; i++) {
-        const position = positions[i];
-
-        // 이미지
-        const isActive = groupState[position].isActive;
-        const color = isActive ? "" : "흑";
-        const positionName = Enum.Position[position];
-        const positionTarget = document.querySelector(
-            `.update-select-position-box .position-${position}`,
-        );
-        if (isActive) {
-            positionTarget.classList.add("isPositionActive");
-        } else {
-            positionTarget.classList.remove("isPositionActive");
-        }
-        positionTarget.querySelector(`img`).src =
-            `https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${positionName}${color}.png`;
-
-        // 유저 이름
-        const userId = +groupState[position].userId;
-        let userName = "";
-        if (userId) {
-            try {
-                const response = await fetch(`/user/${userId}`, {
-                    method: "GET",
-                });
-                userName = await response.text();
-                positionTarget.dataset.userId = userId;
-                positionTarget.classList.add("positionSelected");
-            } catch (e) {
-                console.log(e);
-            }
-        } else {
-            positionTarget.dataset.userId = "";
-            positionTarget.classList.remove("positionSelected");
-        }
-
-        positionTarget.querySelector(".user-name").textContent = userName;
-    }
-}
-
-// 수정 완료 버튼 클릭 시
-document.querySelector("#update-complete").addEventListener("click", () => {
-    const updatePosition = {
-        mid: false,
-        sup: false,
-        adc: false,
-        top: false,
-        jg: false,
-    };
-
-    const title = document.querySelector(
-        ".update-group-modal .group-title-input",
-    ).value;
-    const mode = document.querySelector(
-        ".update-group-modal .group-mode-input",
-    ).value;
-    const tier = document.querySelector(
-        ".update-group-modal .group-tier-input",
-    ).value;
-
-    Object.keys(updatePosition).forEach((position) => {
-        const positionElement = document.querySelector(
-            `.update-select-position-box .position-${position}`,
-        );
-        console.log(positionElement);
-        if (positionElement.classList.contains("isPositionActive")) {
-            updatePosition[position] = true;
-        }
-    });
-
-    socket.emit("groupUpdate", {
-        groupId,
-        mode,
-        name: title,
-        tier,
-        updatePosition,
-    });
-    alert("그룹을 수정하였습니다.");
-});
-
-document.querySelectorAll(".update-group-modal .out-btn").forEach((outBtn) => {
-    outBtn.addEventListener("click", (e) => {
-        const userId = +outBtn.parentElement.dataset.userId;
-        const userName =
-            outBtn.parentElement.querySelector(".user-name").textContent;
-        console.log(userId);
-        noneBlockOutModal(userId, userName);
-    });
-});
-
-document.querySelector(".out-agree-btn").addEventListener("click", (e) => {
-    const outBox = document.querySelector(".out-box");
-    const userId = +outBox.dataset.id;
-    socket.emit("kick", { kickedUserId: userId });
-    noneBlockOutModal();
-});
-
-document.querySelector(".out-cancel-btn").addEventListener("click", (e) => {
-    noneBlockOutModal();
-});
+async function updateGroupUpdateState(groupInfo, groupState) {}
 
 // 그룹 설정 상태 초기화(그룹 나갈시에 발생)
 function resetGroupUpdateState() {}
-
-function showChatNoticeIcon() {
-    const chatNoticeIcon = document.querySelector(".chatting-notice-img-btn");
-    const isHide = chatNoticeIcon.classList.contains("hidden");
-    if (isHide) {
-        chatNoticeIcon.classList.remove("hidden");
-    }
-}
-
-function hideChatNoticeIcon() {
-    const chatNoticeIcon = document.querySelector(".chatting-notice-img-btn");
-    const isHide = chatNoticeIcon.classList.contains("hidden");
-    if (!isHide) {
-        chatNoticeIcon.classList.add("hidden");
-    }
-}
 
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
     if (checkManage.classList.contains("hidden")) {
         showGroupManage();
-        hideChatNoticeIcon();
     } else {
         hideGroupManage();
     }
@@ -582,11 +425,6 @@ socket.on("disconnect", () => {
 socket.on("chat", (data) => {
     const { chat } = data;
     createChatMessage(userId, chat.userId, chat.name, chat.message);
-
-    const groupManageModal = document.querySelector("#groupManageContainer");
-    if (groupManageModal.classList.contains("hidden")) {
-        showChatNoticeIcon();
-    }
 });
 
 socket.on("groupJoin", (data) => {
@@ -595,14 +433,7 @@ socket.on("groupJoin", (data) => {
     const { groupInfo, groupState } = data;
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState);
-    updateSelectPositionState(groupState);
-});
-
-socket.on("groupUpdate", (data) => {
-    const { groupInfo, groupState } = data;
-    updateGroupManageState(groupInfo, groupState);
-    updateGroupUpdateState(groupInfo, groupState);
-    updateSelectPositionState(groupState);
+    updateMyGroupState(groupState);
 });
 
 socket.on("groupKicked", (data) => {

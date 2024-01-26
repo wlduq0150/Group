@@ -1,26 +1,43 @@
+//차단목록 눌렀을 때 차단목록 생성
 async function getBlockedUser(users) {
     const blockedUserList = document.querySelector(
         ".blocked-user-modal .blocked-user-list-box",
     );
-    for (let blocked of users) {
-        let blockedUserBox = document.createElement("div");
-        blockedUserBox.setAttribute("class", "blocked-user-box");
-        blockedUserBox.setAttribute("id", `${blocked.id}`);
-        blockedUserList.appendChild(blockedUserBox);
-        blockedUserBox.innerHTML = `
+    let blockedUserBox = "";
+    for (let userId of users) {
+        //discord 유저 id로 디코 이름과 롤 이름 태그 가져오기
+        const response = await fetch(`/user/${userId}`, { method: "GET" });
+        const blockedUserName = await response.text();
+        const res = await fetch(`/lol/discordUser/${userId}`, {
+            method: "GET",
+        });
+        let blockedLOlUser;
+        if (res.status >= 400) {
+            blockedLOlUser = {
+                profileIconId: 1,
+                nameTag: "롤과 연동되지 않은 계정입니다",
+            };
+        } else {
+            blockedLOlUser = await res.json();
+        }
+        blockedUserBox =
+            blockedUserBox +
+            `
+        <div class="blocked-user-box" id="${userId}">
         <div class="blocked-user-info">
             <div class="blocked-user-icon">
                 <img
-                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/9.png"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/${blockedLOlUser.profileIconId}.png"
                     alt=""
                 />
             </div>
         <div class="blocked-user-info-box">
-            <div class="blocked-discord-name">${blocked.username}</div>
-            <div>게임이름+태그</div>
+            <div class="blocked-discord-name">${blockedUserName}</div>
+            <div>${blockedLOlUser.nameTag}</div>
         </div>
-    </div>`;
+    </div></div>`;
     }
+    blockedUserList.innerHTML = blockedUserBox;
 }
 
 async function showBlockedUserList() {

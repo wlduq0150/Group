@@ -39,7 +39,7 @@ export class LolService {
         if (!userInfo) {
             await this.saveUserAllInfo(name, tag, userId);
         }
-        return;
+        return { message: "이미 존재하는 사용자 입니다" };
     }
 
     async findUserProfile(lolUserId: number) {
@@ -157,7 +157,6 @@ export class LolService {
     private async findUserPuuid(name: string, tag: string) {
         const asiaServer: string = LolServer[0];
         const apiKey: string = this.configService.get("LOL_API_KEY");
-
         const response = await fetch(
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
