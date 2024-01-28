@@ -49,9 +49,16 @@ export class GroupService {
     }
 
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {
-        const { name, mode, tier, mic, owner, position } = createGroupDto;
+        const { name, mode, people, tier, mic, owner, position } =
+            createGroupDto;
 
-        if (position.length === 0) {
+        if (mode === "aram" && !people) {
+            throw new WsException(
+                "칼바람나락 모드에서는 인원선택이 필요합니다.",
+            );
+        }
+
+        if (mode !== "aram" && position.length === 0) {
             throw new WsException("그룹원이 한명이상 필요합니다.");
         }
 
@@ -59,7 +66,7 @@ export class GroupService {
         const groupStateKey = this.generateGroupStateKey(groupId);
 
         const group: Group = { name, mode, tier, mic, owner, open: true };
-        const groupState = initGroupState(position);
+        const groupState = initGroupState(position, people);
 
         await this.redisService.set(groupInfoKey, JSON.stringify(group));
         await this.redisService.set(groupStateKey, JSON.stringify(groupState));
@@ -220,7 +227,7 @@ export class GroupService {
         return groupState;
     }
 
-    async leaveGroup(groupId: string, userId: number) {
+    async leaveGroup(groupId: string, userId: number, users: number[]) {
         const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
         const groupStateLockkey = this.generateGroupLockKey(groupId);
@@ -240,8 +247,8 @@ export class GroupService {
             // 유저 나가기
             groupState.currentUser -= 1;
 
-            // 방장일 경우 새로운 방장으로 교체
-            if (groupInfo.owner === userId) {
+            // 방장일 경우 새로운 방장으로 교체 (칼바람 나락이 아닐 경우)
+            if (groupInfo.mode !== "aram" && groupInfo.owner === userId) {
                 for (let position of POSITION_LIST) {
                     if (
                         groupState[position].isActive &&
@@ -251,6 +258,11 @@ export class GroupService {
                         break;
                     }
                 }
+            }
+
+            // 방장일 경우 새로운 방장으로 교체 (칼바람 나락이 아닐 경우)
+            if (groupInfo.mode === "aram" && groupInfo.owner === userId) {
+                groupInfo.owner = users[0];
             }
 
             // 해당 그룹의 지속 여부
