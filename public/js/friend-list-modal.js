@@ -173,7 +173,9 @@ async function getFriendRequestList() {
 }
 
 async function showFriendList() {
-    getFriendList(friends);
+    getFriendList(friends).then(() => {
+        dblclickFriend();
+    });
     document.querySelector("#friendListContanier").classList.remove("hidden");
 }
 

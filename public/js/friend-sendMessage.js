@@ -1,5 +1,8 @@
 function dblclickFriend() {
-    const allFriends = document.querySelectorAll(".friend_list .user");
+    const allFriends = document.querySelectorAll(
+        ".friend_list .friend_name .user",
+    );
+    console.log(allFriends[0]);
     for (let myFriend of allFriends) {
         myFriend.addEventListener("dblclick", (e) => {
             const message = prompt("보낼 메세지를 입력해 주세요");

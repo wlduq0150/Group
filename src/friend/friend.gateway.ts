@@ -67,25 +67,18 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //친구에게 메세지 보내기
     @SubscribeMessage("sendMessage")
     async sendMessageFriend(client: Socket, sendMessageDto: SendMessageDto) {
-        // try {
-        //     client.emit("sendMessage", { message: client["userId"] });
-        // } catch {
-        //     console.error("err");
-        // }
         const accepterClientId = await this.redisService.get(
-            `friend:${sendMessageDto.accepterId}`,
+            `friend:${sendMessageDto.frinedId}`,
         );
-
         if (accepterClientId) {
             this.server.to(accepterClientId).emit("sendMessage", {
                 senderId: client["userId"],
                 message: sendMessageDto.message,
             });
-
-            client.emit("sendMessage", {
-                senderId: client["userId"],
-                message: sendMessageDto.message,
-            });
         }
+        client.emit("sendMessage", {
+            senderId: client["userId"],
+            message: sendMessageDto.message,
+        });
     }
 }

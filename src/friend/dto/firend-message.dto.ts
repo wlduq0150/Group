@@ -2,7 +2,7 @@ import { IsNumber, IsString } from "class-validator";
 
 export class SendMessageDto {
     @IsNumber()
-    accepterId: number;
+    frinedId: string;
 
     @IsString()
     message: string;

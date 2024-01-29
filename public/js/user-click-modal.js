@@ -19,7 +19,6 @@ function showUserClickModal(e) {
     const isMe = userId === targetUserId;
 
     if (isMe) {
-        dblclickFriend();
         attrList.push("friend_list", "blocked_list");
     }
 
