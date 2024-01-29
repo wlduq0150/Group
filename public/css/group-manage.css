@@ -35,7 +35,7 @@ input {
 }
 
 .group_manage_header .title {
-    width: 28%;
+    width: 24%;
     text-align: center;
     line-height: 70px;
     font-size: 1.5rem;
@@ -48,7 +48,7 @@ input {
 }
 
 .group_manage_header .mode {
-    width: 12.5%;
+    width: 16.5%;
     text-align: center;
     line-height: 70px;
     font-size: 0.875rem;
@@ -152,6 +152,15 @@ input {
 .group_manage_chat_list .other {
     float: left;
     background-color: #b8e2f9;
+}
+
+.group_manage_chat_list .system {
+    width: 100%;
+    text-align: center;
+    background: none;
+    border: none;
+    color: #000;
+    box-shadow: none;
 }
 
 .group_manage_chat {
