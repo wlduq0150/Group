@@ -91,14 +91,13 @@ export class DiscordService implements OnModuleInit {
                 await this.deleteRole(guild.id, role.id);
             }
 
-            try {
-                await channel.delete();
-            } catch (err) {
-                if (err.code === 10003) {
-                    console.log("이미 삭제 된 채널.");
-                }
-            }
+            await channel.delete();
         } catch (error) {
+            if (error.code === 10003) {
+                console.log("이미 삭제 된 채널.");
+                return;
+            }
+
             console.error(`채널 삭제 중 오류 발생: ${channel.id}`, error);
         }
     }
