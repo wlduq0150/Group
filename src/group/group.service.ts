@@ -79,6 +79,12 @@ export class GroupService {
             );
         }
 
+        if (mode === "aram" && position.length) {
+            throw new WsException(
+                "칼바람나락 모드는 포지션 선택을 할 수 없습니다.",
+            );
+        }
+
         if (mode !== "aram" && position.length === 0) {
             throw new WsException("그룹원이 한명이상 필요합니다.");
         }
@@ -292,11 +298,11 @@ export class GroupService {
             if (isGroupEmpty) {
                 const discordId =
                     await this.userService.findDiscordIdByUserId(userId);
-                await this.discordService.deleteVoiceChannelForGroup(
+                this.removeGroup(groupId);
+                this.discordService.deleteVoiceChannelForGroup(
                     groupId,
                     discordId,
                 );
-                await this.removeGroup(groupId);
                 return null;
             } else {
                 // 변화 저장
