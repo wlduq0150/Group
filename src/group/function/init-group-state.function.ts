@@ -1,9 +1,12 @@
 import { GroupState } from "../interface/group-state.interface";
 import { Position } from "../type/position.type";
 
-export function initGroupState(position: Position[]): GroupState {
+export function initGroupState(
+    position: Position[],
+    people?: number,
+): GroupState {
     const groupState: GroupState = {
-        totalUser: position.length,
+        totalUser: position.length ? position.length : people,
         currentUser: 0,
         mid: { isActive: false, userId: null },
         adc: { isActive: false, userId: null },
@@ -17,6 +20,8 @@ export function initGroupState(position: Position[]): GroupState {
             groupState[pos].isActive = true;
         }
     });
+
+    console.log(groupState);
 
     return groupState;
 }

@@ -181,10 +181,19 @@ export class AuthService {
             discordId: discordUser.id,
         });
 
+        const isValidDiscriminator =
+            discordUser.discriminator &&
+            discordUser.discriminator !== "0" &&
+            discordUser.discriminator !== "0000";
+
+        const fullUsername = isValidDiscriminator
+            ? `${discordUser.username}#${discordUser.discriminator}`
+            : discordUser.username;
+
         if (!user) {
             user = this.userRepository.create({
                 discordId: discordUser.id,
-                username: discordUser.username,
+                username: fullUsername,
                 avatar:
                     discordUser.avatar !== undefined
                         ? discordUser.avatar

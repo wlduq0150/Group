@@ -1,5 +1,18 @@
-import { forwardRef, Inject, Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
-import { ChannelType, Client, GuildChannel, Role, VoiceBasedChannel, VoiceChannel } from "discord.js";
+import {
+    Inject,
+    Injectable,
+    NotFoundException,
+    OnModuleInit,
+    forwardRef,
+} from "@nestjs/common";
+import {
+    ChannelType,
+    Client,
+    GuildChannel,
+    Role,
+    VoiceBasedChannel,
+    VoiceChannel,
+} from "discord.js";
 import { ConfigService } from "@nestjs/config";
 import { GroupService } from "src/group/group.service";
 import { UserService } from "src/user/user.service";
@@ -7,7 +20,7 @@ import { UserService } from "src/user/user.service";
 @Injectable()
 export class DiscordService implements OnModuleInit {
     private readonly client: Client<boolean> = new Client({
-        intents: ["Guilds", "GuildVoiceStates", "GuildMembers"]
+        intents: ["Guilds", "GuildVoiceStates", "GuildMembers"],
     });
     private groupChannelMap = new Map<string, string>();
 
@@ -29,18 +42,19 @@ export class DiscordService implements OnModuleInit {
         );
 
         this.client.on("voiceStateUpdate", async (oldState, newState) => {
-            if (oldState.channelId && !newState.channelId) {
+            if (
+                oldState.channelId &&
+                (newState.channelId === lobbyChannelId || !newState.channelId)
+            ) {
                 const channel = oldState.channel;
                 const discordId = newState.member.id;
 
-                if (channel) {
-                    const shouldDelete = this.shouldDeleteChannel(
-                        channel,
-                        lobbyChannelId
-                    );
-                    if (shouldDelete) {
-                        await this.deleteChannel(channel, discordId);
-                    }
+                const shouldDelete = this.shouldDeleteChannel(
+                    channel,
+                    lobbyChannelId,
+                );
+                if (shouldDelete) {
+                    await this.deleteChannel(channel, discordId);
                 }
             }
         });

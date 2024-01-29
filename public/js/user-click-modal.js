@@ -49,7 +49,7 @@ function showProfile() {
     const discordUserId = document.querySelector(
         "#userClickContainer .user_click_modal",
     ).dataset.id;
-    openProfile(discordUserId, false);
+    openProfile(discordUserId);
 }
 
 async function sendFriendRequest() {
