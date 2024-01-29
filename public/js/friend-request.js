@@ -1,4 +1,4 @@
-function showFriendRequest(user) {
+async function showFriendRequest(user) {
     const userId = user.id;
     const discordName = user.username;
     let lolIcon = 1;
@@ -21,8 +21,16 @@ function showFriendRequest(user) {
     );
     const lolTagElement = friendRequestModal.querySelector(".sender_lol_tag");
 
+    const avatarHash = user.avatar;
+    const discordId = user.discordId;
+    const defaultAvatarUrl =
+        "https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png";
+    const avatarUrl = avatarHash
+        ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
+        : defaultAvatarUrl;
+
     friendRequestModal.dataset.senderId = userId;
-    iconElement.src = `https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/${lolIcon}.png`;
+    iconElement.src = avatarUrl;
     discordTagElement.textContent = discordName;
     lolTagElement.textContent = lolName;
 

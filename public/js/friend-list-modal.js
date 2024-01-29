@@ -32,7 +32,9 @@ async function getFriendList(userIds) {
         const userDetailResponse = await fetch(`/user/detail/${userId}`);
 
         const userName = await userNameResponse.text();
-        const userDetail = await userDetailResponse.text();
+        const userDetail = await userDetailResponse.json();
+
+        console.log(userDetail);
 
         const userDiv = document.createElement("div");
         const innerDiv1 = document.createElement("div");
@@ -60,11 +62,16 @@ async function getFriendList(userIds) {
         circleDiv.classList.add("circle");
         onlineDiv.appendChild(circleDiv);
 
-        imgDiv.setAttribute(
-            "src",
-            "https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png",
-        );
-        imgDiv.setAttribute("alt", "");
+        const avatarHash = userDetail.avatar;
+        const discordId = userDetail.discordId;
+        const defaultAvatarUrl =
+            "https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png";
+        const avatarUrl = avatarHash
+            ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
+            : defaultAvatarUrl;
+
+        imgDiv.setAttribute("src", avatarUrl);
+        imgDiv.setAttribute("alt", userName);
 
         innerDiv1.appendChild(imgDiv);
         innerDiv1.appendChild(nameDiv);
@@ -93,18 +100,29 @@ async function getFriendRequestList() {
 
     const response = await fetch("/friend/friend-requests");
     const data = await response.json();
-    console.log(data);
 
     for (const friendRequest of data.data) {
+        const userDetailResponse = await fetch(
+            `/user/detail/${friendRequest.id}`,
+        );
+
+        const userDetail = await userDetailResponse.json();
+
         const friendRequestDiv = document.createElement("div");
 
         const innerDiv1 = document.createElement("div");
         const imgDiv = document.createElement("div");
+
+        const avatarHash = userDetail.avatar;
+        const discordId = userDetail.discordId;
+        const defaultAvatarUrl =
+            "https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png";
+        const avatarUrl = avatarHash
+            ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
+            : defaultAvatarUrl;
+
         const img = document.createElement("img");
-        img.setAttribute(
-            "src",
-            "https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png",
-        );
+        img.setAttribute("src", avatarUrl);
         img.setAttribute("alt", "");
         imgDiv.appendChild(img);
 
