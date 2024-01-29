@@ -1,7 +1,7 @@
 import { IsNumber, IsString } from "class-validator";
 
 export class SendMessageDto {
-    @IsString()
+    @IsNumber()
     accepterId: number;
 
     @IsString()

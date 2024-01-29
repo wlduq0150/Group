@@ -495,3 +495,9 @@ friendSocket.on("friendRequest", (data) => {
 friendSocket.on("friendComplete", (data) => {
     friends.push(data.friendId);
 });
+
+// friendSocket.emit("sendMessage");
+
+friendSocket.on("sendMessage", (data) => {
+    console.log(data);
+});
