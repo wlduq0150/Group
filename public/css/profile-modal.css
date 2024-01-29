@@ -5,7 +5,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    position: absolute;
+    
     border-radius: 20px;
     box-shadow: 0 5px 6px #000000;
 }
@@ -305,6 +306,7 @@ span {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: absolute;
 
     border-radius: 20px;
     box-shadow: 0 5px 6px #000000;

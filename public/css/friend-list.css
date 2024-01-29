@@ -70,6 +70,7 @@
     background-color: white;
     border-radius: 20px;
     box-shadow: 0 5px 6px #000000;
+    position:absolute;
 }
 
 .friend_list_title {

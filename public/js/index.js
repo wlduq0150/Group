@@ -41,50 +41,6 @@ window.onload = function () {
     socket.emit("getAllGroup");
 };
 
-//Make the DIV element draggagle:
-console.log("dragMe" , document.getElementById("dragMe"));
-dragElement(document.getElementById("dragMe"));
-
-function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
-    /* if present, the header is where you move the DIV from:*/
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
-  }
-
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
-
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
-
-  function closeDragElement() {
-    /* stop moving when mouse button is released:*/
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
 // 로그인 이벤트 처리
 const loginBtn = document.getElementById('login-btn');
 
@@ -124,7 +80,7 @@ const makeGroupBtn = document.querySelector(".make-group");
 const groupContainer = document.querySelector("#groupContainer");
 const completeBtn = document.querySelector(".create-group-modal .complete-btn");
 const refreshBtn = document.querySelector(".refresh");
-const chattingBtn = document.querySelector(".chatting-img-btn");
+const chattingBtn = document.querySelector(".chatting_img_btn");
 
 makeGroupBtn.addEventListener("click", () => {
     if (loginBtn.value === "로그인") {
@@ -271,24 +227,24 @@ async function updateGroupTable(groups) {
             }">${userName}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
-        ${["jg", "top", "mid", "adc", "sup"]
+        <div>
+                ${["jg", "top", "mid", "adc", "sup"]
                 .map(
                     (pos) =>
                         `<div class="${Enum.PositionClass[pos]
                         }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${group.state[pos] && group.state[pos].isActive
-                            ? group.state[pos].userId
-                                ? `${Enum.Position[pos]}`
-                                : `${Enum.Position[pos]}흑`
+                            ? `${Enum.Position[pos]}흑`
                             : "금지흑"
                         }.png" /></div>`
                 )
                 .join("")}
+        </div>
     </td>`;
 
         tableBody.appendChild(tr);
     }
 
-    groups.forEach((group) => {});
+    groups.forEach((group) => { });
 }
 
 // 그룹 참가 함수
