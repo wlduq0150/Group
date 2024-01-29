@@ -6,7 +6,7 @@ import { UserModule } from "src/user/user.module";
 import { DiscordModule } from "src/discord/discord.module";
 
 @Module({
-    imports: [RedisModule, UserModule, forwardRef(() => DiscordModule)],
+    imports: [RedisModule, UserModule, DiscordModule],
     exports: [GroupService],
     providers: [GroupService, GroupGateway],
 })

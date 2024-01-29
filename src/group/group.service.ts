@@ -13,6 +13,7 @@ import { UserService } from "src/user/user.service";
 import { UpdateGroupDto } from "./dto/update-group.dto";
 import { updateGroupState } from "./function/update-group-state.function";
 import { POSITION_LIST } from "./constants/position.constants";
+import { GroupGateway } from "./group.gateway";
 
 @Injectable()
 export class GroupService {
@@ -23,6 +24,8 @@ export class GroupService {
         private readonly userService: UserService,
         @Inject(forwardRef(() => DiscordService))
         private readonly discordService: DiscordService,
+        @Inject(forwardRef(() => GroupGateway))
+        private readonly groupGateway: GroupGateway,
     ) {
         this.clear();
 
@@ -60,6 +63,10 @@ export class GroupService {
 
     async delDataInSocket(clientId: string, attr: string) {
         await this.redisService.getRedisClient().hdel(clientId, attr);
+    }
+
+    async findGroupUsers(groupId: string) {
+        return await this.groupGateway.findGroupUsers(groupId);
     }
 
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {

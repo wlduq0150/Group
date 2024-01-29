@@ -1,4 +1,4 @@
-import { Injectable, UseFilters } from "@nestjs/common";
+import { Inject, Injectable, UseFilters, forwardRef } from "@nestjs/common";
 import {
     OnGatewayConnection,
     OnGatewayDisconnect,
@@ -26,11 +26,13 @@ import { KickDto } from "./dto/kick-group.dto";
 export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
 
-    constructor(private readonly groupService: GroupService) {}
+    constructor(
+        @Inject(forwardRef(() => GroupService))
+        private readonly groupService: GroupService,
+    ) {}
 
     handleConnection(client: Socket) {
         console.log(`[Group]client connected: ${client.id}`);
-        client["groupId"] = null;
     }
 
     async handleDisconnect(client: Socket) {
