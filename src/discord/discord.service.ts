@@ -43,8 +43,9 @@ export class DiscordService implements OnModuleInit {
             if (oldState.channelId && !newState.channelId) {
                 const channel = oldState.channel;
                 const discordId = newState.member.id;
+                const movedToLobby = newState.channelId === lobbyChannelId;
 
-                if (channel) {
+                if (channel && (movedToLobby || !newState.channelId)) {
                     const shouldDelete = this.shouldDeleteChannel(
                         channel,
                         lobbyChannelId,

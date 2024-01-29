@@ -45,6 +45,29 @@ function createChatMessage(myId, userId, name, message) {
     lastWriter = userId;
 }
 
+async function moveDiscord() {
+    try {
+        const response = await fetch("/discord/join-voice", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            console.log(response);
+            throw new Error("서버 상태 오류");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        alert("음성 채널에 참여했습니다. 채널 ID: " + data.channelId);
+    } catch (err) {
+        alert(err.message);
+    }
+}
+
 const positionSelectBtn = document.getElementById("groupPositionSelect");
 const updateGroupBtn = document.getElementById("updateGroupSetting");
 const clickModalOutSide = document.getElementById("groupManageContainer");
