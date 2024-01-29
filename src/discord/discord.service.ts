@@ -40,19 +40,19 @@ export class DiscordService implements OnModuleInit {
         );
 
         this.client.on("voiceStateUpdate", async (oldState, newState) => {
-            if (oldState.channelId && !newState.channelId) {
+            if (
+                oldState.channelId &&
+                (newState.channelId === lobbyChannelId || !newState.channelId)
+            ) {
                 const channel = oldState.channel;
                 const discordId = newState.member.id;
-                const movedToLobby = newState.channelId === lobbyChannelId;
 
-                if (channel && (movedToLobby || !newState.channelId)) {
-                    const shouldDelete = this.shouldDeleteChannel(
-                        channel,
-                        lobbyChannelId,
-                    );
-                    if (shouldDelete) {
-                        await this.deleteChannel(channel, discordId);
-                    }
+                const shouldDelete = this.shouldDeleteChannel(
+                    channel,
+                    lobbyChannelId,
+                );
+                if (shouldDelete) {
+                    await this.deleteChannel(channel, discordId);
                 }
             }
         });
