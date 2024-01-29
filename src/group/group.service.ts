@@ -48,6 +48,20 @@ export class GroupService {
         return `group:lock:${groupId}`;
     }
 
+    async saveDataInSocket(clientId: string, attr: string, data: any) {
+        await this.redisService
+            .getRedisClient()
+            .hset(clientId, attr, data.toString());
+    }
+
+    async getDataInSocket(clientId: string, attr: string) {
+        return await this.redisService.getRedisClient().hget(clientId, attr);
+    }
+
+    async delDataInSocket(clientId: string, attr: string) {
+        await this.redisService.getRedisClient().hdel(clientId, attr);
+    }
+
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {
         const { name, mode, people, tier, mic, owner, position } =
             createGroupDto;

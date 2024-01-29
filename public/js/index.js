@@ -474,7 +474,6 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
         for (let i = 0; i < aramUsers.length; i++) {
             const position = positions[i];
             const userId = aramUsers[i];
-            console.log("하이 ", userId);
 
             const positionTarget = document.querySelector(
                 `.update-select-position-box .position-${position}`,
@@ -630,6 +629,7 @@ socket.on("groupJoin", (data) => {
     console.log("유저 그룹 참가 완료: ", data);
     groupId = data.groupId;
     const { groupInfo, groupState, users, userId } = data;
+    console.log("유저 목록: ", users);
     createSystemMessage(userId, "join");
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState, users ? [...users] : []);

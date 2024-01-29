@@ -43,13 +43,17 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             console.log("예상치 못한 에러 발생");
         }
 
+        Promise.all([
+            this.groupService.delDataInSocket(client.id, "userId"),
+            this.groupService.delDataInSocket(client.id, "groupId"),
+        ]);
         console.log(`[Group]client disconnected: ${client.id}`);
     }
 
     // 클라이언트 socket 연결시 connections에 등록
     @SubscribeMessage("connectWithUserId")
-    connectWithUserId(client: Socket, userId: number): void {
-        client["userId"] = +userId;
+    async connectWithUserId(client: Socket, userId: number): Promise<void> {
+        await this.groupService.saveDataInSocket(client.id, "userId", userId);
     }
 
     @SubscribeMessage("clear")
@@ -68,7 +72,15 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async findGroupUsers(groupId: string) {
         const clientSockets = await this.server.in(groupId).fetchSockets();
-        const users: number[] = clientSockets.map((socket) => socket["userId"]);
+        const users: number[] = [];
+        for (let client of clientSockets) {
+            const userId = +(await this.groupService.getDataInSocket(
+                client.id,
+                "userId",
+            ));
+            users.push(userId);
+        }
+
         return users;
     }
 
@@ -79,7 +91,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         createGroupDto: CreateGroupDto,
     ): Promise<void> {
         console.log(createGroupDto);
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
+
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -104,7 +120,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         updateGroupDto: UpdateGroupDto,
     ): Promise<void> {
         const { groupId } = updateGroupDto;
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -134,7 +153,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage("groupJoin")
     async groupJoin(client: Socket, joinGroupDto: JoinGroupDto): Promise<void> {
         const { groupId } = joinGroupDto;
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -150,10 +172,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         // 그룹 참가
         await client.join(groupId);
-        client["groupId"] = groupId;
+        await this.groupService.saveDataInSocket(client.id, "groupId", groupId);
 
         // 소켓으로 접속한 유저들 목록 불러오기
         const users = await this.findGroupUsers(groupId);
+        console.log("유저 목록: ", users);
 
         this.server.to(groupId).emit("groupJoin", {
             groupId,
@@ -175,7 +198,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
         const { groupId, position } = selectPositionDto;
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -202,7 +228,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
         const { groupId, position } = selectPositionDto;
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -222,8 +251,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage("groupLeave")
     async groupLeave(client: Socket, force?: boolean): Promise<void> {
-        const groupId: string = client["groupId"];
-        const userId: number = +client["userId"];
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
 
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
@@ -235,7 +270,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         // 그룹 나가기
         client.leave(groupId);
-        client["groupId"] = null;
+        await this.groupService.delDataInSocket(client.id, "groupId");
 
         // 칼바람 나락시 방장 교체를 위한 유저 목록
         const users = await this.findGroupUsers(groupId);
@@ -274,8 +309,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     async kickUser(client: Socket, kickDto: KickDto): Promise<void> {
         const { kickedUserId } = kickDto;
 
-        const groupId: string = client["groupId"];
-        const userId: number = +client["userId"];
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
 
         if (userId === kickedUserId) {
             throw new WsException("본인은 강제퇴장이 불가능합니다.");
@@ -306,8 +347,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("그룹에 참여하고 있지 않습니다.");
         }
 
-        const groupId = client["groupId"];
-        const userId = client["userId"];
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
 
         const chat = await this.groupService.createGroupChat(userId, message);
 
