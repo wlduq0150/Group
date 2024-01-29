@@ -63,6 +63,7 @@
 }
 
 .create-group-modal .people-box {
+    display: none;
     width: 7%;
 }
 
@@ -85,6 +86,10 @@
     height: 110px;
     width: 110px;
     cursor: pointer;
+}
+
+.create-group-modal .select-position-box .forbidden {
+    pointer-events: none;
 }
 
 .create-group-modal .complete-btn {

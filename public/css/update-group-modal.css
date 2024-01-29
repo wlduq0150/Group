@@ -51,6 +51,7 @@
 }
 
 .update-group-modal .people-box {
+    display: none;
     width: 7%;
 }
 
