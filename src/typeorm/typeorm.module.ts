@@ -1,6 +1,9 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { LolChampion } from "src/entity/lol-champion.entity";
+import { LolUser } from "src/entity/lol-user.entity";
+import { User } from "src/entity/user.entity";
 
 @Module({})
 export class TypeormModule {
@@ -8,12 +11,12 @@ export class TypeormModule {
         const typeormModule: DynamicModule = TypeOrmModule.forRootAsync({
             useFactory: (configService: ConfigService) => ({
                 type: "mysql",
-                host: "localhost",
-                port: 3306,
-                username: "root",
-                password: "1q2w3e4r",
-                database: "group",
-                entities: ["dist/**/**/*.entity.{ts,js}"],
+                host: configService.get<string>("DATABASE_HOST"),
+                port: configService.get<number>("DATABASE_PORT"),
+                username: configService.get<string>("DATABASE_USERNAME"),
+                password: configService.get<string>("DATABASE_PASSWORD"),
+                database: configService.get<string>("DATABASE_NAME"),
+                entities: [User, LolChampion, LolUser],
                 synchronize: true,
                 logging: false
             }),

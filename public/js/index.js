@@ -7,8 +7,8 @@ const socket = io("http://localhost:5001/group", {
     transports: ["websocket"],
     cors: {
         origin: "http://127.0.0.1:5500/public/index.html",
-        methods: ["GET", "POST"],
-    },
+        methods: ["GET", "POST"]
+    }
 });
 
 window.onload = function () {
@@ -42,16 +42,17 @@ window.onload = function () {
 };
 
 // 로그인 이벤트 처리
-const loginBtn = document.querySelector(".login");
+const loginBtn = document.getElementById('login-btn');
 
 loginBtn.addEventListener("click", async () => {
+    console.log(loginBtn)
     if (loginBtn.value === "로그인") {
         window.location.href = "/auth/login";
     } else {
         try {
             const response = await fetch("/auth/logout", {
                 method: "GET",
-                credentials: "include",
+                credentials: "includerySelec"
             });
 
             if (response.ok) {
@@ -97,26 +98,26 @@ completeBtn.addEventListener("click", async function (e) {
     e.preventDefault();
 
     const title = document.querySelector(
-        ".create-group-modal .group-title-input",
+        ".create-group-modal .group-title-input"
     ).value;
     const mode = document.querySelector(
-        'select[name="create-group-game-mode"]',
+        "select[name=\"create-group-game-mode\"]"
     ).value;
     const tier = document.querySelector(
-        'select[name="create-group-game-tier"]',
+        "select[name=\"create-group-game-tier\"]"
     ).value;
     const people = +document.querySelector(
         'select[name="create-group-game-people"]',
     ).value;
     const privateCheckbox = document.querySelector(
-        '.private-box input[type="checkbox"]',
+        ".private-box input[type=\"checkbox\"]"
     );
     const password = document.querySelector(".private-password").value;
     const positions = document.querySelectorAll(
-        ".position-jg.selected, .position-top.selected,.position-mid.selected,.position-adc.selected,.position-sup.selected",
+        ".position-jg.selected, .position-top.selected,.position-mid.selected,.position-adc.selected,.position-sup.selected"
     );
     const selectedPositions = Array.from(positions).map((position) =>
-        position.className.split(" ")[0].replace("position-", ""),
+        position.className.split(" ")[0].replace("position-", "")
     );
 
     socket.emit("groupCreate", {
@@ -142,14 +143,14 @@ refreshBtn.addEventListener("click", () => {
 async function updateLoginStatus() {
     try {
         const response = await fetch("/auth/session", {
-            method: "GET",
+            method: "GET"
         });
         const data = await response.json();
         userId = data.userId;
 
         if (data.userId) {
             const response = await fetch(`/user/detail/${data.userId}`, {
-                method: "GET",
+                method: "GET"
             });
             const user = await response.json();
 
@@ -203,7 +204,7 @@ async function updateGroupTable(groups) {
         let userName;
         try {
             const response = await fetch(`/user/${group.info.owner}`, {
-                method: "GET",
+                method: "GET"
             });
             userName = await response.text();
         } catch (e) {
@@ -216,32 +217,28 @@ async function updateGroupTable(groups) {
         tr.onclick = joinGroup;
 
         tr.innerHTML = `
-        <td class="group_name">${group.info.name}</td>
-        <td class="group_people">${group.state.currentUser}/${
-            group.state.totalUser
-        }</td>
+        <td class="group_name"><span>${group.info.name}</span></td>
+        <td class="group_people">${group.state.currentUser}/${group.state.totalUser
+            }</td>
         <td class="group_tier">
             <div class="user-rank">${Enum.Tier[group.info.tier]}</div>
         </td>
-        <td class="group_user"><span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${
-            group.info.owner
-        }">${userName}</span></td>
+        <td class="group_user"><span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${group.info.owner
+            }">${userName}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
         ${["jg", "top", "mid", "adc", "sup"]
-            .map(
-                (pos) =>
-                    `<div class="${
-                        Enum.PositionClass[pos]
-                    }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
-                        group.state[pos] && group.state[pos].isActive
+                .map(
+                    (pos) =>
+                        `<div class="${Enum.PositionClass[pos]
+                        }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${group.state[pos] && group.state[pos].isActive
                             ? group.state[pos].userId
                                 ? `${Enum.Position[pos]}`
                                 : `${Enum.Position[pos]}흑`
                             : "금지흑"
-                    }.png" /></div>`,
-            )
-            .join("")}
+                        }.png" /></div>`
+                )
+                .join("")}
     </td>`;
 
         tableBody.appendChild(tr);
@@ -311,13 +308,13 @@ async function updateGroupManageState(groupInfo, groupState) {
     const titleElement = document.querySelector(".group_manage_header .title");
     const modeElement = document.querySelector(".group_manage_header .mode");
     const ownerElement = document.querySelector(
-        ".group_manage_header .owner_name",
+        ".group_manage_header .owner_name"
     );
 
     let ownerName;
     try {
         const response = await fetch(`/user/${groupInfo.owner}`, {
-            method: "GET",
+            method: "GET"
         });
         ownerName = await response.text();
     } catch (e) {
@@ -325,11 +322,9 @@ async function updateGroupManageState(groupInfo, groupState) {
     }
 
     titleElement.textContent = `${groupInfo.name}`;
-    modeElement.innerHTML = `${
-        Enum.Mode[groupInfo.mode]
-    } <span class="number">${groupState.currentUser}/${
-        groupState.totalUser
-    }</span>`;
+    modeElement.innerHTML = `${Enum.Mode[groupInfo.mode]
+        } <span class="number">${groupState.currentUser}/${groupState.totalUser
+        }</span>`;
     ownerElement.innerHTML = `${ownerName}`;
 }
 
@@ -354,7 +349,7 @@ async function updateSelectPositionState(groupState, users) {
 
     for (let pos of positions) {
         const target = document.querySelector(
-            `.select-position-parent .position-${pos}`,
+            `.select-position-parent .position-${pos}`
         );
         let { isActive, userId } = groupState[pos];
 
@@ -378,7 +373,7 @@ async function updateSelectPositionState(groupState, users) {
         let userName;
         try {
             const response = await fetch(`/user/${userId}`, {
-                method: "GET",
+                method: "GET"
             });
             userName = await response.text();
         } catch (e) {
@@ -395,7 +390,7 @@ function resetSelectPositionState() {
 
     for (let pos of positions) {
         const target = document.querySelector(
-            `.select-position-parent .position-${pos}`,
+            `.select-position-parent .position-${pos}`
         );
         setSPDisable(target);
     }
@@ -404,25 +399,25 @@ function resetSelectPositionState() {
 // 그룹 설정 상태 변경시 업데이트
 async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
     const title = document.querySelector(
-        ".update-group-modal .group-title-input",
+        ".update-group-modal .group-title-input"
     );
     const mode = document.querySelector(
-        ".update-group-modal .group-mode-input",
+        ".update-group-modal .group-mode-input"
     );
     const tier = document.querySelector(
-        ".update-group-modal .group-tier-input",
+        ".update-group-modal .group-tier-input"
     );
     const peopleBox = document.querySelector(
         ".update-group-modal .select-group-box .people-box",
     );
     const people = document.querySelector(
-        ".update-group-modal .group-people-input",
+        ".update-group-modal .group-people-input"
     );
     const privateCheckbox = document.querySelector(
-        '.update-group-modal .private-box input[type="checkbox"]',
+        ".update-group-modal .private-box input[type=\"checkbox\"]"
     );
     const password = document.querySelector(
-        ".update-group-modal .private-password",
+        ".update-group-modal .private-password"
     );
 
     if (groupInfo !== null) {
@@ -451,7 +446,7 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
                 ? "금지"
                 : Enum.Position[position];
         const positionTarget = document.querySelector(
-            `.update-select-position-box .position-${position}`,
+            `.update-select-position-box .position-${position}`
         );
         if (isActive) {
             positionTarget.classList.add("isPositionActive");
@@ -467,7 +462,7 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
         if (userId) {
             try {
                 const response = await fetch(`/user/${userId}`, {
-                    method: "GET",
+                    method: "GET"
                 });
                 userName = await response.text();
                 positionTarget.dataset.userId = userId;
@@ -516,17 +511,17 @@ document.querySelector("#update-complete").addEventListener("click", () => {
         sup: false,
         adc: false,
         top: false,
-        jg: false,
+        jg: false
     };
 
     const title = document.querySelector(
-        ".update-group-modal .group-title-input",
+        ".update-group-modal .group-title-input"
     ).value;
     const mode = document.querySelector(
-        ".update-group-modal .group-mode-input",
+        ".update-group-modal .group-mode-input"
     ).value;
     const tier = document.querySelector(
-        ".update-group-modal .group-tier-input",
+        ".update-group-modal .group-tier-input"
     ).value;
     const people = +document.querySelector(
         ".update-group-modal .group-people-input",
@@ -534,7 +529,7 @@ document.querySelector("#update-complete").addEventListener("click", () => {
 
     Object.keys(updatePosition).forEach((position) => {
         const positionElement = document.querySelector(
-            `.update-select-position-box .position-${position}`,
+            `.update-select-position-box .position-${position}`
         );
         if (positionElement.classList.contains("isPositionActive")) {
             updatePosition[position] = true;
@@ -572,7 +567,8 @@ document.querySelector(".out-cancel-btn").addEventListener("click", (e) => {
 });
 
 // 그룹 설정 상태 초기화(그룹 나갈시에 발생)
-function resetGroupUpdateState() {}
+function resetGroupUpdateState() {
+}
 
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
@@ -612,7 +608,7 @@ document
     .querySelector("#groupManageContainer .chat_send")
     .addEventListener("click", (e) => {
         const message = document.querySelector(
-            "#groupManageContainer .chat_input",
+            "#groupManageContainer .chat_input"
         ).value;
 
         socket.emit("chat", { message });
@@ -726,3 +722,47 @@ friendSocket.on("friendRequest", (data) => {
 friendSocket.on("friendComplete", (data) => {
     friends.push(data.friendId);
 });
+//Make the DIV element draggagle:
+console.log("dragMe" , document.getElementById("dragMe"));
+dragElement(document.getElementById("dragMe"));
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    /* if present, the header is where you move the DIV from:*/
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}

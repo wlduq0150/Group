@@ -33,17 +33,15 @@ header {
         }
     }
 }
+
 *:active {
-    cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/ccursor.cur")
-            5 5,
-        pointer;
+    cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/ccursor.cur") 5 5,
+    pointer;
 }
+
 * {
-    cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/cursor+(2).cur")
-            5 5,
-        auto;
+    cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/cursor+(2).cur") 5 5,
+    auto;
 }
 
 body {
@@ -51,7 +49,7 @@ body {
     height: 100vh;
 
     background-image: linear-gradient(#00000040, #00000040),
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/background/background.jpg");
+    url("https://with-lol.s3.ap-northeast-2.amazonaws.com/background/background.jpg");
     background-size: cover;
     /* background-position: 50%; */
     background-repeat: no-repeat;
@@ -66,6 +64,7 @@ main {
 }
 
 .login {
+    color:white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,13 +74,12 @@ main {
     border-radius: 8px;
     background-color: rgb(106, 106, 106, 0.5);
 
-    cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
-            5 5,
-        pointer;
+    cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur") 5 5,
+    pointer;
 }
 
 .logout {
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,10 +88,8 @@ main {
     border: none;
     border-radius: 8px;
     background-color: rgb(106, 106, 106, 0.5);
-    cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
-            5 5,
-        pointer;
+    cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur") 5 5,
+    pointer;
 }
 
 .main {
@@ -139,10 +135,6 @@ main {
                 text-align: left;
             }
 
-            td:nth-last-child(-n + 5) {
-                text-align: center !important;
-            }
-
             > th {
                 font-size: 18px;
             }
@@ -182,12 +174,59 @@ main {
     }
 }
 
-/* #groupTable .title_position {
-    position: absolute;
-} */
+.title_room {
+    max-width: 36%;
+}
+
+.title_people {
+    max-width: 4%;
+}
+
+.title_tier {
+    max-width: 7%;
+}
+
+.title_user {
+    width: 15%;
+}
+
+.title_type {
+    width: 10%;
+}
+
+.title_position {
+    width: 27%;
+}
 
 .user-rank {
     display: flex;
+}
+/* .group_user{
+    color: black;
+} */
+
+/* .group_user:hover {
+    color: black;
+} */
+.group_user > span {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100px;
+    
+    
+    &:hover {
+        color: black;
+    }
+}
+
+.group_name > span {
+    display: inline-block;
+    width: 320px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .user-context {
@@ -261,10 +300,8 @@ aaa .login {
 #groupCloseButton,
 #profileOpenButton,
 #profileCloseButton {
-    cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
-            5 5,
-        pointer;
+    cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur") 5 5,
+    pointer;
 }
 
 #groupContainer {
@@ -401,6 +438,33 @@ aaa .login {
     height: 50px;
 }
 
+.main_page .group_position {
+    padding: 0;
+
+    > div {
+        display: flex;
+        justify-content: space-around;
+        padding: 0px;
+        height: 50px;
+
+        > div {
+            display: flex;
+            width: 20%;
+            justify-content: center;
+            align-items: center;
+
+            > img {
+                max-width: 80%;
+                max-height: 80%;
+            }
+
+            &:nth-last-child(n+2) {
+                border-right: 1px solid rgba(255, 255, 255, 0.366);
+            }
+        }
+    }
+}
+
 .main_page .group_position div {
     width: 20%;
     border-right: 1px solid rgba(255, 255, 255, 0.366);
@@ -408,19 +472,6 @@ aaa .login {
     display: flex;
     align-items: center;
 }
-
-.chatting-img-btn {
-    position: absolute;
-    left: 50px;
-    bottom: 50px;
-    width: 100px;
-    height: 90px;
-    cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
-            5 5,
-        pointer;
-}
-
 .chatting-notice-img-btn {
     position: absolute;
     left: 150px;
@@ -435,8 +486,40 @@ aaa .login {
 
 .user_click {
     z-index: 5;
-    cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
-            5 5,
-        pointer;
+    cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur") 5 5,
+    pointer;
+}
+
+.chatting_button_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    width: 60px;
+    height: 80px;
+    border: 4px solid white;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255, 0.6);
+    user-select: none;
+}
+
+.chatting_img_btn {
+    width: 100%;
+    padding: 4px;
+    cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur") 5 5,
+    pointer;
+}
+
+.chatting_drag_btn {
+    width: 90%;
+    height: 20px;
+    padding: 4px;
+    background-color: black;
+    cursor: grab;
+}
+
+.chatting_drag_btn:active{
+    cursor: grabbing;
 }
