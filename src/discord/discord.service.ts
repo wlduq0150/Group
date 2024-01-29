@@ -17,6 +17,7 @@ import { ConfigService } from "@nestjs/config";
 import { GroupService } from "src/group/group.service";
 import { UserService } from "src/user/user.service";
 import { GroupGateway } from "src/group/group.gateway";
+import { error } from "console";
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
@@ -90,7 +91,13 @@ export class DiscordService implements OnModuleInit {
                 await this.deleteRole(guild.id, role.id);
             }
 
-            await channel.delete();
+            try {
+                await channel.delete();
+            } catch (err) {
+                if (err.code === 10003) {
+                    console.log("이미 삭제 된 채널.");
+                }
+            }
         } catch (error) {
             console.error(`채널 삭제 중 오류 발생: ${channel.id}`, error);
         }
