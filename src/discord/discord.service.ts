@@ -16,6 +16,8 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { GroupService } from "src/group/group.service";
 import { UserService } from "src/user/user.service";
+import { GroupGateway } from "src/group/group.gateway";
+import { error } from "console";
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
@@ -91,6 +93,11 @@ export class DiscordService implements OnModuleInit {
 
             await channel.delete();
         } catch (error) {
+            if (error.code === 10003) {
+                console.log("이미 삭제 된 채널.");
+                return;
+            }
+
             console.error(`채널 삭제 중 오류 발생: ${channel.id}`, error);
         }
     }
@@ -246,16 +253,24 @@ export class DiscordService implements OnModuleInit {
             throw new NotFoundException("해당 그룹을 찾을 수 없습니다.");
         }
 
-        const groupState = await this.groupService.findGroupStateById(groupId);
-        const positions: string[] = ["mid", "adc", "sup", "top", "jg"];
+        let userIds: number[];
 
-        const userIds: number[] = positions
-            .filter(
-                (position) =>
-                    groupState[position].isActive &&
-                    groupState[position].userId,
-            )
-            .map((position) => groupState[position].userId);
+        const groupInfo = await this.groupService.findGroupInfoById(groupId);
+        const groupState = await this.groupService.findGroupStateById(groupId);
+
+        if (groupInfo.mode === "aram") {
+            userIds = await this.groupService.findGroupUsers(groupId);
+        } else {
+            const positions: string[] = ["mid", "adc", "sup", "top", "jg"];
+
+            userIds = positions
+                .filter(
+                    (position) =>
+                        groupState[position].isActive &&
+                        groupState[position].userId,
+                )
+                .map((position) => groupState[position].userId);
+        }
 
         const discordIds: string[] = await Promise.all(
             userIds.map((userId) =>

@@ -1,4 +1,4 @@
-import { Injectable, UseFilters } from "@nestjs/common";
+import { Inject, Injectable, UseFilters, forwardRef } from "@nestjs/common";
 import {
     OnGatewayConnection,
     OnGatewayDisconnect,
@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from "uuid";
 import { UpdateGroupDto } from "./dto/update-group.dto";
 import { GroupChatDto } from "./dto/chat-group.dto";
 import { KickDto } from "./dto/kick-group.dto";
+import { checkPositionCorrectForMode } from "./function/check-mode-position-correct.function";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -26,11 +27,13 @@ import { KickDto } from "./dto/kick-group.dto";
 export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
 
-    constructor(private readonly groupService: GroupService) {}
+    constructor(
+        @Inject(forwardRef(() => GroupService))
+        private readonly groupService: GroupService,
+    ) {}
 
     handleConnection(client: Socket) {
         console.log(`[Group]client connected: ${client.id}`);
-        client["groupId"] = null;
     }
 
     async handleDisconnect(client: Socket) {
@@ -43,13 +46,17 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             console.log("예상치 못한 에러 발생");
         }
 
+        Promise.all([
+            this.groupService.delDataInSocket(client.id, "userId"),
+            this.groupService.delDataInSocket(client.id, "groupId"),
+        ]);
         console.log(`[Group]client disconnected: ${client.id}`);
     }
 
     // 클라이언트 socket 연결시 connections에 등록
     @SubscribeMessage("connectWithUserId")
-    connectWithUserId(client: Socket, userId: number): void {
-        client["userId"] = +userId;
+    async connectWithUserId(client: Socket, userId: number): Promise<void> {
+        await this.groupService.saveDataInSocket(client.id, "userId", userId);
     }
 
     @SubscribeMessage("clear")
@@ -57,6 +64,24 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.groupService.clear();
 
         this.server.emit("clear", { message: "Redis 초기화 완료" });
+    }
+
+    @SubscribeMessage("openGroupUpdate")
+    async openGroupUpdate(
+        client: Socket,
+        updateGroupDto: UpdateGroupDto,
+    ): Promise<void> {
+        const { groupId } = updateGroupDto;
+
+        const [groupInfo, groupState, users] = await Promise.all([
+            this.groupService.findGroupInfoById(groupId),
+            this.groupService.findGroupStateById(groupId),
+            this.findGroupUsers(groupId),
+        ]);
+
+        this.server
+            .to(client.id)
+            .emit("openGroupUpdate", { groupInfo, groupState, users });
     }
 
     @SubscribeMessage("getAllGroup")
@@ -68,7 +93,15 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async findGroupUsers(groupId: string) {
         const clientSockets = await this.server.in(groupId).fetchSockets();
-        const users: number[] = clientSockets.map((socket) => socket["userId"]);
+        const users: number[] = [];
+        for (let client of clientSockets) {
+            const userId = +(await this.groupService.getDataInSocket(
+                client.id,
+                "userId",
+            ));
+            users.push(userId);
+        }
+
         return users;
     }
 
@@ -79,7 +112,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         createGroupDto: CreateGroupDto,
     ): Promise<void> {
         console.log(createGroupDto);
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
+
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -103,14 +140,22 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         updateGroupDto: UpdateGroupDto,
     ): Promise<void> {
-        const { groupId } = updateGroupDto;
-        const userId = +client["userId"];
+        const { mode, updatePosition, groupId } = updateGroupDto;
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
 
         if (!checkIsUserAlreadyGroupJoin(client, groupId)) {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
+        }
+
+        // 모드별 포지션 확인
+        if (mode && updatePosition) {
+            checkPositionCorrectForMode(mode, updatePosition);
         }
 
         const { groupInfo, groupState } = await this.groupService.updateGroup(
@@ -134,7 +179,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage("groupJoin")
     async groupJoin(client: Socket, joinGroupDto: JoinGroupDto): Promise<void> {
         const { groupId } = joinGroupDto;
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -150,7 +198,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         // 그룹 참가
         await client.join(groupId);
-        client["groupId"] = groupId;
+        await this.groupService.saveDataInSocket(client.id, "groupId", groupId);
 
         // 소켓으로 접속한 유저들 목록 불러오기
         const users = await this.findGroupUsers(groupId);
@@ -175,7 +223,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
         const { groupId, position } = selectPositionDto;
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -202,7 +253,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
         const { groupId, position } = selectPositionDto;
-        const userId = +client["userId"];
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
@@ -222,8 +276,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage("groupLeave")
     async groupLeave(client: Socket, force?: boolean): Promise<void> {
-        const groupId: string = client["groupId"];
-        const userId: number = +client["userId"];
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
 
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
@@ -235,7 +295,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         // 그룹 나가기
         client.leave(groupId);
-        client["groupId"] = null;
+        await this.groupService.delDataInSocket(client.id, "groupId");
 
         // 칼바람 나락시 방장 교체를 위한 유저 목록
         const users = await this.findGroupUsers(groupId);
@@ -274,8 +334,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     async kickUser(client: Socket, kickDto: KickDto): Promise<void> {
         const { kickedUserId } = kickDto;
 
-        const groupId: string = client["groupId"];
-        const userId: number = +client["userId"];
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
 
         if (userId === kickedUserId) {
             throw new WsException("본인은 강제퇴장이 불가능합니다.");
@@ -306,8 +372,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("그룹에 참여하고 있지 않습니다.");
         }
 
-        const groupId = client["groupId"];
-        const userId = client["userId"];
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
 
         const chat = await this.groupService.createGroupChat(userId, message);
 

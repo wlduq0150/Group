@@ -1,6 +1,5 @@
 let userId;
 let groupId;
-let allGroups = [];
 let blockedUsers = [];
 let friends = [];
 const friendSocket = io("/friend");
@@ -25,6 +24,8 @@ window.onload = function () {
     }
 
     socket.on("getAllGroup", function (data) {
+        let allGroups = [];
+
         if (Array.isArray(data.groups)) {
             allGroups = data.groups.map((groupObj) => {
                 const keys = Object.keys(groupObj);
@@ -32,11 +33,9 @@ window.onload = function () {
                     return groupObj[keys[0]];
                 }
             });
-
-            console.log("그룹목록: ", allGroups);
-
-            updateGroupTable(allGroups);
         }
+
+        updateGroupTable(allGroups);
     });
 
     socket.emit("getAllGroup");
@@ -124,11 +123,11 @@ completeBtn.addEventListener("click", async function (e) {
         name: title,
         mode: mode,
         tier: tier,
-        people: people,
+        people: mode === "aram" ? people : null,
         owner: userId,
         private: privateCheckbox.checked,
         password: privateCheckbox.checked ? password : undefined,
-        position: selectedPositions,
+        position: mode === "aram" ? [] : selectedPositions,
     });
 
     groupContainer.classList.add("hidden");
@@ -216,8 +215,6 @@ async function updateGroupTable(groups) {
         tr.dataset.id = group.groupId;
         tr.onclick = joinGroup;
 
-        groupId = group.id;
-
         tr.innerHTML = `
         <td class="group_name">${group.info.name}</td>
         <td class="group_people">${group.state.currentUser}/${
@@ -238,7 +235,9 @@ async function updateGroupTable(groups) {
                         Enum.PositionClass[pos]
                     }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
                         group.state[pos] && group.state[pos].isActive
-                            ? `${Enum.Position[pos]}흑`
+                            ? group.state[pos].userId
+                                ? `${Enum.Position[pos]}`
+                                : `${Enum.Position[pos]}흑`
                             : "금지흑"
                     }.png" /></div>`,
             )
@@ -296,6 +295,12 @@ async function createSystemMessage(userId, type) {
     chatList.appendChild(chatLine);
 }
 
+document
+    .querySelector(".group_manage #updateGroupSetting")
+    .addEventListener("click", (e) => {
+        socket.emit("openGroupUpdate", { groupId });
+    });
+
 // 그룹 상태 변경시 그룹 상태를 변경
 function updateMyGroupState(groupState) {
     updateSelectPositionState(groupState);
@@ -346,8 +351,6 @@ function resetGroupManageState() {
 // 그룹 역할 상태 변경시 업데이트
 async function updateSelectPositionState(groupState, users) {
     const positions = ["jg", "top", "mid", "adc", "sup"];
-
-    console.log("역할 상태 변경 유저 목록: ", users);
 
     for (let pos of positions) {
         const target = document.querySelector(
@@ -409,6 +412,9 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
     const tier = document.querySelector(
         ".update-group-modal .group-tier-input",
     );
+    const peopleBox = document.querySelector(
+        ".update-group-modal .select-group-box .people-box",
+    );
     const people = document.querySelector(
         ".update-group-modal .group-people-input",
     );
@@ -426,7 +432,11 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
         privateCheckbox.checked = !groupInfo.open;
         password.value = groupInfo.password ? groupInfo.password : "";
     }
-    people.value = Enum.numberToEnglish[groupState.totalUser];
+
+    if (groupInfo && groupInfo.mode === "aram") {
+        peopleBox.style.display = "flex";
+    }
+    people.value = groupState.totalUser;
 
     const positions = ["jg", "top", "mid", "adc", "sup"];
 
@@ -436,7 +446,10 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
         // 이미지
         const isActive = groupState[position].isActive;
         const color = isActive ? "" : "흑";
-        const positionName = Enum.Position[position];
+        const positionName =
+            groupInfo && groupInfo.mode === "aram"
+                ? "금지"
+                : Enum.Position[position];
         const positionTarget = document.querySelector(
             `.update-select-position-box .position-${position}`,
         );
@@ -474,7 +487,6 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
         for (let i = 0; i < aramUsers.length; i++) {
             const position = positions[i];
             const userId = aramUsers[i];
-            console.log("하이 ", userId);
 
             const positionTarget = document.querySelector(
                 `.update-select-position-box .position-${position}`,
@@ -516,6 +528,9 @@ document.querySelector("#update-complete").addEventListener("click", () => {
     const tier = document.querySelector(
         ".update-group-modal .group-tier-input",
     ).value;
+    const people = +document.querySelector(
+        ".update-group-modal .group-people-input",
+    ).value;
 
     Object.keys(updatePosition).forEach((position) => {
         const positionElement = document.querySelector(
@@ -528,12 +543,11 @@ document.querySelector("#update-complete").addEventListener("click", () => {
 
     socket.emit("groupUpdate", {
         groupId,
-        mode,
         name: title,
         tier,
+        people: mode === "aram" ? people : null,
         updatePosition,
     });
-    alert("그룹을 수정하였습니다.");
 });
 
 document.querySelectorAll(".update-group-modal .out-btn").forEach((outBtn) => {
@@ -636,11 +650,18 @@ socket.on("groupJoin", (data) => {
     updateSelectPositionState(groupState, users ? [...users] : []);
 });
 
+socket.on("openGroupUpdate", (data) => {
+    const { groupInfo, groupState, users } = data;
+    updateGroupUpdateState(groupInfo, groupState, users ? [...users] : []);
+    document.querySelector("#updateGroupContainer").classList.remove("hidden");
+});
+
 socket.on("groupUpdate", (data) => {
     const { groupInfo, groupState, users } = data;
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState, users ? [...users] : []);
     updateSelectPositionState(groupState, users ? [...users] : []);
+    alert("그룹이 수정되었습니다.");
 });
 
 socket.on("groupKicked", (data) => {
@@ -675,7 +696,6 @@ socket.on("positionSelect", (data) => {
 
 socket.on("positionSelected", async (data) => {
     const { groupState } = data;
-    console.log(data);
     updateSelectPositionState(groupState);
     updateGroupUpdateState(null, groupState);
 });

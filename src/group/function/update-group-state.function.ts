@@ -5,6 +5,7 @@ import { UpdateGroupPosition } from "../interface/update-group-position.interfac
 export function updateGroupState(
     groupState: GroupState,
     updatePosition: UpdateGroupPosition,
+    people: number,
 ): GroupState {
     let totalUser = 0;
 
@@ -18,8 +19,10 @@ export function updateGroupState(
             groupState[pos].isActive = updatePosition[pos];
         }
 
-        if (groupState[pos]) totalUser++;
+        if (updatePosition[pos]) totalUser++;
     }
+
+    totalUser = !totalUser && people ? people : totalUser;
 
     // 유저수 변동
     if (totalUser < groupState.currentUser) {
