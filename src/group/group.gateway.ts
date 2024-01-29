@@ -19,7 +19,6 @@ import { v4 as uuidv4 } from "uuid";
 import { UpdateGroupDto } from "./dto/update-group.dto";
 import { GroupChatDto } from "./dto/chat-group.dto";
 import { KickDto } from "./dto/kick-group.dto";
-import { RedisAdapter } from "@socket.io/redis-adapter";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -47,6 +46,12 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log(`[Group]client disconnected: ${client.id}`);
     }
 
+    // 클라이언트 socket 연결시 connections에 등록
+    @SubscribeMessage("connectWithUserId")
+    connectWithUserId(client: Socket, userId: number): void {
+        client["userId"] = +userId;
+    }
+
     @SubscribeMessage("clear")
     clear(client: Socket): void {
         this.groupService.clear();
@@ -61,10 +66,10 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server.to(client.id).emit("getAllGroup", { groups: data });
     }
 
-    // 클라이언트 socket 연결시 connections에 등록
-    @SubscribeMessage("connectWithUserId")
-    connectWithUserId(client: Socket, userId: number): void {
-        client["userId"] = +userId;
+    async findGroupUsers(groupId: string) {
+        const clientSockets = await this.server.in(groupId).fetchSockets();
+        const users: number[] = clientSockets.map((socket) => socket["userId"]);
+        return users;
     }
 
     // 클라이언트에서 그룹 생성시 발생하는 이벤트
@@ -90,17 +95,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             createGroupDto,
         );
 
-        client.join(groupId);
-        client["groupId"] = groupId;
-
-        const groupState = await this.groupService.joinGroup(groupId);
-
-        this.server
-            .to(groupId)
-            .emit("groupJoin", { groupId, userId, groupInfo, groupState });
-        this.server
-            .to(client.id)
-            .emit("positionSelect", { groupId, groupInfo, groupState });
+        this.groupJoin(client, { groupId });
     }
 
     @SubscribeMessage("groupUpdate")
@@ -124,9 +119,15 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             updateGroupDto,
         );
 
-        this.server
-            .to(groupId)
-            .emit("groupUpdate", { groupId, groupInfo, groupState });
+        // 소켓으로 접속한 유저들 목록 불러오기
+        const users = await this.findGroupUsers(groupId);
+
+        this.server.to(groupId).emit("groupUpdate", {
+            groupId,
+            groupInfo,
+            groupState,
+            users: groupInfo.mode === "aram" ? users : null,
+        });
     }
 
     // 클라이언트에서 그룹 참여시 발생하는 이벤트
@@ -144,16 +145,24 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
 
-        const groupInfo = await this.groupService.findGroupInfoById(groupId);
         const groupState = await this.groupService.joinGroup(groupId);
+        const groupInfo = await this.groupService.findGroupInfoById(groupId);
 
         // 그룹 참가
-        client.join(groupId);
+        await client.join(groupId);
         client["groupId"] = groupId;
 
-        this.server
-            .to(groupId)
-            .emit("groupJoin", { groupId, userId, groupInfo, groupState });
+        // 소켓으로 접속한 유저들 목록 불러오기
+        const users = await this.findGroupUsers(groupId);
+
+        this.server.to(groupId).emit("groupJoin", {
+            groupId,
+            userId,
+            groupInfo,
+            groupState,
+            users: groupInfo.mode === "aram" ? users : null,
+        });
+
         this.server
             .to(client.id)
             .emit("positionSelect", { groupId, groupInfo, groupState });
@@ -224,22 +233,39 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
         }
 
-        const groupState = await this.groupService.leaveGroup(groupId, userId);
-        const groupInfo = await this.groupService.findGroupInfoById(groupId);
-
         // 그룹 나가기
         client.leave(groupId);
         client["groupId"] = null;
+
+        // 칼바람 나락시 방장 교체를 위한 유저 목록
+        const users = await this.findGroupUsers(groupId);
+        const groupState = await this.groupService.leaveGroup(
+            groupId,
+            userId,
+            users,
+        );
 
         // 그룹에 아무도 없어 그룹을 없애야 하는 경우
         if (!groupState) {
             this.server.to(client.id).emit("groupLeave");
         } else {
             // 그룹에 남은 유저가 있는 경우
-            this.server.to(groupId).emit("positionDeselected", { groupState });
-            this.server
-                .to(groupId)
-                .emit("otherGroupLeave", { userId, groupInfo, groupState });
+            const users = await this.findGroupUsers(groupId);
+            const groupInfo =
+                await this.groupService.findGroupInfoById(groupId);
+
+            if (groupInfo.mode !== "aram") {
+                this.server
+                    .to(groupId)
+                    .emit("positionDeselected", { groupState });
+            }
+
+            this.server.to(groupId).emit("otherGroupLeave", {
+                userId,
+                groupInfo,
+                groupState,
+                users: groupInfo.mode === "aram" ? users : [],
+            });
             this.server.to(client.id).emit("groupLeave");
         }
     }

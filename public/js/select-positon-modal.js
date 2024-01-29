@@ -32,12 +32,17 @@ function setSPActive(target, name) {
         return;
     }
 
+    const isForibidden = target.classList.contains("forbidden");
+    if (isForibidden) {
+        target.querySelector("#userName").innerHTML = name;
+        return;
+    }
+
     srcSplit[srcSplit.length - 1] = `${pos.replaceAll("흑", "")}.png`;
     src = srcSplit.join("/lane/");
     target.querySelector("img").src = src;
     target.querySelector("#userName").innerHTML = name;
     target.classList.add("selected");
-    target.classList.remove("forbidden");
 }
 
 function setSPDisable(target) {
@@ -49,7 +54,6 @@ function setSPDisable(target) {
     if (isForibidden) {
         pos = target.classList[0].replace("position-", "");
         pos = Enum.Position[pos];
-        console.log(pos);
     }
 
     if (!isForibidden && pos[pos.length - 1] === "흑") {
