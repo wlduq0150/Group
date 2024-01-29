@@ -20,6 +20,7 @@
     height: 475px;
     box-shadow: 0 10px 8px #000000;
     border-radius: 20px;
+    position: absolute;
 }
 
 .create-group-modal .create-group-modal-bar {
