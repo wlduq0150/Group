@@ -1,5 +1,7 @@
-async function getUserProfile(discordUserId, discordUserName) {
-    fetch(`/lol/user/${discordUserId}`, {
+const mostChampionCount = 3;
+
+async function getUserProfile(lolUserId, discordUserName) {
+    fetch(`/lol/user/${lolUserId}`, {
         method: "GET",
     })
         .then((res) => {
@@ -10,6 +12,10 @@ async function getUserProfile(discordUserId, discordUserName) {
       src="https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/${data.user.profileIconId}.png"
       alt=""
     />`;
+            document
+                .querySelector(".parent .name-box")
+                .setAttribute("data-id", `${userId}`);
+
             document.querySelector(".name-box .discord-name").innerHTML =
                 `${discordUserName}`;
             document.querySelector(".lol-name-tag").innerHTML =
@@ -91,39 +97,40 @@ async function getUserProfile(discordUserId, discordUserName) {
         `;
             }
             mostChampionsParent.innerHTML = `${mostChampionsBox}`;
+        })
+        .then((e) => {
+            const loading = document.querySelector(".parent .loading");
+            loading.style.visibility = "hidden";
+            loading.classList.add("paused");
+            return console.log("프로필을 불러왔습니다");
         });
-
-    return;
 }
 
-const mostChampionCount = 3;
 //discordUserId 로 discord이름과 lolUser정보 가져오기
-async function getLolUserId(discordUserId, me) {
+async function getLolUserId(discordUserId) {
+    const resp = await fetch(`/user/${discordUserId}`, { method: "GET" });
+    const discordUserName = await resp.text();
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
         method: "GET",
     });
+    const me = discordUserId == userId;
     if (res.status >= 400) {
-        noDataLolUser(me);
+        noDataLolUser(discordUserId, discordUserName, me);
         return;
     }
     const lolUser = await res.text();
-    const resp = await fetch(`/user/${discordUserId}`, { method: "GET" });
-    if (resp.status >= 400) {
-        noDataLolUser(me);
-        return;
-    }
-    const discordUserName = await resp.text();
+
     getUserProfile(lolUser, discordUserName);
 }
 
 //프로필을 켰을때 작동하는 함수
-function openProfile(discordUserId, me) {
+function openProfile(discordUserId) {
     if (!discordUserId) {
         return;
     }
 
     showProfileModal();
-    getLolUserId(discordUserId, me);
+    getLolUserId(discordUserId);
 }
 
 function mouseenterHandler() {
@@ -160,9 +167,9 @@ document
         document.querySelector(".not-connect-modal").style.display = "none";
     });
 
-//유저의 롤데이터가 없을때
-function noDataLolUser(me) {
-    //내가 연동안됬을 경우
+//유저가 롤과 연동하지 않았을 때
+function noDataLolUser(discordUserId, discordUserName, me) {
+    //내가 연동하지 않았을 때
     if (me) {
         document.querySelector(".parent").style.display = "none";
         document.querySelector(".not-connect-modal").style.display = "flex";
@@ -175,6 +182,12 @@ function noDataLolUser(me) {
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "hidden";
+        console.log(discordUserName + discordUserId);
+        const discordName = document.querySelector(
+            ".not-connect-modal .discord-name",
+        );
+        discordName.innerHTML = `${discordUserName}`;
+        discordName.setAttribute("data-id", `${discordUserId}`);
     }
 }
 
@@ -190,12 +203,22 @@ clickLinkingBtn.addEventListener("click", (e) => {
     linkingLolUser(lolName, lolTag, userId);
 });
 
+//계정연동
 async function linkingLolUser(lolName, lolTag, userId) {
+    const loading = document.querySelector(".parent .loading");
+    loading.style.visibility = "visible";
+    loading.classList.remove("paused");
     await fetch(`/lol`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: lolName, tag: lolTag, userId: userId }),
-    }).then((e) => {
-        console.log("계정이 연결되었어요");
+    }).then((res) => {
+        if (res.status >= 400) {
+            document.querySelector(".parent .loading").style.visibility =
+                "hidden";
+            console.log("잘못된 이름과 태그 입니다");
+        } else {
+            console.log("계정이 연결되었어요");
+        }
     });
 }
