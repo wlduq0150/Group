@@ -11,7 +11,7 @@ const socket = io("http://localhost:5001/group", {
     }
 });
 
-window.onload = function () {
+window.onload = function() {
     updateLoginStatus();
 
     const params = new URLSearchParams(window.location.search);
@@ -23,7 +23,7 @@ window.onload = function () {
         alert("로그아웃에 성공했습니다.");
     }
 
-    socket.on("getAllGroup", function (data) {
+    socket.on("getAllGroup", function(data) {
         let allGroups = [];
 
         if (Array.isArray(data.groups)) {
@@ -52,7 +52,7 @@ loginBtn.addEventListener("click", async () => {
         try {
             const response = await fetch("/auth/logout", {
                 method: "GET",
-                credentials: "includerySelec"
+                credentials: "include"
             });
 
             if (response.ok) {
@@ -94,7 +94,7 @@ makeGroupBtn.addEventListener("click", () => {
     }
 });
 
-completeBtn.addEventListener("click", async function (e) {
+completeBtn.addEventListener("click", async function(e) {
     e.preventDefault();
 
     const title = document.querySelector(
@@ -107,7 +107,7 @@ completeBtn.addEventListener("click", async function (e) {
         "select[name=\"create-group-game-tier\"]"
     ).value;
     const people = +document.querySelector(
-        'select[name="create-group-game-people"]',
+        "select[name=\"create-group-game-people\"]"
     ).value;
     const privateCheckbox = document.querySelector(
         ".private-box input[type=\"checkbox\"]"
@@ -128,7 +128,7 @@ completeBtn.addEventListener("click", async function (e) {
         owner: userId,
         private: privateCheckbox.checked,
         password: privateCheckbox.checked ? password : undefined,
-        position: mode === "aram" ? [] : selectedPositions,
+        position: mode === "aram" ? [] : selectedPositions
     });
 
     groupContainer.classList.add("hidden");
@@ -229,15 +229,19 @@ async function updateGroupTable(groups) {
         <td class="group_position">
         <div>
                 ${["jg", "top", "mid", "adc", "sup"]
-                .map(
-                    (pos) =>
-                        `<div class="${Enum.PositionClass[pos]
-                        }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${group.state[pos] && group.state[pos].isActive
-                            ? `${Enum.Position[pos]}흑`
+            .map(
+                (pos) =>
+                    `<div class="${
+                        Enum.PositionClass[pos]
+                    }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
+                        group.state[pos] && group.state[pos].isActive
+                            ? group.state[pos].userId
+                                ? `${Enum.Position[pos]}`
+                                : `${Enum.Position[pos]}흑`
                             : "금지흑"
-                        }.png" /></div>`
-                )
-                .join("")}
+                    }.png" /></div>`
+            )
+            .join("")}
         </div>
     </td>`;
 
@@ -265,7 +269,7 @@ async function createSystemMessage(userId, type) {
     let userName;
     try {
         const response = await fetch(`/user/${userId}`, {
-            method: "GET",
+            method: "GET"
         });
         userName = await response.text();
     } catch (e) {
@@ -333,7 +337,7 @@ function resetGroupManageState() {
     const titleElement = document.querySelector(".group_manage_header .title");
     const modeElement = document.querySelector(".group_manage_header .mode");
     const ownerElement = document.querySelector(
-        ".group_manage_header .owner_name",
+        ".group_manage_header .owner_name"
     );
     const chatList = document.querySelector(".group_manage_chat_list");
 
@@ -408,7 +412,7 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
         ".update-group-modal .group-tier-input"
     );
     const peopleBox = document.querySelector(
-        ".update-group-modal .select-group-box .people-box",
+        ".update-group-modal .select-group-box .people-box"
     );
     const people = document.querySelector(
         ".update-group-modal .group-people-input"
@@ -484,13 +488,13 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
             const userId = aramUsers[i];
 
             const positionTarget = document.querySelector(
-                `.update-select-position-box .position-${position}`,
+                `.update-select-position-box .position-${position}`
             );
             positionTarget.dataset.userId = userId;
 
             try {
                 const response = await fetch(`/user/${userId}`, {
-                    method: "GET",
+                    method: "GET"
                 });
                 const userName = await response.text();
                 positionTarget.dataset.userId = userId;
@@ -524,7 +528,7 @@ document.querySelector("#update-complete").addEventListener("click", () => {
         ".update-group-modal .group-tier-input"
     ).value;
     const people = +document.querySelector(
-        ".update-group-modal .group-people-input",
+        ".update-group-modal .group-people-input"
     ).value;
 
     Object.keys(updatePosition).forEach((position) => {
@@ -541,7 +545,7 @@ document.querySelector("#update-complete").addEventListener("click", () => {
         name: title,
         tier,
         people: mode === "aram" ? people : null,
-        updatePosition,
+        updatePosition
     });
 });
 
