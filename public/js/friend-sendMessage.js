@@ -12,8 +12,8 @@ function dblclickFriend() {
     // console.log(allFriends);
 }
 
-function sendMessage(frinedId, message) {
-    const privateMessage = { frinedId, message };
+function sendMessage(friendId, message) {
+    const privateMessage = { friendId, message };
     friendSocket.emit("sendMessage", privateMessage);
 }
 

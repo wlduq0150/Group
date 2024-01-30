@@ -9,6 +9,8 @@ import { RedisService } from "src/redis/redis.service";
 import { Repository } from "typeorm";
 import IORedis from "ioredis";
 import { UserService } from "src/user/user.service";
+import { SendMessage } from "src/entity/sendMessage.entity";
+import { SendMessageType } from "./interface/sendMessage.interface";
 @Injectable()
 export class FriendService {
     private readonly redisClient: IORedis;
@@ -18,6 +20,8 @@ export class FriendService {
         private readonly userRepository: Repository<User>,
         private readonly redisService: RedisService,
         private readonly userService: UserService,
+        @InjectRepository(SendMessage)
+        private readonly sendMessageRepository: Repository<SendMessage>,
     ) {
         this.redisClient = this.redisService.getRedisClient();
     }
@@ -288,5 +292,19 @@ export class FriendService {
     // 친구 요청 키 생성
     private getFriendRequestKey(senderId: number, friendId: number) {
         return `friend-request:${senderId}:${friendId}`;
+    }
+
+    //메세지 저장
+    async saveSendMessage(sendMessages: SendMessageType[]) {
+        for (let oneMessage of sendMessages) {
+            oneMessage.sendDate = new Date(oneMessage.sendDate);
+
+            await this.sendMessageRepository.save({
+                senderId: +oneMessage.senderId,
+                accepterId: +oneMessage.accepterId,
+                message: oneMessage.message,
+                sendDate: oneMessage.sendDate,
+            });
+        }
     }
 }

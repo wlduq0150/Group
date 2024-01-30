@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { LolUser } from "src/entity/lol-user.entity";
+import { SendMessage } from "src/entity/sendMessage.entity";
 import { User } from "src/entity/user.entity";
 @Module({})
 export class TypeormModule {
@@ -15,7 +16,7 @@ export class TypeormModule {
                 username: configService.get<string>("DATABASE_USERNAME"),
                 password: configService.get<string>("DATABASE_PASSWORD"),
                 database: configService.get<string>("DATABASE_NAME"),
-                entities: [User, LolChampion, LolUser],
+                entities: [User, LolChampion, LolUser, SendMessage],
                 synchronize: true,
                 logging: false,
             }),

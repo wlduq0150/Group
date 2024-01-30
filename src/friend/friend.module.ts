@@ -7,9 +7,14 @@ import { RedisModule } from "src/redis/redis.module";
 import { RedisService } from "src/redis/redis.service";
 import { UserModule } from "src/user/user.module";
 import { FriendGateway } from "./friend.gateway";
+import { SendMessage } from "src/entity/sendMessage.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User]), RedisModule, UserModule],
+    imports: [
+        TypeOrmModule.forFeature([User, SendMessage]),
+        RedisModule,
+        UserModule,
+    ],
     controllers: [FriendController],
     providers: [FriendService, FriendGateway],
     exports: [FriendService],
