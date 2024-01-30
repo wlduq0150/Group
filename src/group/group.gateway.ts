@@ -113,11 +113,12 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         createGroupDto: CreateGroupDto,
     ): Promise<void> {
-        console.log(createGroupDto);
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
             "userId",
         ));
+
+        console.log({ ...createGroupDto, owner: userId });
 
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
@@ -134,7 +135,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             owner: userId,
         });
 
-        await this.groupJoin(client, { groupId });
+        this.groupJoin(client, { groupId });
     }
 
     @SubscribeMessage("groupUpdate")
@@ -397,7 +398,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const chat = await this.groupService.createGroupChat(userId, message);
 
-        console.log(`${userId}: ${chat}`);
+        console.log(`${userId}: ${message}`);
 
         this.server.to(groupId).emit("chat", { chat });
     }
