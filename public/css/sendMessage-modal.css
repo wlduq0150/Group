@@ -1,0 +1,127 @@
+.sendMessage-parent {
+    background-color: white;
+    position: absolute;
+    width: 300px;
+    height: 520px;
+    border-radius: 20px;
+    box-shadow: 0 5px 6px #000000;
+}
+
+.sendMessage-parent .modal-bar {
+    box-shadow: inset 0px 5px 6px white;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    height: 45px;
+    text-align: center;
+    line-height: 50px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
+    display: flex;
+    flex-direction: column;
+}
+
+.sendMessage-parent .no-modal-bar {
+    padding: 20px;
+    margin-top: -10px;
+
+    height: 92%;
+    display: flex;
+    flex-direction: column;
+}
+
+.sendMessage-parent .back-btn-box {
+    margin-right: auto;
+}
+
+.sendMessage-parent .modal-bar .back-btn {
+    position: absolute;
+    margin-left: 10px;
+    margin-top: 15px;
+    width: 17px;
+    height: 17px;
+}
+
+.sendMessage-parent .modal-bar .back-btn :hover {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
+}
+
+.sendMessage-parent .message-day {
+    color: rgb(85, 85, 85);
+    font-size: 11px;
+}
+
+.sendMessage-parent .discord-name {
+    margin-top: 7px;
+}
+
+.sendMessage-parent .message-time {
+    margin: 3px;
+    font-size: 13px;
+}
+
+.sendMessage-parent .friend {
+    display: flex;
+    flex-direction: column;
+}
+
+.sendMessage-parent .one-message {
+    margin-top: 5px;
+    display: flex;
+}
+
+.sendMessage-parent .friend .message-text-box {
+    font-size: 16px;
+    background-color: rgb(184, 226, 249);
+    box-shadow: 0 1px 2px #000000;
+    border-radius: 5px;
+}
+
+.sendMessage-parent .friend .message-day {
+    display: flex;
+    justify-content: center;
+}
+
+.sendMessage-parent .me {
+    display: flex;
+    flex-direction: column;
+}
+
+.sendMessage-parent .me .message-day {
+    display: flex;
+    justify-content: center;
+}
+
+.sendMessage-parent .me .discord-name {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sendMessage-parent .me .one-message {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sendMessage-parent .me .message-text-box {
+    font-size: 16px;
+    background-color: rgb(255, 213, 132);
+    box-shadow: 0 1px 2px #000000;
+    border-radius: 5px;
+}
+
+.sendMessage-parent .sendMessage-input-box {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sendMessage-parent .sendMessage-input {
+    height: 28px;
+    width: 260px;
+}

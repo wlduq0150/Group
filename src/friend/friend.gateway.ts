@@ -78,12 +78,24 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             `friend:${sendMessageDto.friendId}`,
         );
 
+        const messageRoom = await this.friendService.checkMessageRoom(
+            client["userId"],
+            +sendMessageDto.friendId,
+        );
+
         if (accepterClientId) {
             this.server.to(accepterClientId).emit("sendMessage", {
                 senderId: client["userId"],
                 message: sendMessageDto.message,
+                sendDate: date,
             });
         }
+
+        client.emit("sendMessage", {
+            senderId: client["userId"],
+            message: sendMessageDto.message,
+            sendDate: date,
+        });
 
         await this.redisService.set(
             `friendMessage:${client["userId"]}:${
@@ -94,13 +106,9 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 accepterId: sendMessageDto.friendId,
                 message: sendMessageDto.message,
                 date: date.toString(),
+                messageRoomId: messageRoom.id,
             }),
         );
-
-        client.emit("sendMessage", {
-            senderId: client["userId"],
-            message: sendMessageDto.message,
-        });
 
         const messageCount = await this.redisService.scan(
             `friendMessage:${client["userId"]}:${sendMessageDto.friendId}`,
@@ -130,6 +138,7 @@ const messageCount = await this.redisService.scan(
                 accepterId: +parseMessage.accepterId,
                 message: parseMessage.message,
                 sendDate: parseMessage.date,
+                messageRoomId: parseMessage.messageRoomId,
             });
         }
 

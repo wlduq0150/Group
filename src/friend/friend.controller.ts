@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Delete,
     Get,
@@ -10,6 +11,7 @@ import {
 } from "@nestjs/common";
 import { FriendService } from "./friend.service";
 import { FriendGateway } from "./friend.gateway";
+import { MessageRoomDto } from "./dto/friend-send-accept.dto";
 
 @Controller("friend")
 export class FriendController {
@@ -166,5 +168,14 @@ export class FriendController {
             message: "차단 목록을 조회했습니다.",
             data: blockedUsers,
         };
+    }
+
+    //유저 아이디 2개로 메세지방 조회
+    @Post("/messageRoom")
+    async getMessageRoom(@Body() messageRoomDto: MessageRoomDto) {
+        return await this.friendService.checkMessageRoom(
+            messageRoomDto.userOne,
+            messageRoomDto.userTwo,
+        );
     }
 }

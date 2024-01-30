@@ -1,22 +1,15 @@
+//이름 더블클릭 했을때 채팅창 나오기 + 이름 우클릭으로 모달창 띄우기
 function dblclickFriend() {
     const allFriends = document.querySelectorAll(
         ".friend_list .friend_name .user",
     );
-    console.log(allFriends[0]);
     for (let myFriend of allFriends) {
         myFriend.addEventListener("dblclick", (e) => {
-            const message = prompt("보낼 메세지를 입력해 주세요");
-            sendMessage(e.currentTarget.dataset.id, message);
+            openSendMessage(e.target.innerText);
+            getSendAccept(myFriend.dataset.id, userId, e.target.innerText);
+        });
+        myFriend.addEventListener("contextmenu", (e) => {
+            showUserClickModal(e);
         });
     }
-    // console.log(allFriends);
 }
-
-function sendMessage(friendId, message) {
-    const privateMessage = { friendId, message };
-    friendSocket.emit("sendMessage", privateMessage);
-}
-
-// for(let friend of allFriends){
-//     friend.setAttribute("id")
-// }

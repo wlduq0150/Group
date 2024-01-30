@@ -11,6 +11,7 @@ import IORedis from "ioredis";
 import { UserService } from "src/user/user.service";
 import { SendMessage } from "src/entity/sendMessage.entity";
 import { SendMessageType } from "./interface/sendMessage.interface";
+import { MessageRoom } from "src/entity/messageRoom.endtity";
 @Injectable()
 export class FriendService {
     private readonly redisClient: IORedis;
@@ -22,6 +23,8 @@ export class FriendService {
         private readonly userService: UserService,
         @InjectRepository(SendMessage)
         private readonly sendMessageRepository: Repository<SendMessage>,
+        @InjectRepository(MessageRoom)
+        private readonly messageRoomRepository: Repository<MessageRoom>,
     ) {
         this.redisClient = this.redisService.getRedisClient();
     }
@@ -304,7 +307,46 @@ export class FriendService {
                 accepterId: +oneMessage.accepterId,
                 message: oneMessage.message,
                 sendDate: oneMessage.sendDate,
+                messageRoomId: oneMessage.messageRoomId,
             });
         }
+    }
+
+    async getMessage(senderId: number, accepterId: number) {
+        return await this.sendMessageRepository.find({
+            where: { senderId, accepterId },
+            order: { sendDate: "ASC" },
+        });
+    }
+
+    //메세지방 확인 및 없으면 생성
+    async checkMessageRoom(userOne: number, userTwo: number) {
+        let smallId: number, bigId: number;
+        if (userOne > userTwo) {
+            bigId = userOne;
+            smallId = userTwo;
+        } else {
+            bigId = userTwo;
+            smallId = userOne;
+        }
+        const checkRoom = await this.findMessageRoom(smallId, bigId);
+        if (!checkRoom) {
+            return await this.createMessageRoom(smallId, bigId);
+        }
+        return checkRoom;
+    }
+
+    //메세지방 생성
+    private async createMessageRoom(smallId: number, bigId: number) {
+        await this.messageRoomRepository.save({ smallId, bigId });
+        return await this.findMessageRoom(smallId, bigId);
+    }
+
+    //메세지방 검색
+    private async findMessageRoom(smallId: number, bigId: number) {
+        return await this.messageRoomRepository.findOne({
+            where: { bigId, smallId },
+            relations: { sendMessage: true },
+        });
     }
 }

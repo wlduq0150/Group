@@ -3,4 +3,5 @@ export interface SendMessageType {
     accepterId: number;
     message: string;
     sendDate: Date;
+    messageRoomId: number;
 }
