@@ -42,16 +42,17 @@ window.onload = function () {
 };
 
 // 로그인 이벤트 처리
-const loginBtn = document.querySelector(".login");
+const loginBtn = document.getElementById("login-btn");
 
 loginBtn.addEventListener("click", async () => {
+    console.log(loginBtn);
     if (loginBtn.value === "로그인") {
         window.location.href = "/auth/login";
     } else {
         try {
             const response = await fetch("/auth/logout", {
                 method: "GET",
-                credentials: "include",
+                credentials: "includerySelec",
             });
 
             if (response.ok) {
@@ -79,7 +80,7 @@ const makeGroupBtn = document.querySelector(".make-group");
 const groupContainer = document.querySelector("#groupContainer");
 const completeBtn = document.querySelector(".create-group-modal .complete-btn");
 const refreshBtn = document.querySelector(".refresh");
-const chattingBtn = document.querySelector(".chatting-img-btn");
+const chattingBtn = document.querySelector(".chatting_img_btn");
 
 makeGroupBtn.addEventListener("click", () => {
     if (loginBtn.value === "로그인") {
@@ -216,7 +217,7 @@ async function updateGroupTable(groups) {
         tr.onclick = joinGroup;
 
         tr.innerHTML = `
-        <td class="group_name">${group.info.name}</td>
+        <td class="group_name"><span>${group.info.name}</span></td>
         <td class="group_people">${group.state.currentUser}/${
             group.state.totalUser
         }</td>
@@ -228,20 +229,22 @@ async function updateGroupTable(groups) {
         }">${userName}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
-        ${["jg", "top", "mid", "adc", "sup"]
-            .map(
-                (pos) =>
-                    `<div class="${
-                        Enum.PositionClass[pos]
-                    }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
-                        group.state[pos] && group.state[pos].isActive
-                            ? group.state[pos].userId
-                                ? `${Enum.Position[pos]}`
-                                : `${Enum.Position[pos]}흑`
-                            : "금지흑"
-                    }.png" /></div>`,
-            )
-            .join("")}
+        <div>
+                ${["jg", "top", "mid", "adc", "sup"]
+                    .map(
+                        (pos) =>
+                            `<div class="${
+                                Enum.PositionClass[pos]
+                            }"><img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/${
+                                group.state[pos] && group.state[pos].isActive
+                                    ? group.state[pos].userId
+                                        ? `${Enum.Position[pos]}`
+                                        : `${Enum.Position[pos]}흑`
+                                    : "금지흑"
+                            }.png" /></div>`,
+                    )
+                    .join("")}
+        </div>
     </td>`;
 
         tableBody.appendChild(tr);

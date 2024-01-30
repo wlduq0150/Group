@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div id="login">
-                <input class="login" type="button" value="로그인" />
+                <input id="login-btn" class="login" type="button" value="로그인" />
             </div>
         </nav>
     </header>
@@ -44,7 +44,6 @@
             loadHTML("./group-manage.html");
         </script>
     </div>
-    </main>
     <div class="hidden" id="groupContainer">
         <script>
             loadHTML("./create-group-modal.html");
@@ -82,41 +81,48 @@
                     <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png" />
                 </div>
                 <div class="search">
+                    <input placeholder="Search" type="text">
                     <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png" />
-                    <input placeholder="Search" type="text" />
                 </div>
                 <div class="make-group" id="groupOpenButton" type="button">
                     그룹 생성
                 </div>
             </div>
 
-            <table id="groupTable">
-                <tbody>
-                    <tr>
-                        <th class="title_room" width="36%">제목</th>
-                        <th class="title_people" width="4%">인원</th>
-                        <th class="title_tier" width="7%">티어</th>
-                        <th class="title_user" width="15%">그룹장</th>
-                        <th class="title_type" width="10%">대기열</th>
-                        <th class="title_position" width="27%">
-                            포지션 현황
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table_wrapper scrollBar">
+                <table id="groupTable">
+                    <tbody>
+                        <tr>
+                            <th class="title_room">제목</th>
+                            <th class="title_people">인원</th>
+                            <th class="title_tier">티어</th>
+                            <th class="title_user">그룹장</th>
+                            <th class="title_type">대전 모드</th>
+                            <th class="title_position">
+                                포지션 현황
+                            </th>
+                        </tr>
+                       
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <img class="chatting-notice-img-btn hidden"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png" alt="">
-        <img class="chatting-img-btn" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png"
-            alt="" />
-    </main>
+        <img alt="" class="chatting-notice-img-btn hidden"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png">
 
+    </main>
+    <div class="chatting_button_wrapper">
+        <img alt="" class="chatting_img_btn"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png" />
+        <div id="dragMe" class="chatting_drag_btn">Drag</div>
+    </div>
     <!-- <script src="../js/pop-up.js"></script> -->
 
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="../js/constants.js"></script>
     <script src="../js/index.js"></script>
     <script src="../js/user-click-modal.js"></script>
+    <script src="../js/drag.js"></script>
     <!-- <script src="../js/login-modal.js"></script> -->
 </body>
 
