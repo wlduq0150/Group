@@ -25,7 +25,7 @@ export class ReportService {
 
         for (const word of filterWords) {
             const entity = new FilterWords();
-            entity.category = "욕설";
+            entity.category = "언어 폭력";
             entity.word = word;
 
             await this.filterWordRepository.save(entity);
