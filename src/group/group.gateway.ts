@@ -222,7 +222,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
-        const { groupId, position } = selectPositionDto;
+        const { position } = selectPositionDto;
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
             "userId",
@@ -252,7 +256,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
-        const { groupId, position } = selectPositionDto;
+        const { position } = selectPositionDto;
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
             "userId",
