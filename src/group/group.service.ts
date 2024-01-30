@@ -112,7 +112,7 @@ export class GroupService {
         const groupStateKey = this.generateGroupStateKey(groupId);
         const groupStateLockkey = this.generateGroupLockKey(groupId);
 
-        const lock = await this.redlock.acquire([groupStateLockkey], 1000);
+        const lock = await this.redlock.acquire([groupStateLockkey], 2000);
 
         let groupInfo = await this.findGroupInfoById(groupId);
         let groupState = await this.findGroupStateById(groupId);
@@ -254,7 +254,7 @@ export class GroupService {
         const groupStateKey = this.generateGroupStateKey(groupId);
         const groupStateLockkey = this.generateGroupLockKey(groupId);
 
-        const lock = await this.redlock.acquire([groupStateLockkey], 1000);
+        const lock = await this.redlock.acquire([groupStateLockkey], 2000);
 
         const groupInfo = await this.findGroupInfoById(groupId);
         const groupState = await this.findGroupStateById(groupId);
@@ -290,7 +290,7 @@ export class GroupService {
         const groupStateKey = this.generateGroupStateKey(groupId);
         const groupStateLockkey = this.generateGroupLockKey(groupId);
 
-        const lock = await this.redlock.acquire([groupStateLockkey], 1000);
+        const lock = await this.redlock.acquire([groupStateLockkey], 2000);
 
         const groupInfo = await this.findGroupInfoById(groupId);
         let groupState = await this.findGroupStateById(groupId);
@@ -360,7 +360,7 @@ export class GroupService {
 
         const redisClient = this.redisService.getRedisClient();
 
-        const lock = await this.redlock.acquire([groupStateLockkey], 1000);
+        const lock = await this.redlock.acquire([groupStateLockkey], 2000);
 
         const groupState = await this.findGroupStateById(groupId);
 
