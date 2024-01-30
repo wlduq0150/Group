@@ -239,6 +239,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
         }
 
+        console.log(`${userId}님이 포지션 선택`);
+
         const groupState = await this.groupService.selectPosition(
             groupId,
             userId,
@@ -272,6 +274,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (!checkIsUserAlreadyGroupJoin(client, groupId)) {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
         }
+
+        console.log(`${userId}님이 포지션 선택해제`);
 
         const groupState = await this.groupService.deselectPosition(
             groupId,
@@ -390,6 +394,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ));
 
         const chat = await this.groupService.createGroupChat(userId, message);
+
+        console.log(`${userId}: ${chat}`);
 
         this.server.to(groupId).emit("chat", { chat });
     }
