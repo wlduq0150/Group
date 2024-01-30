@@ -80,7 +80,7 @@ const makeGroupBtn = document.querySelector(".make-group");
 const groupContainer = document.querySelector("#groupContainer");
 const completeBtn = document.querySelector(".create-group-modal .complete-btn");
 const refreshBtn = document.querySelector(".refresh");
-const chattingBtn = document.querySelector(".chatting_img_btn");
+const chattingBtn = document.querySelector(".chatting-img-btn");
 
 makeGroupBtn.addEventListener("click", () => {
     if (loginBtn.value === "로그인") {

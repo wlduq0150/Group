@@ -32,7 +32,7 @@ async function getBlockedUser(users) {
                 />
             </div>
         <div class="blocked-user-info-box">
-            <div class="blocked-discord-name">${blockedUserName}</div>
+            <div class="blocked-discord-name"><span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${blockedUserName}">${userName}</span></div>
             <div>${blockedLOlUser.nameTag}</div>
         </div>
     </div></div>`;
