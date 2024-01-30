@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, OnApplicationBootstrap, OnModuleInit } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigProjectModule } from "./config/config.module";
@@ -11,6 +11,9 @@ import { FriendModule } from "./friend/friend.module";
 
 import { LolModule } from "./lol/lol.module";
 import { CachingModule } from "./caching/caching.module";
+import { RedisService } from "./redis/redis.service";
+import { ReportService } from "./report/report.service";
+import { ReportModule } from "./report/report.module";
 
 @Module({
     imports: [
@@ -23,8 +26,23 @@ import { CachingModule } from "./caching/caching.module";
         GroupModule,
         FriendModule,
         DiscordModule,
+        ReportModule,
     ],
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+    constructor(
+        private readonly redisService: RedisService,
+        private readonly reportService: ReportService,
+    ) {}
+
+    async onModuleInit() {
+        const client = this.redisService.getRedisClient();
+        const filterWords = await this.reportService.loadFilterWords();
+
+        for (const word of filterWords) {
+            await client.set(`filterWords:${word}`, "욕설");
+        }
+    }
+}

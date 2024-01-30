@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { FilterWords } from "src/entity/filter-word.entity";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { LolUser } from "src/entity/lol-user.entity";
 import { User } from "src/entity/user.entity";
@@ -15,7 +16,7 @@ export class TypeormModule {
                 username: configService.get<string>("DATABASE_USERNAME"),
                 password: configService.get<string>("DATABASE_PASSWORD"),
                 database: configService.get<string>("DATABASE_NAME"),
-                entities: [User, LolChampion, LolUser],
+                entities: [User, LolChampion, LolUser, FilterWords],
                 synchronize: true,
                 logging: false,
             }),
