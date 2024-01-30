@@ -226,6 +226,10 @@ main {
 
             background-color: var(--sub-bg);
 
+            &:hover {
+                filter: brightness(0.8);
+            }
+
             & > td {
                 white-space: nowrap;
                 overflow: hidden;
@@ -269,7 +273,7 @@ main {
 }
 
 .title_room {
-    width: 412px;
+    width: 408px;
     text-align: left;
 
 }
@@ -281,7 +285,6 @@ main {
 
 .title_people {
     width: 80px;
-
 }
 
 .group_people {
@@ -297,7 +300,7 @@ main {
 }
 
 .title_user {
-    width: 148px;
+    width: 146px;
     text-align: left;
 }
 
@@ -307,7 +310,7 @@ main {
 }
 
 .title_type {
-    width: 112px;
+    width: 114px;
 }
 
 .group_type {
@@ -572,13 +575,13 @@ main {
 }
 
 .main_page .group_position {
-
     padding: 0;
 
     > div {
         display: flex;
         justify-content: space-around;
-        padding: 0px;
+        padding: 0;
+        height: 45px;
 
         > div {
             display: flex;
@@ -587,8 +590,8 @@ main {
             align-items: center;
 
             > img {
-                max-width: 80%;
-                max-height: 80%;
+                max-width: 38px;
+                max-height: 38px;
             }
 
             &:nth-last-child(n+2) {

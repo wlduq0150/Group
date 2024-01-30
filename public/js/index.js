@@ -42,10 +42,10 @@ window.onload = function() {
 };
 
 // 로그인 이벤트 처리
-const loginBtn = document.getElementById('login-btn');
+const loginBtn = document.getElementById("login-btn");
 
 loginBtn.addEventListener("click", async () => {
-    console.log(loginBtn)
+    console.log(loginBtn);
     if (loginBtn.value === "로그인") {
         window.location.href = "/auth/login";
     } else {
@@ -192,7 +192,7 @@ async function updateGroupTable(groups) {
         .querySelector("tbody");
     const existingRows = tableBody.querySelectorAll(".user-group");
 
-    existingRows.forEach((row) => row.remove());
+    // existingRows.forEach((row) => row.remove());
 
     if (!groups || !Array.isArray(groups)) {
         console.error("No groups data to display.");
@@ -219,12 +219,12 @@ async function updateGroupTable(groups) {
         tr.innerHTML = `
         <td class="group_name"><span>${group.info.name}</span></td>
         <td class="group_people">${group.state.currentUser}/${group.state.totalUser
-            }</td>
+        }</td>
         <td class="group_tier">
             <div class="user-rank">${Enum.Tier[group.info.tier]}</div>
         </td>
         <td class="group_user"><span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${group.info.owner
-            }">${userName}</span></td>
+        }">${userName}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
         <div>
@@ -248,7 +248,8 @@ async function updateGroupTable(groups) {
         tableBody.appendChild(tr);
     }
 
-    groups.forEach((group) => { });
+    groups.forEach((group) => {
+    });
 }
 
 // 그룹 참가 함수
@@ -327,8 +328,8 @@ async function updateGroupManageState(groupInfo, groupState) {
 
     titleElement.textContent = `${groupInfo.name}`;
     modeElement.innerHTML = `${Enum.Mode[groupInfo.mode]
-        } <span class="number">${groupState.currentUser}/${groupState.totalUser
-        }</span>`;
+    } <span class="number">${groupState.currentUser}/${groupState.totalUser
+    }</span>`;
     ownerElement.innerHTML = `${ownerName}`;
 }
 
