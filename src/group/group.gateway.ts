@@ -55,7 +55,9 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // 클라이언트 socket 연결시 connections에 등록
     @SubscribeMessage("connectWithUserId")
-    async connectWithUserId(client: Socket, userId: number): Promise<void> {
+    async connectWithUserId(client: Socket): Promise<void> {
+        const userId = Math.floor(Math.random() * 1000) + 1;
+        console.log("유저 아이디: ", userId);
         await this.groupService.saveDataInSocket(client.id, "userId", userId);
     }
 
@@ -127,12 +129,12 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const uniqueId = uuidv4();
         const groupId = `group-${uniqueId}`; // 유니큰한 값 랜덤 생성으로 바뀔 예정
-        const groupInfo = await this.groupService.createGroup(
-            groupId,
-            createGroupDto,
-        );
+        const groupInfo = await this.groupService.createGroup(groupId, {
+            ...createGroupDto,
+            owner: userId,
+        });
 
-        this.groupJoin(client, { groupId });
+        await this.groupJoin(client, { groupId });
     }
 
     @SubscribeMessage("groupUpdate")

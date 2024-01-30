@@ -418,8 +418,8 @@ export class GroupService {
     }
 
     async createGroupChat(userId: number, message: string) {
-        const name = await this.userService.findNameByUserId(userId);
+        // const name = await this.userService.findNameByUserId(userId);
 
-        return { userId, name, message };
+        return { userId, message };
     }
 }
