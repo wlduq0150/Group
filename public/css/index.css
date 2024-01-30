@@ -127,81 +127,119 @@ main {
         align-items: center;
     }
 
-    .table_wrapper {
-        height: 360px;
-        overflow-y: scroll;
-
-        /* 아래의 모든 코드는 영역::코드로 사용 */
-
-        &::-webkit-scrollbar {
-            width: 10px;
-            /* 스크롤바의 너비 */
-        }
-
-        &::-webkit-scrollbar-thumb {
-            height: 10%;
-            /* 스크롤바의 길이 */
-            background: white;
-            /* 스크롤바의 색상 */
-
-            border-radius: 10px;
-        }
-
-        body::-webkit-scrollbar-track {
-            background: rgba(33, 122, 244, .1);
-            /*스크롤바 뒷 배경 색상*/
-        }
+    body::-webkit-scrollbar-track {
+        background: rgba(33, 122, 244, .1);
+        /*스크롤바 뒷 배경 색상*/
     }
 
     .table_wrapper > table {
         scrollbar-gutter: stable both-edges;
         width: 1145px;
         min-width: fit-content;
-        border-spacing: 0 8px;
+        border-spacing: 0 0;
 
-        > tbody > tr {
+        & thead, & tbody tr {
+            display: table;
+
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        & > thead {
+            width: 1145px;
+            position: sticky;
+            z-index: 1;
+        }
+
+        & > thead > tr {
             color: white;
             transition: all 0.5s;
 
-            &:hover {
-                filter: brightness(0.8);
-            }
-
-            background-color: var(--sub-bg);
-
-            &:first-child {
-                position: sticky;
-                top: 8px;
-                z-index: 1;
+            & {
                 background-color: #1ea4ae;
-                height: 4;
 
                 > section {
                     color: var(--bg);
                 }
             }
 
-            > th,
-            td {
+            &:hover {
+                filter: brightness(0.8);
+            }
+
+            & > th {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                height: 30px;
+                box-sizing: border-box;
+                padding: 0 20px;
+                font-size: 18px;
+                position: sticky;
+                top: 0;
+            }
+
+            & > th:first-child {
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+            }
+
+            & > th:last-child {
+                border-right: none;
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
+            }
+
+            & > th:nth-child(n + 2) {
+                border-left: solid 2px #0000007d;
+            }
+        }
+
+        & > tbody {
+            width: 1155px;
+            display: block;
+            height: 360px;
+            overflow-y: scroll;
+            padding: 0;
+
+            /* 아래의 모든 코드는 영역::코드로 사용 */
+
+            &::-webkit-scrollbar {
+                width: 10px;
+                /* 스크롤바의 너비 */
+            }
+
+            &::-webkit-scrollbar-thumb {
+                height: 10%;
+                /* 스크롤바의 길이 */
+                background: white;
+                /* 스크롤바의 색상 */
+
+                border-radius: 10px;
+            }
+
+        }
+
+        & > tbody > tr {
+            color: white;
+            transition: all 0.5s;
+
+            background-color: var(--sub-bg);
+
+            & > td {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 font-size: 16px;
-                height: 30px;
+                height: 45px;
                 box-sizing: border-box;
-                padding: 0px 20px;
+                padding: 0 20px;
             }
 
-            > th {
-                font-size: 18px;
-                position: sticky;
-                top: 8px;
-            }
-
-            > td {
+            & > td {
                 > img {
                     height: 32px;
-                    /* 
+                    /*
                     &:nth-child(4) {
                     } */
 
@@ -212,21 +250,18 @@ main {
                 }
             }
 
-            > th:first-child,
-            td:first-child {
+            & > td:first-child {
                 border-top-left-radius: 10px;
                 border-bottom-left-radius: 10px;
             }
 
-            > th:last-child,
-            td:last-child {
+            & > td:last-child {
                 border-right: none;
                 border-top-right-radius: 10px;
                 border-bottom-right-radius: 10px;
             }
 
-            > th:nth-child(n + 2),
-            td:nth-child(n + 2) {
+            & > td:nth-child(n + 2) {
                 border-left: solid 2px #0000007d;
             }
         }
@@ -234,29 +269,57 @@ main {
 }
 
 .title_room {
-    width: 36%;
+    width: 412px;
+    text-align: left;
+
+}
+
+.group_name {
+    width: 410px;
     text-align: left;
 }
 
 .title_people {
-    width: 4%;
+    width: 80px;
+
+}
+
+.group_people {
+    width: 80px;
 }
 
 .title_tier {
-    width: 8%;
+    width: 90px;
+}
+
+.group_tier {
+    width: 90px;
 }
 
 .title_user {
-    width: 11.5%;
+    width: 148px;
+    text-align: left;
+}
+
+.group_user {
+    width: 140px;
     text-align: left;
 }
 
 .title_type {
-    width: 12.5%;
+    width: 112px;
+}
+
+.group_type {
+    width: 120px;
 }
 
 .title_position {
-    width: 27%;
+    width: 300px;
+}
+
+.group_position {
+    width: 305px;
 }
 
 .user-rank {
@@ -364,7 +427,7 @@ main {
     color: white;
 }
 
-aaa .login {
+.login {
     color: white;
 }
 
@@ -472,7 +535,7 @@ aaa .login {
     position: absolute;
 }
 
-#friendListContanier {
+#friendListContainer {
     z-index: 9;
     width: 100%;
     height: 100vh;
@@ -491,7 +554,7 @@ aaa .login {
     z-index: 10;
 }
 
-#friendListContanier.hidden,
+#friendListContainer.hidden,
 #blockedUserContainer.hidden,
 #userClickContainer.hidden,
 #friendRequestContainer.hidden,
@@ -516,7 +579,6 @@ aaa .login {
         display: flex;
         justify-content: space-around;
         padding: 0px;
-        height: 50px;
 
         > div {
             display: flex;
