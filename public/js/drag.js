@@ -11,12 +11,9 @@ dragElement(document.getElementById("friend_request_modal_drag_me"), true);
 
 function dragElement(elmnt, leftDraggable) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    if (document.getElementById(elmnt.id + "header")) {
+    if (elmnt?.id) {
         /* if present, the header is where you move the DIV from:*/
-        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-    } else {
-        /* otherwise, move the DIV from anywhere inside the DIV:*/
-        elmnt.onmousedown = dragMouseDown;
+        document.getElementById(elmnt.id).onmousedown = dragMouseDown;
     }
 
     function dragMouseDown(e) {
@@ -39,7 +36,6 @@ function dragElement(elmnt, leftDraggable) {
             pos3 = e.clientX;
             elmnt.parentElement.style.left = (elmnt.parentElement.offsetLeft - pos1) + "px";
         }
-        console.log(elmnt.parentElement.style.left, elmnt.parentElement.style.top)
         pos2 = pos4 - e.clientY;
         pos4 = e.clientY;
         // set the element's new position:

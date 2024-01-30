@@ -114,8 +114,15 @@ main {
     align-items: flex-start;
     margin-top: 120px;
     gap: 4px;
+    padding: 0 55px;
+
+    .main_page{
+        justify-content: center;
+        align-items: center;
+    }
 
     .table_wrapper {
+        z-index: -10;
         height: 360px;
         overflow-y: scroll;
 
@@ -214,7 +221,7 @@ main {
 
             >th:nth-child(n + 2),
             td:nth-child(n + 2) {
-                border-left: solid 3px #0000007d;
+                border-left: solid 2px #0000007d;
             }
         }
     }
@@ -490,6 +497,7 @@ aaa .login {
 }
 
 .main_page .group_position {
+
     padding: 0;
 
     >div {
@@ -514,6 +522,12 @@ aaa .login {
             }
         }
     }
+}
+
+.group_position{
+    padding: 0 !important;
+    justify-content: center;
+    align-items: center;
 }
 
 .chatting-notice-img-btn {
