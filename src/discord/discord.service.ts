@@ -275,5 +275,5 @@ export class DiscordService implements OnModuleInit {
             console.error(`역할 삭제 실패: ${error}`);
         }
     }
-    
+
 }
