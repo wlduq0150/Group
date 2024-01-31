@@ -2,12 +2,29 @@ clickBackBtn = document
     .querySelector(".sendMessage-parent .back-btn")
     .addEventListener("click", (e) => {
         document.getElementById("sendMessageContainer").classList.add("hidden");
+        saveMessage(
+            userId,
+            document.querySelector(".sendMessage-parent .discordUser-name")
+                .dataset.id,
+        );
     });
 
+//모달창 껏을때 메세지 저장
+function saveMessage(userId, friendId) {
+    fetch("/friend/saveMessage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userOne: +userId, userTwo: +friendId }),
+    });
+}
+
 //친구 메세지 열기
-async function openSendMessage(friendName) {
+async function openSendMessage(friendName, friendId) {
     document.querySelector(".sendMessage-parent .discordUser-name").innerHTML =
         `${friendName}`;
+    document
+        .querySelector(".sendMessage-parent .discordUser-name")
+        .setAttribute("data-id", `${friendId}`);
     document.getElementById("sendMessageContainer").classList.remove("hidden");
 }
 
@@ -37,13 +54,13 @@ function fillMessage(messages) {
 //엔터 눌렀을 때
 function enterkey() {
     if (window.event.keyCode == 13) {
-        let messageValue = document.querySelector(
+        let messageInput = document.querySelector(
             ".sendMessage-parent .sendMessage-input",
-        ).value;
+        );
         const friendId = document.querySelector(".sendMessage-parent .friend")
             .dataset.id;
-        sendMessage(friendId, messageValue);
-        messageValue = "";
+        sendMessage(friendId, messageInput.value);
+        messageInput.value = "";
     }
 }
 

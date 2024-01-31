@@ -372,6 +372,16 @@ aaa .login {
     align-items: flex-start;
 }
 
+#sendMessageContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    position: absolute;
+}
+
+#sendMessageContainer.hidden,
 #friendListContanier.hidden,
 #blockedUserContainer.hidden,
 #userClickContainer.hidden,

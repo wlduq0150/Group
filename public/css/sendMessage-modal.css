@@ -1,8 +1,8 @@
 .sendMessage-parent {
     background-color: white;
     position: absolute;
-    width: 300px;
-    height: 520px;
+    width: 298px;
+    height: 514px;
     border-radius: 20px;
     box-shadow: 0 5px 6px #000000;
 }
@@ -13,7 +13,7 @@
     font-size: 16px;
     font-weight: bold;
     color: white;
-    height: 45px;
+    height: 40px;
     text-align: center;
     line-height: 50px;
     border-top-left-radius: 20px;
@@ -24,9 +24,7 @@
 }
 
 .sendMessage-parent .no-modal-bar {
-    padding: 20px;
-    margin-top: -10px;
-
+    padding: 10px;
     height: 92%;
     display: flex;
     flex-direction: column;
@@ -44,11 +42,28 @@
     height: 17px;
 }
 
-.sendMessage-parent .modal-bar .back-btn :hover {
+.sendMessage-parent .modal-bar .back-btn:hover {
     cursor:
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
             5 5,
         pointer;
+}
+
+.sendMessage-parent .sendMessage-list-box {
+    overflow-y: auto;
+}
+
+.sendMessage-parent .sendMessage-list-box::-webkit-scrollbar {
+    width: 15px;
+}
+
+.sendMessage-parent .sendMessage-list-box::-webkit-scrollbar-thumb {
+    background: rgb(75, 118, 127);
+    border-radius: 10px;
+}
+
+.sendMessage-parent .sendMessage-list-box::-webkit-scrollbar-track {
+    background: rgba(33, 122, 244, 0.1);
 }
 
 .sendMessage-parent .message-day {
@@ -88,6 +103,7 @@
 }
 
 .sendMessage-parent .me {
+    margin-right: 10px;
     display: flex;
     flex-direction: column;
 }

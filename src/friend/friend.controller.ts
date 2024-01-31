@@ -178,4 +178,13 @@ export class FriendController {
             messageRoomDto.userTwo,
         );
     }
+
+    //유저 id 두개로 메세지 저장
+    @Post("/saveMessage")
+    async saveMessages(@Body() messageRoomDto: MessageRoomDto) {
+        await this.friendGateway.saveMessages(
+            messageRoomDto.userOne,
+            messageRoomDto.userTwo,
+        );
+    }
 }

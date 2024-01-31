@@ -117,21 +117,22 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         );
 
         if (messageCount[1].length > 100) {
-            this.saveSendedMessage(messageCount[1]);
+            this.saveSendedMessage(messageCount[1]).then(() => {
+                for (let ms of messageCount[1]) {
+                    this.redisService.del(ms);
+                }
+            });
+        }
+    }
+
+    async saveMessages(myId: number, friendId: number) {
+        const messageCount = await this.getRedisKey(myId, friendId);
+        console.log(messageCount);
+        this.saveSendedMessage(messageCount[1]).then((e) => {
             for (let ms of messageCount[1]) {
                 this.redisService.del(ms);
             }
-        }
-    }
-    /*
-const messageCount = await this.redisService.scan(
-            `friendMessage:${client["userId"]}:`,
-        );
-        this.saveSendedMessage(messageCount[1]);
-*/
-    async saveMessages(myId: number, friendId: number) {
-        const messageCount = await this.getRedisKey(myId, friendId);
-        this.saveSendedMessage(messageCount[1]);
+        });
     }
 
     //redis에서 유저id 두개로 키값 찾기
@@ -146,6 +147,7 @@ const messageCount = await this.redisService.scan(
         for (let message of messageCount) {
             const oneMessage: any = await this.redisService.get(`${message}`);
             const parseMessage = JSON.parse(oneMessage);
+            console.log(parseMessage);
             sendMessages.push({
                 senderId: +parseMessage.senderId,
                 accepterId: +parseMessage.accepterId,
