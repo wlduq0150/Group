@@ -192,7 +192,7 @@ async function updateGroupTable(groups) {
         .querySelector("tbody");
     const existingRows = tableBody.querySelectorAll(".user-group");
 
-    existingRows.forEach((row) => row.remove());
+    // existingRows.forEach((row) => row.remove());
 
     if (!groups || !Array.isArray(groups)) {
         console.error("No groups data to display.");
