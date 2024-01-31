@@ -28,11 +28,17 @@ export class ReportService {
         const filterWords = fileContent.split("\n");
 
         for (const word of filterWords) {
-            const entity = new FilterWords();
-            entity.category = "언어 폭력";
-            entity.word = word;
+            let entity: FilterWords = await this.filterWordRepository.findOneBy(
+                { word },
+            );
 
-            await this.filterWordRepository.save(entity);
+            if (!entity) {
+                entity = new FilterWords();
+                entity.category = "언어 폭력";
+                entity.word = word;
+
+                await this.filterWordRepository.save(entity);
+            }
         }
 
         return filterWords;

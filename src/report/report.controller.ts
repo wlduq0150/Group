@@ -7,6 +7,11 @@ import { ReportList } from "src/entity/report-list.entity";
 export class ReportController {
     constructor(private readonly reportService: ReportService) {}
 
+    @Post("loadFilterWords")
+    async loadFilterWords() {
+        return await this.reportService.loadFilterWords();
+    }
+
     @Post("/create")
     createReport(@Body() reportData: CreateReportDto): Promise<ReportList> {
         console.log("reportData", reportData);
