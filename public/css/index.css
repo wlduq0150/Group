@@ -114,10 +114,10 @@ main {
 }
 
 .main {
-    width: 1260px;
+    width: 100vw;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     margin-top: 120px;
     gap: 4px;
     padding: 0 55px;
@@ -134,6 +134,7 @@ main {
 
     .table_wrapper {
         width: 60%;
+        min-width: 1145px;
     }
 
     .table_wrapper > table {
