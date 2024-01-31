@@ -52,7 +52,7 @@ async function getFriendList(userIds) {
 
         const detailDiv = document.createElement("div");
         detailDiv.textContent = userDetail.lolUser
-            ? userDetail.lolUser
+            ? userDetail.lolUser.nameTag
             : "롤 유저 정보 없음";
         nameDiv.appendChild(detailDiv);
 
@@ -138,7 +138,7 @@ async function getFriendRequestList() {
 
         const detailDiv = document.createElement("div");
         detailDiv.textContent = friendRequest.lolUser
-            ? friendRequest.lolUser
+            ? friendRequest.lolUser.nameTag
             : "롤 유저 정보 없음";
         nameDiv.appendChild(detailDiv);
 

@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { FilterWords } from "src/entity/filter-word.entity";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { LolUser } from "src/entity/lol-user.entity";
 import { MessageRoom } from "src/entity/messageRoom.endtity";
@@ -23,7 +24,9 @@ export class TypeormModule {
                     LolUser,
                     SendMessage,
                     MessageRoom,
+                    FilterWords,
                 ],
+
                 synchronize: true,
                 logging: false,
             }),
