@@ -132,9 +132,13 @@ main {
         /*스크롤바 뒷 배경 색상*/
     }
 
+    .table_wrapper {
+        width: 60%;
+    }
+
     .table_wrapper > table {
         scrollbar-gutter: stable both-edges;
-        width: 1145px;
+        width: 100%;
         min-width: fit-content;
         border-spacing: 0 0;
 
@@ -147,8 +151,10 @@ main {
 
         & > thead {
             width: 100%;
+            margin-right: 10px;
             position: sticky;
             z-index: 1;
+            box-sizing: border-box;
         }
 
         & > thead > tr {
@@ -206,7 +212,7 @@ main {
             /* 아래의 모든 코드는 영역::코드로 사용 */
 
             &::-webkit-scrollbar {
-                width: 0;
+                width: 10px;
                 /* 스크롤바의 너비 */
             }
 
@@ -276,55 +282,57 @@ main {
 }
 
 .title_room {
-    width: 408.9px;
+    width: 36%;
     text-align: left;
     padding-left: 20px;
 }
 
 .group_name {
-    width: 408px;
+    width: 36%;
     text-align: left;
 }
 
 .title_people {
-    width: 80px;
+    width: 5%;
 }
 
 .group_people {
-    width: 80px;
+    width: 5%;
     text-align: center;
 }
 
 .title_tier {
-    width: 90px;
+    width: 9%;
+    text-align: left;
+    padding-left: 20px;
 }
 
 .group_tier {
-    width: 90px;
+    width: 9%;
     text-align: center;
 }
 
 .title_user {
-    width: 148px;
+    width: 11%;
     text-align: left;
     padding-left: 20px;
 }
 
 .group_user {
-    width: 140px;
+    width: 11%;
     text-align: left;
 }
 
 .title_type {
-    width: 114px;
+    width: 10%;
 }
 
 .group_type {
-    width: 114px;
+    width: 10%;
 }
 
 .group_position {
-    width: 304px;
+    width: 29%;
 }
 
 .user-rank {
@@ -514,7 +522,6 @@ main {
     z-index: 20;
     width: 100%;
     height: 100vh;
-    margin-top: 40px;
     display: flex;
     justify-content: center;
     position: absolute;

@@ -1,4 +1,3 @@
-
 //Make the DIV element draggagle:
 dragElement(document.getElementById("create_group_modal_drag_me"), true);
 dragElement(document.getElementById("group_manage_drag_me"), true);
@@ -7,7 +6,6 @@ dragElement(document.getElementById("profile_modal_login_drag_me"), true);
 dragElement(document.getElementById("friend_list_modal_drag_me"), true);
 dragElement(document.getElementById("friend_request_modal_drag_me"), true);
 dragElement(document.getElementById("blocked_user_modal_drag_me"), true);
-
 
 
 function dragElement(elmnt, leftDraggable) {
@@ -39,21 +37,22 @@ function dragElement(elmnt, leftDraggable) {
         }
         pos2 = pos4 - e.clientY;
         pos4 = e.clientY;
+        console.log(elmnt.parentElement.style.top, elmnt.parentElement.style.left);
         // set the element's new position:
         elmnt.parentElement.style.top = (elmnt.parentElement.offsetTop - pos2) + "px";
-        
+
         if (Number(elmnt.parentElement.style.top.replace("px", "")) < 0) {
-            elmnt.parentElement.style.top = "0px"
+            elmnt.parentElement.style.top = "0px";
         }
         if (Number(elmnt.parentElement.style.top.replace("px", "")) > window.innerHeight - (window.innerHeight * 0.1)) {
-            elmnt.parentElement.style.top = `${window.innerHeight - (window.innerHeight * 0.1)}px`
+            elmnt.parentElement.style.top = `${window.innerHeight - (window.innerHeight * 0.1)}px`;
         }
-        
+
         if (Number(elmnt.parentElement.style.left.replace("px", "")) < 0) {
-            elmnt.parentElement.style.left = "0px"
+            elmnt.parentElement.style.left = "0px";
         }
         if (Number(elmnt.parentElement.style.left.replace("px", "")) > window.innerWidth - (window.innerWidth * 0.1)) {
-            elmnt.parentElement.style.left = `${window.innerWidth - (window.innerWidth * 0.1)}px`
+            elmnt.parentElement.style.left = `${window.innerWidth - (window.innerWidth * 0.1)}px`;
         }
     }
 

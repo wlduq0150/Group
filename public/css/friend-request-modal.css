@@ -3,13 +3,13 @@
 } */
 
 .friend_request_wrapper {
-    position:absolute;
+    width: 360px;
+    height: 140px;
+    position: absolute;
     z-index: 30;
 }
 
 .friend_request_modal {
-    width: 360px;
-    height: 140px;
     display: flex;
     justify-content: space-around;
     flex-direction: column;
@@ -64,9 +64,13 @@
     line-height: 35px;
     background-color: #4b767f;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .friend_request_modal .reject_button {
+    display: flex;
     width: 45%;
     height: 30px;
     font-weight: bold;
@@ -76,4 +80,6 @@
     line-height: 35px;
     background-color: #fff;
     cursor: pointer;
+    justify-content: center;
+    align-items: center;
 }
