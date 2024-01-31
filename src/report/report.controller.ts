@@ -13,16 +13,8 @@ export class ReportController {
     }
 
     @Post("/create")
-    createReport(@Body() reportData: CreateReportDto): Promise<ReportList> {
+    createReport(@Body() reportData: CreateReportDto) {
         console.log("reportData", reportData);
-        console.log(
-            "reportData",
-            reportData.reportCategory,
-            reportData.reportContent,
-            reportData.reportDetail,
-            reportData.reportLocation,
-            reportData.reportUser,
-        );
         return this.reportService.createReport(reportData);
     }
 }

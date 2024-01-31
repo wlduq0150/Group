@@ -14,7 +14,7 @@ import { CachingModule } from "./caching/caching.module";
 import { RedisService } from "./redis/redis.service";
 import { ReportService } from "./report/report.service";
 import { ReportModule } from "./report/report.module";
-import { InjectRepository } from "@nestjs/typeorm";
+import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "./entity/filter-word.entity";
 import { Repository } from "typeorm";
 
@@ -22,6 +22,7 @@ import { Repository } from "typeorm";
     imports: [
         ConfigProjectModule,
         TypeormModule.forRoot(),
+        TypeOrmModule.forFeature([FilterWords]),
         RedisModule,
         LolModule,
         CachingModule.register(),
@@ -37,7 +38,6 @@ import { Repository } from "typeorm";
 export class AppModule implements OnModuleInit {
     constructor(
         private readonly redisService: RedisService,
-        private readonly reportService: ReportService,
         @InjectRepository(FilterWords)
         private readonly filterWordRepository: Repository<FilterWords>,
     ) {}

@@ -1,3 +1,4 @@
+import { IsNumber, IsOptional, IsString } from "class-validator";
 import {
     Column,
     Entity,
@@ -6,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./user.entity";
+import { PickType } from "@nestjs/mapped-types";
 
 @Entity({ name: "reportList" })
 export class ReportList {
@@ -13,17 +15,23 @@ export class ReportList {
     id: number;
 
     @ManyToOne(() => User, (user) => user.reportLists)
+    @IsNumber()
     reportUser: User;
 
     @Column()
+    @IsString()
     reportCategory: string;
 
     @Column()
+    @IsString()
     reportLocation: string;
 
     @Column({ nullable: true })
-    reportContent: string;
+    @IsString()
+    @IsOptional()
+    reportContent?: string;
 
     @Column()
+    @IsString()
     reportDetail: string;
 }
