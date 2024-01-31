@@ -69,7 +69,7 @@ async function moveDiscord() {
 }
 
 const positionSelectBtn = document.getElementById("groupPositionSelect");
-const updateGroupBtn = document.getElementById("updateGroupSetting");
+// const updateGroupBtn = document.getElementById("updateGroupSetting");
 const clickModalOutSide = document.getElementById("groupManageContainer");
 
 positionSelectBtn.addEventListener("click", (e) => {
@@ -78,9 +78,9 @@ positionSelectBtn.addEventListener("click", (e) => {
         .classList.remove("hidden");
 });
 
-updateGroupBtn.addEventListener("click", (e) => {
-    document.getElementById("updateGroupContainer").classList.remove("hidden");
-});
+// updateGroupBtn.addEventListener("click", (e) => {
+//     document.getElementById("updateGroupContainer").classList.remove("hidden");
+// });
 
 //모달창 밖 눌렀을 때
 clickModalOutSide.addEventListener("click", (e) => {

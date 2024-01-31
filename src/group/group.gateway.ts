@@ -1,4 +1,4 @@
-import { Injectable, UseFilters } from "@nestjs/common";
+import { Inject, Injectable, UseFilters, forwardRef } from "@nestjs/common";
 import {
     OnGatewayConnection,
     OnGatewayDisconnect,
@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from "uuid";
 import { UpdateGroupDto } from "./dto/update-group.dto";
 import { GroupChatDto } from "./dto/chat-group.dto";
 import { KickDto } from "./dto/kick-group.dto";
+import { checkPositionCorrectForMode } from "./function/check-mode-position-correct.function";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -26,11 +27,13 @@ import { KickDto } from "./dto/kick-group.dto";
 export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
 
-    constructor(private readonly groupService: GroupService) {}
+    constructor(
+        @Inject(forwardRef(() => GroupService))
+        private readonly groupService: GroupService,
+    ) {}
 
     handleConnection(client: Socket) {
         console.log(`[Group]client connected: ${client.id}`);
-        client["groupId"] = null;
     }
 
     async handleDisconnect(client: Socket) {
@@ -61,6 +64,24 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.groupService.clear();
 
         this.server.emit("clear", { message: "Redis 초기화 완료" });
+    }
+
+    @SubscribeMessage("openGroupUpdate")
+    async openGroupUpdate(
+        client: Socket,
+        updateGroupDto: UpdateGroupDto,
+    ): Promise<void> {
+        const { groupId } = updateGroupDto;
+
+        const [groupInfo, groupState, users] = await Promise.all([
+            this.groupService.findGroupInfoById(groupId),
+            this.groupService.findGroupStateById(groupId),
+            this.findGroupUsers(groupId),
+        ]);
+
+        this.server
+            .to(client.id)
+            .emit("openGroupUpdate", { groupInfo, groupState, users });
     }
 
     @SubscribeMessage("getAllGroup")
@@ -119,7 +140,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         updateGroupDto: UpdateGroupDto,
     ): Promise<void> {
-        const { groupId } = updateGroupDto;
+        const { mode, updatePosition, groupId } = updateGroupDto;
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
             "userId",
@@ -130,6 +151,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         if (!checkIsUserAlreadyGroupJoin(client, groupId)) {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
+        }
+
+        // 모드별 포지션 확인
+        if (mode && updatePosition) {
+            checkPositionCorrectForMode(mode, updatePosition);
         }
 
         const { groupInfo, groupState } = await this.groupService.updateGroup(
@@ -176,7 +202,6 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         // 소켓으로 접속한 유저들 목록 불러오기
         const users = await this.findGroupUsers(groupId);
-        console.log("유저 목록: ", users);
 
         this.server.to(groupId).emit("groupJoin", {
             groupId,

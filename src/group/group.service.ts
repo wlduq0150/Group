@@ -13,6 +13,7 @@ import { UserService } from "src/user/user.service";
 import { UpdateGroupDto } from "./dto/update-group.dto";
 import { updateGroupState } from "./function/update-group-state.function";
 import { POSITION_LIST } from "./constants/position.constants";
+import { GroupGateway } from "./group.gateway";
 
 @Injectable()
 export class GroupService {
@@ -23,6 +24,8 @@ export class GroupService {
         private readonly userService: UserService,
         @Inject(forwardRef(() => DiscordService))
         private readonly discordService: DiscordService,
+        @Inject(forwardRef(() => GroupGateway))
+        private readonly groupGateway: GroupGateway,
     ) {
         this.clear();
 
@@ -62,6 +65,10 @@ export class GroupService {
         await this.redisService.getRedisClient().hdel(clientId, attr);
     }
 
+    async findGroupUsers(groupId: string) {
+        return await this.groupGateway.findGroupUsers(groupId);
+    }
+
     async createGroup(groupId: string, createGroupDto: CreateGroupDto) {
         const { name, mode, people, tier, mic, owner, position } =
             createGroupDto;
@@ -72,8 +79,14 @@ export class GroupService {
             );
         }
 
-        if (mode !== "aram" && position.length === 0) {
-            throw new WsException("그룹원이 한명이상 필요합니다.");
+        if (mode === "aram" && position.length) {
+            throw new WsException(
+                "칼바람나락 모드는 포지션 선택을 할 수 없습니다.",
+            );
+        }
+
+        if (mode !== "aram" && position.length < 2) {
+            throw new WsException("그룹원이 두명이상 필요합니다.");
         }
 
         const groupInfoKey = this.generateGroupInfoKey(groupId);
@@ -93,31 +106,62 @@ export class GroupService {
         groupId: string,
         updateGroupDto: UpdateGroupDto,
     ) {
+        const { mode } = updateGroupDto;
+
         const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupStateLockkey = this.generateGroupLockKey(groupId);
+
+        const lock = await this.redlock.acquire([groupStateLockkey], 1000);
 
         let groupInfo = await this.findGroupInfoById(groupId);
         let groupState = await this.findGroupStateById(groupId);
 
-        if (userId !== groupInfo.owner) {
-            throw new WsException("그룹장만이 그룹 설정을 변경 가능합니다.");
-        }
-
-        for (let update of Object.keys(updateGroupDto)) {
-            if (update === "updatePosition") {
-                groupState = updateGroupState(
-                    groupState,
-                    updateGroupDto[update],
+        try {
+            if (userId !== groupInfo.owner) {
+                throw new WsException(
+                    "그룹장만이 그룹 설정을 변경 가능합니다.",
                 );
-            } else {
-                if (update in groupInfo) {
-                    groupInfo[update] = updateGroupDto[update];
+            }
+
+            // 칼바람나락 모드에서 또는 모드로 수정을 금지
+            if (
+                mode &&
+                mode !== groupInfo.mode &&
+                (groupInfo.mode === "aram" || mode === "aram")
+            ) {
+                throw new WsException(
+                    "칼바람나락 모드로 그룹을 수정하는 것은 불가능합니다.",
+                );
+            }
+
+            for (let update of Object.keys(updateGroupDto)) {
+                if (update === "updatePosition") {
+                    groupState = updateGroupState(
+                        groupState,
+                        updateGroupDto[update],
+                        updateGroupDto["people"],
+                    );
+                } else if (update !== "people") {
+                    if (update in groupInfo) {
+                        groupInfo[update] = updateGroupDto[update];
+                    }
                 }
             }
-        }
 
-        await this.redisService.set(groupInfoKey, JSON.stringify(groupInfo));
-        await this.redisService.set(groupStateKey, JSON.stringify(groupState));
+            await this.redisService.set(
+                groupInfoKey,
+                JSON.stringify(groupInfo),
+            );
+            await this.redisService.set(
+                groupStateKey,
+                JSON.stringify(groupState),
+            );
+        } catch (e) {
+            throw new WsException(e.message);
+        } finally {
+            await lock.release();
+        }
 
         return { groupInfo, groupState };
     }
@@ -285,11 +329,11 @@ export class GroupService {
             if (isGroupEmpty) {
                 const discordId =
                     await this.userService.findDiscordIdByUserId(userId);
-                await this.discordService.deleteVoiceChannelForGroup(
+                this.removeGroup(groupId);
+                this.discordService.deleteVoiceChannelForGroup(
                     groupId,
                     discordId,
                 );
-                await this.removeGroup(groupId);
                 return null;
             } else {
                 // 변화 저장

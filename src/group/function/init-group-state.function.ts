@@ -21,7 +21,5 @@ export function initGroupState(
         }
     });
 
-    console.log(groupState);
-
     return groupState;
 }
