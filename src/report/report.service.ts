@@ -4,12 +4,16 @@ import path from "path";
 import { FilterWords } from "src/entity/filter-word.entity";
 import { Repository } from "typeorm";
 import fs from "fs";
+import { CreateReportDto } from "./dtos/createReport.dto";
+import { ReportList } from "src/entity/report-list.entity";
 
 @Injectable()
 export class ReportService {
     constructor(
         @InjectRepository(FilterWords)
-        private filterWordRepository: Repository<FilterWords>,
+        private readonly filterWordRepository: Repository<FilterWords>,
+        @InjectRepository(ReportList)
+        private readonly reportRepository: Repository<ReportList>,
     ) {}
 
     async loadFilterWords() {
@@ -32,5 +36,11 @@ export class ReportService {
         }
 
         return filterWords;
+    }
+
+    createReport(reportData: CreateReportDto): Promise<ReportList> {
+        const newReport: ReportList = this.reportRepository.create(reportData);
+
+        return this.reportRepository.save(newReport);
     }
 }
