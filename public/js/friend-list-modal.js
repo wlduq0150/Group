@@ -1,5 +1,4 @@
 const friendRequestButton = document.querySelector("#friend_request");
-import { LolUser } from "./../../src/entity/lol-user.entity";
 friendRequestButton.addEventListener("change", function () {
     getFriendRequestList();
 });
@@ -53,7 +52,7 @@ async function getFriendList(userIds) {
 
         const detailDiv = document.createElement("div");
         detailDiv.textContent = userDetail.lolUser
-            ? `${userDetail.LolUser.username}#${userDetail.LolUser.tag}`
+            ? userDetail.lolUser.nameTag
             : "롤 유저 정보 없음";
         nameDiv.appendChild(detailDiv);
 
@@ -139,7 +138,7 @@ async function getFriendRequestList() {
 
         const detailDiv = document.createElement("div");
         detailDiv.textContent = friendRequest.lolUser
-            ? `${friendRequest.LolUser.username}#${friendRequest.LolUser.tag}`
+            ? friendRequest.lolUser.nameTag
             : "롤 유저 정보 없음";
         nameDiv.appendChild(detailDiv);
 
