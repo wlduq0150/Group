@@ -43,7 +43,6 @@ function enterkey() {
         const friendId = document.querySelector(".sendMessage-parent .friend")
             .dataset.id;
         sendMessage(friendId, messageValue);
-
         messageValue = "";
     }
 }
@@ -121,7 +120,7 @@ function createMessage(data) {
         newMessage =
             newMessage +
             ` <div class="message-day">${day[0]}</div>
-        <div class="me-name">${senderName}</div>`;
+        <div class="discord-name">${senderName}</div>`;
     }
     newMessage = newMessage + tailMessage;
     messageChild.innerHTML = newMessage;
