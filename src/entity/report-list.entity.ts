@@ -15,7 +15,6 @@ export class ReportList {
     id: number;
 
     @ManyToOne(() => User, (user) => user.reportLists)
-    @IsNumber()
     reportUser: User;
 
     @Column()

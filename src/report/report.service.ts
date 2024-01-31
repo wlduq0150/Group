@@ -47,9 +47,7 @@ export class ReportService {
     }
 
     async createReport(reportData: CreateReportDto): Promise<ReportList> {
-        const user = await this.userService.findOneById(
-            reportData.reportUser.id,
-        );
+        const user = await this.userService.findOneById(reportData.reportUser);
 
         const newReport = this.reportRepository.create({
             ...reportData,
