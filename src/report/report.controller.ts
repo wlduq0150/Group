@@ -14,7 +14,6 @@ export class ReportController {
 
     @Post("/create")
     createReport(@Body() reportData: CreateReportDto) {
-        console.log("reportData", reportData);
         return this.reportService.createReport(reportData);
     }
 }
