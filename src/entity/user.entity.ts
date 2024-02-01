@@ -34,9 +34,6 @@ export class User {
     @Column({ default: false })
     isBanned: boolean;
 
-    @Column({ default: false })
-    isSuspended: boolean;
-
     @CreateDateColumn()
     createdAt: Date;
 

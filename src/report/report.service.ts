@@ -55,7 +55,6 @@ export class ReportService implements IReportServive {
         const newReport: ReportList = this.reportRepository.create({
             ...reportData,
             reportUser: user,
-            isProcessed: false,
         });
 
         if (reportData.reportContent) {
@@ -65,8 +64,11 @@ export class ReportService implements IReportServive {
             );
 
             if (isAbusive) {
-                newReport.isProcessed = true;
+                user.reportCount += 3;
+            } else {
+                user.reportCount += 1;
             }
+            await this.userService.save(user);
         }
 
         return this.reportRepository.save(newReport);
@@ -83,11 +85,6 @@ export class ReportService implements IReportServive {
                 isAbusive = true;
             }
         });
-
-        if (isAbusive) {
-            user.reportCount += 1;
-            await this.userService.save(user);
-        }
 
         return isAbusive;
     }
