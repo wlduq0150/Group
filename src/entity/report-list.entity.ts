@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 import {
     Column,
     Entity,
@@ -33,4 +33,8 @@ export class ReportList {
     @Column()
     @IsString()
     reportDetail: string;
+
+    @Column({ default: false })
+    @IsBoolean()
+    isProcessed: boolean;
 }

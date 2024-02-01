@@ -186,3 +186,18 @@ async function report() {
         console.log("신고 실패: ", err);
     }
 }
+
+// DB에 필터링 단어 저장
+async function saveFilterWords() {
+    try {
+        const response = await fetch("/report/loadFilterWords", {
+            method: "POST",
+        });
+
+        if (!response.ok) {
+            throw new Error("DB에 필터링 단어 저장 실패");
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}

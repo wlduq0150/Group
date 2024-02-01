@@ -7,6 +7,7 @@ export class CreateReportDto extends PickType(ReportList, [
     "reportLocation",
     "reportContent",
     "reportDetail",
+    "isProcessed",
 ]) {
     @IsNumber()
     reportUser: number;
