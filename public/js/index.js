@@ -3,12 +3,8 @@ let groupId;
 let blockedUsers = [];
 let friends = [];
 const friendSocket = io("/friend");
-const socket = io("http://localhost:5001/group", {
+const socket = io("/group", {
     transports: ["websocket"],
-    cors: {
-        origin: "http://127.0.0.1:5500/public/index.html",
-        methods: ["GET", "POST"],
-    },
 });
 
 window.onload = function () {
