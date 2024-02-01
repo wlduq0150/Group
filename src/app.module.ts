@@ -14,11 +14,15 @@ import { CachingModule } from "./caching/caching.module";
 import { RedisService } from "./redis/redis.service";
 import { ReportService } from "./report/report.service";
 import { ReportModule } from "./report/report.module";
+import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
+import { FilterWords } from "./entity/filter-word.entity";
+import { Repository } from "typeorm";
 
 @Module({
     imports: [
         ConfigProjectModule,
         TypeormModule.forRoot(),
+        TypeOrmModule.forFeature([FilterWords]),
         RedisModule,
         LolModule,
         CachingModule.register(),
@@ -34,15 +38,14 @@ import { ReportModule } from "./report/report.module";
 export class AppModule implements OnModuleInit {
     constructor(
         private readonly redisService: RedisService,
-        private readonly reportService: ReportService,
+        @InjectRepository(FilterWords)
+        private readonly filterWordRepository: Repository<FilterWords>,
     ) {}
 
     async onModuleInit() {
         const client = this.redisService.getRedisClient();
-        const filterWords = await this.reportService.loadFilterWords();
+        const filterWords = await this.filterWordRepository.find();
 
-        for (const word of filterWords) {
-            await client.set(`filterWords:${word}`, "욕설");
-        }
+        await client.set("filterWords", JSON.stringify(filterWords));
     }
 }

@@ -34,6 +34,9 @@ export class User {
     @Column({ default: false })
     isBanned: boolean;
 
+    @Column({ default: false })
+    isSuspended: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 
@@ -51,9 +54,6 @@ export class User {
     @ManyToMany(() => User, (user) => user.reportedUsers)
     @JoinTable()
     reportedUsers: User[];
-
-    @Column({ default: false })
-    isSuspended: boolean;
 
     @OneToOne(() => LolUser, (lolUser) => lolUser.user)
     lolUser: LolUser;
