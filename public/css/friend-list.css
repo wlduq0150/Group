@@ -62,11 +62,15 @@
 }
 
 .friend_list_background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 298px;
     height: 514px;
     background-color: white;
     border-radius: 20px;
     box-shadow: 0 5px 6px #000000;
+    position:absolute;
 }
 
 .friend_list_title {
@@ -172,6 +176,28 @@
     border-radius: 50%;
     border: 1px black;
     background-color: rgb(77, 188, 86);
+}
+.search_name{
+    background-color: #E9E9E9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 30px;
+    border-radius: 12px;
+    border-color: #E9E9E9;
+    color: #505050;
+    padding: 10px 0;
+    margin: 15px;
+    
+    > input {
+        background-color: rgba(255, 255, 255, 0);
+        color: black;
+        font-size: 13px;
+
+        outline: none;
+        border: 1px solid rgba(255, 255, 255, 0);
+    }
 }
 
 .hidden {

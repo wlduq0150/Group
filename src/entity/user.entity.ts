@@ -4,11 +4,13 @@ import {
     Entity,
     JoinTable,
     ManyToMany,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
 import { LolUser } from "./lol-user.entity";
+import { ReportList } from "./report-list.entity";
 
 @Entity({
     name: "users", // 데이터베이스 테이블의 이름
@@ -29,6 +31,12 @@ export class User {
     @Column({ default: 0 })
     reportCount: number;
 
+    @Column({ default: false })
+    isBanned: boolean;
+
+    @Column({ default: false })
+    isSuspended: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 
@@ -47,9 +55,9 @@ export class User {
     @JoinTable()
     reportedUsers: User[];
 
-    @Column({ default: false })
-    isSuspended: boolean;
-
     @OneToOne(() => LolUser, (lolUser) => lolUser.user)
     lolUser: LolUser;
+
+    @OneToMany(() => ReportList, (reportList) => reportList.reportUser)
+    reportLists: ReportList[];
 }

@@ -8,10 +8,11 @@
     height: 510px;
     border-radius: 20px;
     box-shadow: 0 5px 6px #000000;
+    position: absolute;
 }
 
 .blocked-user-modal .blocked-user-modal-bar {
-    box-shadow: inset 0px 5px 6px white;
+    box-shadow: inset 0 5px 6px white;
     width: 100%;
     font-size: 16px;
     font-weight: bold;
@@ -40,6 +41,7 @@
     width: 50px;
     height: 50px;
 }
+
 .blocked-user-modal .blocked-user-info-box {
     margin-left: 10px;
     margin-bottom: 5px;

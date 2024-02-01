@@ -161,3 +161,28 @@ function clickSup() {
       />
     `;
 }
+
+// 신고 테스트
+async function report() {
+    try {
+        const response = await fetch("/report/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                reportUser: 3,
+                reportCategory: "언어 폭력",
+                reportLocation: "채팅방",
+                reportContent:
+                    "안녕하세요\n시발 내말 안들려?\n야이 자식아 닥쳐\nㅋㅋㅋㅋ 어쩌라고",
+                reportDetail: "얘가 욕함",
+            }),
+        });
+
+        const data = await response.json();
+        console.log("신고 성공: ", data);
+    } catch (err) {
+        console.log("신고 실패: ", err);
+    }
+}

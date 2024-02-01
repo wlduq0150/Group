@@ -13,7 +13,9 @@
 
     <body>
         <div id="friend-list-modal" class="friend_list_background">
-            <div class="friend_list_title">친구 목록</div>
+            <div id="friend_list_modal_drag_me" class="friend_list_title">
+                친구 목록
+            </div>
             <div class="friend_title">
                 <div>
                     <input
@@ -32,8 +34,14 @@
                         value="friend_request"
                         type="radio"
                     />
-                    <label for="friend_request">친구 신청</label>
+                    <label for="friend_request" type="text">친구 신청</label>
                 </div>
+            </div>
+            <div class="search_name">
+                <img
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
+                />
+                <input placeholder="닉네임 , 태그 검색" />
             </div>
             <!-- friend_list => 친구 목록을 볼 수 있는 곳 -->
             <div class="friend_content_wrapper">
@@ -41,7 +49,9 @@
                 <div class="friend_request_list hidden"></div>
             </div>
         </div>
-        <script src="../js/friend-list-modal.js"></script>
-        <script src="../js/friend-sendMessage.js"></script>
     </body>
+    <script src="../js/friend-list-modal.js"></script>
+    <script src="../js/friend-sendMessage.js"></script>
+    <script src="../js/drag.js"></script>
 </html>
+>>>>>>> 87ea7680f993ca61ed46888b9629e411a098dbbc
