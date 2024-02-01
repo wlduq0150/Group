@@ -24,18 +24,7 @@
 
 <body>
     <div class="group_manage">
-        <div class="hidden" id="positionSelectContainer">
-            <script>
-                loadHTML("./select-position-modal.html");
-            </script>
-        </div>
-        <div class="hidden" id="updateGroupContainer">
-            <script>
-                loadHTML("./update-group-modal.html");
-            </script>
-        </div>
-
-        <div class="group_manage_header">
+        <div id="group_manage_drag_me" class="group_manage_header">
             <div class="title"></div>
             <div class="mode"><span class="number"></span></div>
             <div class="owner">
@@ -65,6 +54,17 @@
             </div>
         </div>
 
+        <div class="hidden" id="positionSelectContainer">
+            <script>
+                loadHTML("./select-position-modal.html");
+            </script>
+        </div>
+        <div class="hidden" id="updateGroupContainer">
+            <script>
+                loadHTML("./update-group-modal.html");
+            </script>
+        </div>
+
         <div class="group_manage_chat_list"></div>
 
         <div class="group_manage_chat">
@@ -73,6 +73,7 @@
         </div>
     </div>
     <script src="../js/group-manage.js"></script>
+    <script src="../js/drag.js"></script>
 </body>
 
 </html>

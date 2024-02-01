@@ -32,7 +32,7 @@ function createChatMessage(myId, userId, name, message) {
     const writer = document.createElement("div");
     writer.classList.add("chat_writer");
     writer.innerHTML = `
-        <span class="user" data-id="${userId}">
+        <span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${userId}">
             ${name}
         </span>
     `;
