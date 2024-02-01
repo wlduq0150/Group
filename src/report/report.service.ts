@@ -59,7 +59,6 @@ export class ReportService implements IReportServive {
 
         if (reportData.reportContent) {
             const isAbusive: boolean = await this.processReport(
-                user,
                 reportData.reportContent,
             );
 
@@ -75,7 +74,7 @@ export class ReportService implements IReportServive {
     }
 
     // 신고 처리
-    async processReport(user: User, reportContent: string): Promise<boolean> {
+    async processReport(reportContent: string): Promise<boolean> {
         const filterwords: FilterWords[] =
             await this.filterWordRepository.find();
 

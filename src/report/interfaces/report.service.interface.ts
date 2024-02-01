@@ -5,5 +5,5 @@ import { ReportList } from "src/entity/report-list.entity";
 export interface IReportServive {
     loadFilterWords(): Promise<string[]>;
     createReport(reportData: CreateReportDto): Promise<ReportList>;
-    processReport(user: User, reportContent: string): Promise<boolean>;
+    processReport(reportContent: string): Promise<boolean>;
 }
