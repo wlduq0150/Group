@@ -127,7 +127,6 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async saveMessages(myId: number, friendId: number) {
         const messageCount = await this.getRedisKey(myId, friendId);
-        console.log(messageCount);
         this.saveSendedMessage(messageCount[1]).then((e) => {
             for (let ms of messageCount[1]) {
                 this.redisService.del(ms);
@@ -147,7 +146,6 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         for (let message of messageCount) {
             const oneMessage: any = await this.redisService.get(`${message}`);
             const parseMessage = JSON.parse(oneMessage);
-            console.log(parseMessage);
             sendMessages.push({
                 senderId: +parseMessage.senderId,
                 accepterId: +parseMessage.accepterId,

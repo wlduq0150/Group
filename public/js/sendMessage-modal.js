@@ -130,14 +130,12 @@ function createMessage(data) {
         ) {
             lastChild.querySelector(".message-time").innerHTML = "";
         } else {
-            newMessage =
-                newMessage + `<div class="discord-name">${senderName}</div>`;
         }
     } else {
         newMessage =
             newMessage +
             ` <div class="message-day">${day[0]}</div>
-        <div class="discord-name">${senderName}</div>`;
+`;
     }
     newMessage = newMessage + tailMessage;
     messageChild.innerHTML = newMessage;

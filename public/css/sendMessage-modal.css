@@ -90,11 +90,15 @@
     display: flex;
 }
 
-.sendMessage-parent .friend .message-text-box {
+.sendMessage-parent .message-text-box {
+    padding: 5px;
     font-size: 16px;
-    background-color: rgb(184, 226, 249);
     box-shadow: 0 1px 2px #000000;
     border-radius: 5px;
+}
+
+.sendMessage-parent .friend .message-text-box {
+    background-color: rgb(184, 226, 249);
 }
 
 .sendMessage-parent .friend .message-day {
@@ -124,14 +128,12 @@
 }
 
 .sendMessage-parent .me .message-text-box {
-    font-size: 16px;
     background-color: rgb(255, 213, 132);
-    box-shadow: 0 1px 2px #000000;
-    border-radius: 5px;
 }
 
 .sendMessage-parent .sendMessage-input-box {
     margin-top: auto;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
