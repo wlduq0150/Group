@@ -70,7 +70,7 @@
     background-color: white;
     border-radius: 20px;
     box-shadow: 0 5px 6px #000000;
-    position:absolute;
+    position: absolute;
 }
 
 .friend_list_title {
@@ -104,10 +104,8 @@
     margin: 0 10px;
 
     .friend_request_button {
-        display: grid;
-        grid-template-columns: 40% 40%;
-        justify-content: center;
-        justify-items: center;
+        display: flex;
+        justify-content: space-between;
 
         & > div {
             font-weight: bold;
@@ -178,19 +176,19 @@
     border: 1px black;
     background-color: rgb(77, 188, 86);
 }
-.search_name{
-    background-color: #E9E9E9;
+.search_name {
+    background-color: #e9e9e9;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 250px;
     height: 30px;
     border-radius: 12px;
-    border-color: #E9E9E9;
+    border-color: #e9e9e9;
     color: #505050;
     padding: 10px 0;
     margin: 15px;
-    
+
     > input {
         background-color: rgba(255, 255, 255, 0);
         color: black;

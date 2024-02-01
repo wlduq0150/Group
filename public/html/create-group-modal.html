@@ -31,7 +31,7 @@
           <div>
             티어
           </div>
-          <select class="group-box-item-input" name="create-group-game-tier" id="lang">
+          <select class="group-tier-box group-box-item-input" name="create-group-game-tier" id="lang">
             <option value="challenger">
               챌린저
             </option>
@@ -50,7 +50,7 @@
       </div>
       <div class="people-box group-box-item">
         <div>인원</div>
-        <select class="group-box-item-input" name="create-group-game-people" id="lang">
+        <select class="group-tier-box group-box-item-input" name="create-group-game-people" id="lang">
           <option value=2>2</option>
           <option value=3>3</option>
           <option value=4>4</option>
@@ -66,23 +66,23 @@
     <div class="select-position-box">
       <div class="position-jg">
         <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" alt=""
-          onclick="cg_clickDarkJg()" />
+          onclick="createGroupClickUpdate(event)" />
       </div>
       <div class="position-top">
         <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png" alt=""
-          onclick="cg_clickDarkTop()" />
+          onclick="createGroupClickUpdate(event)" />
       </div>
       <div class="position-mid">
         <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png" alt=""
-          onclick="cg_clickDarkMid()" />
+          onclick="createGroupClickUpdate(event)" />
       </div>
       <div class="position-adc">
         <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png" alt=""
-          onclick="cg_clickDarkAdc()" />
+          onclick="createGroupClickUpdate(event)" />
       </div>
       <div class="position-sup">
         <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png" alt=""
-          onclick="cg_clickDarkSup()" />
+          onclick="createGroupClickUpdate(event)" />
       </div>
     </div>
     <div class="complete-btn">완료</div>
