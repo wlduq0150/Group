@@ -42,8 +42,8 @@ export class DiscordService implements OnModuleInit {
 
         this.client.on("voiceStateUpdate", async (oldState, newState) => {
             if (
-                oldState.channelId &&
-                (newState.channelId === lobbyChannelId || !newState.channelId)
+                oldState.channelId !== lobbyChannelId &&
+                (!newState.channelId || newState.channelId !== lobbyChannelId)
             ) {
                 const channel = oldState.channel;
                 const discordId = newState.member.id;
@@ -149,6 +149,9 @@ export class DiscordService implements OnModuleInit {
     ): Promise<void> {
         const guild = this.client.guilds.cache.get(guildId);
         const channel = guild.channels.cache.get(channelId) as VoiceChannel;
+        const lobbyChannelId = this.configService.get<string>(
+            "DISCORD_LOBBY_CHANNEL_ID",
+        );
 
         if (!channel) {
             throw new NotFoundException("해당 채널을 찾을 수 없습니다.");
@@ -158,14 +161,14 @@ export class DiscordService implements OnModuleInit {
             const member = await guild.members.fetch(discordId);
 
             if (member) {
-                try {
-                    await member.roles.add(roleId);
-                    await member.voice.setChannel(channel);
-                } catch (err) {
+                if (member.voice.channelId !== lobbyChannelId) {
                     throw new NotFoundException(
                         "유저가 대기실에 존재하지 않습니다.",
                     );
                 }
+
+                await member.roles.add(roleId);
+                await member.voice.setChannel(channel);
             }
         }
     }
