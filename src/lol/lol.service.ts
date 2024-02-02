@@ -31,15 +31,12 @@ export class LolService {
         return lolUser.id;
     }
 
-    //이름+태그로 롤 유저 찾아서 없으면 새로 만들기
-    async findUserByNameTag(name: string, tag: string, userId: number) {
+    //이름+태그로 롤 유저 찾기
+    private async findUserByNameTag(name: string, tag: string) {
         const userInfo = await this.lolUserRepository.findOneBy({
             nameTag: name + "#" + tag,
         });
-        if (!userInfo) {
-            return await this.saveUserAllInfo(name, tag, userId);
-        }
-        return { message: "이미 존재하는 사용자 입니다" };
+        return userInfo;
     }
 
     //롤 유저id로 롤유저 찾기
@@ -69,6 +66,11 @@ export class LolService {
 
     //유저생성
     async saveUserAllInfo(name: string, tag: string, discordUserId: number) {
+        const checkUser = await this.findUserByNameTag(name, tag);
+        if (checkUser) {
+            throw new Error("이미 연동된 롤유저 입니다");
+        }
+
         const userInfo = await this.saveLolUser(name, tag, discordUserId);
         await this.saveChampionData(userInfo.id);
     }

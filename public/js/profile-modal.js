@@ -53,6 +53,7 @@ async function getUserProfile(lolUserId, discordUserName) {
                 ".champion-box-parent",
             );
             let mostChampionsBox = "";
+            console.log(data.user.lolChampions.length);
             if (data.user.lolChampions.length) {
                 for (let i = 0; i < mostChampionCount; i++) {
                     const champKda = (
@@ -107,6 +108,8 @@ async function getUserProfile(lolUserId, discordUserName) {
              </div>
             `;
                 }
+            } else if (tier != "unRanked") {
+                mostChampionsBox = `<div>챔피언 정보를 불러오는 중입니다<div>`;
             } else {
                 mostChampionsBox = `<div>이번 시즌 솔로 랭크 배치를 완료하지 않아 플레이한 챔피언 정보가 없습니다</div>`;
             }
@@ -227,12 +230,17 @@ async function linkingLolUser(lolName, lolTag, userId) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: lolName, tag: lolTag, userId: +userId }),
-    }).then((res) => {
-        if (res.status >= 400) {
-            document.querySelector(".parent .loading").style.visibility =
-                "hidden";
-        } else {
-            console.log("계정이 정보를 저장했어요");
-        }
-    });
+    })
+        .then((res) => {
+            console.log(res);
+            if (res.status >= 400) {
+                document.querySelector(".parent .loading").style.visibility =
+                    "hidden";
+            } else {
+                console.log("계정이 정보를 저장했어요");
+            }
+        })
+        .catch((e) => {
+            console.log(e);
+        });
 }

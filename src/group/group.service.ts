@@ -1,4 +1,9 @@
-import { Inject, Injectable, forwardRef } from "@nestjs/common";
+import {
+    ForbiddenException,
+    Inject,
+    Injectable,
+    forwardRef,
+} from "@nestjs/common";
 import { CreateGroupDto } from "./dto/create-group.dto";
 import { Group } from "./interface/group.interface";
 import { initGroupState } from "./function/init-group-state.function";
@@ -211,7 +216,9 @@ export class GroupService {
             }
         }
 
-        return null;
+        throw new ForbiddenException(
+            "그룹장만이 디스코드 이동을 결정할 수 있습니다.",
+        );
     }
 
     async findGroupInfoById(groupId: string) {

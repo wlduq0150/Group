@@ -55,14 +55,17 @@ async function moveDiscord() {
             },
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            console.log(response);
-            throw new Error("서버 상태 오류");
+            if (response.status === 403) {
+                alert(data.message);
+            }
+
+            return;
         }
 
-        const data = await response.json();
-        console.log(data);
-        alert("음성 채널에 참여했습니다. 채널 ID: " + data.channelId);
+        alert("음성 채널에 참여했습니다.");
     } catch (err) {
         alert(err.message);
     }

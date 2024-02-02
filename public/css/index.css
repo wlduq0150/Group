@@ -284,15 +284,19 @@ main {
 }
 
 .title_room {
-    width: 36%;
+    width: 33%;
     text-align: left;
     padding-left: 20px;
 }
 
 .group_name {
-    width: 36%;
+    width: 33%;
     text-align: left;
     padding-left: 20px;
+}
+
+.group_name span {
+    padding-top: 3px;
 }
 
 .title_people {
@@ -306,15 +310,13 @@ main {
 }
 
 .title_tier {
-    width: 9%;
-    text-align: left;
-    padding-left: 20px;
+    width: 12%;
+    text-align: center;
 }
 
 .group_tier {
-    width: 9%;
-    text-align: left;
-    padding-left: 20px;
+    width: 12%;
+    text-align: center;
 }
 
 .title_user {
@@ -348,6 +350,7 @@ main {
 
 .user-rank {
     display: flex;
+    justify-content: center;
 }
 
 /* .group_user{
@@ -385,16 +388,17 @@ main {
 
 .refresh {
     display: flex;
-    width: 38px;
+    width: 35px;
     height: 35px;
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    /* padding: 8px; */
     background-color: rgba(255, 255, 255, 0.841);
     border-radius: 8px;
 }
 
 .search {
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
