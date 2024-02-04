@@ -11,7 +11,6 @@ export class AppService {
                 return;
             }
 
-            console.log(sessions);
             return sessions;
         });
     }
