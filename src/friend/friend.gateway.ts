@@ -20,11 +20,11 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
     constructor(private readonly redisService: RedisService) {}
 
     handleConnection(client: Socket) {
-        console.log(`[Group]client connected: ${client.id}`);
+        console.log(`[Friend]client connected: ${client.id}`);
     }
 
     async handleDisconnect(client: Socket) {
-        console.log(`[Group]client disconnected: ${client.id}`);
+        console.log(`[Friend]client disconnected: ${client.id}`);
         if (client["userId"]) {
             await this.redisService.del(`friend:${client["userId"]}`);
         }
