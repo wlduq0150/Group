@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, Session } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { LolServer } from "./constants/lol-server.constants";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -20,38 +20,30 @@ export class LolService {
         private readonly cacheManager: Cache,
     ) {}
 
-    //이름+태그로 유저의 승률, 티어, 챔피언의 승률, kda 가져오기
-    // async findUser(name: string, tag: string) {
-    //     const userPuuid = await this.findUserPuuid(name, tag);
+    //디코유저 id로 롤 유저 찾기
+    async findUserByUserId(userId: number) {
+        const lolUser = await this.lolUserRepository.findOneBy({
+            userId: userId,
+        });
+        if (!lolUser) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
+        return lolUser.id;
+    }
 
-    //     const userTier = await this.findTier(userPuuid.puuid);
+    //이름+태그로 롤 유저 찾아서 없으면 새로 만들기
+    async findUserByNameTag(name: string, tag: string, userId: number) {
+        const userInfo = await this.lolUserRepository.findOneBy({
+            nameTag: name + "#" + tag,
+        });
+        if (!userInfo) {
+            await this.saveUserAllInfo(name, tag, userId);
+        }
+        return { message: "이미 존재하는 사용자 입니다" };
+    }
 
-    //     const count: number = userTier[0].wins + userTier[0].losses;
-    //     const userMatchIds = await this.findMatchIds(userPuuid.puuid, count);
-    //     const userChampions = await this.allMatches(
-    //         userMatchIds,
-    //         userPuuid.puuid,
-    //     );
-    //     const clearChampions = userChampions
-    //         .filter((e) => {
-    //             return e != null;
-    //         })
-    //         .sort((a, b) => b.total - a.total);
-
-    //     return {
-    //         name: name,
-    //         tag: tag,
-    //         tier: userTier[0].tier,
-    //         rank: userTier[0].rank,
-    //         leaguePoints: userTier[0].leaguePoints,
-    //         wins: userTier[0].wins,
-    //         losses: userTier[0].losses,
-    //         champion: clearChampions,
-    //     };
-    // }
-
-    async findUserProfile(userId: number) {
-        const userCacheKey: string = `userCache:id${userId}`;
+    async findUserProfile(lolUserId: number) {
+        const userCacheKey: string = `userCache:id${lolUserId}`;
         const userCache: string = await this.cacheManager.get(userCacheKey);
         if (userCache) {
             const userInfo = JSON.parse(userCache) as
@@ -63,9 +55,9 @@ export class LolService {
             return userInfo;
         }
 
-        const user = await this.findUserInfo(userId);
+        const user = await this.findUserInfo(lolUserId);
         const champion = await this.lolChampionRepository.find({
-            where: { lolUserId: userId },
+            where: { lolUserId: lolUserId },
             order: { total: "DESC" },
         });
         await this.cacheManager.set(
@@ -79,6 +71,7 @@ export class LolService {
     //유저생성
     async saveUserAllInfo(name: string, tag: string, discordUserId: number) {
         const userInfo = await this.saveLolUser(name, tag, discordUserId);
+
         await this.saveChampionData(userInfo.id);
     }
 
@@ -93,10 +86,11 @@ export class LolService {
         const { user, profileIconId, summonerLevel } = await this.findTier(
             userPuuid.puuid,
         );
+
         await this.lolUserRepository.save({
             gameName: name,
             gameTag: tag,
-            nameTag: name + tag,
+            nameTag: name + "#" + tag,
             summonerLevel: summonerLevel,
             profileIconId: profileIconId,
             puuid: userPuuid.puuid,
@@ -109,7 +103,7 @@ export class LolService {
             lastMatchId: "no",
         });
         const thisUser = await this.lolUserRepository.findOne({
-            where: { nameTag: name + tag },
+            where: { nameTag: name + "#" + tag },
         });
         return thisUser;
     }
@@ -163,7 +157,6 @@ export class LolService {
     private async findUserPuuid(name: string, tag: string) {
         const asiaServer: string = LolServer[0];
         const apiKey: string = this.configService.get("LOL_API_KEY");
-
         const response = await fetch(
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
@@ -233,6 +226,9 @@ export class LolService {
             { method: "GET" },
         );
         const userMatch = await response.json();
+        if (!userMatch) {
+            throw new NotFoundException("매치정보를 찾을수 없습니다");
+        }
         //다시하기는 제외하기
         if (userMatch.info.gameDuration > 250) {
             const thisUser = userMatch.info.participants.filter(

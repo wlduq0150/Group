@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Friend Request</title>
+    <link rel="stylesheet" href="../css/friend-request-modal.css">
+</head>
+
+<body>
+    <div class="friend_request_wrapper">
+        <div id="friend_request_modal_drag_me" class="friend_request_modal" data-senderId="0">
+            <div class="sender_box">
+                <div class="sender_img_box">
+                    <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿.png" />
+                </div>
+                <div class="sender_tag_box">
+                    <div class="sender_tag sender_discord_tag">예원#3333</div>
+                    <div class="sender_tag sender_lol_tag">가렌장인예원#가렌장인</div>
+                    <div class="sender_request_message">님이 친구 요청을 보냈습니다.</div>
+                </div>
+            </div>
+            <div class="button_box">
+                <div class="accept_button" onclick="acceptFriendRequest()">수락</div>
+                <div class="reject_button" onclick="rejectFriendRequest()">거절</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../js/friend-request.js"></script>
+
+</html>

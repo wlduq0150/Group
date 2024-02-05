@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class LolhDto {
+export class LolDto {
     @IsString()
     @IsNotEmpty({ message: "이름을 입력해 주세요" })
     name: string;
@@ -8,4 +8,7 @@ export class LolhDto {
     @IsString()
     @IsNotEmpty({ message: "태그를 입력해 주세요" })
     tag: string;
+
+    @IsNumber()
+    userId: number;
 }

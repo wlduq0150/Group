@@ -1,51 +1,108 @@
+/* * {
+    margin: 0;
+    padding: 0;
+} */
+
+#modal-container {
+    background: rgba(0, 0, 0, 0.5);
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 .create-group-modal {
-  top: 150px;
-  left: 550px;
-  position: absolute;
-  width: 800px;
-  height: 500px;
-  box-shadow: 0 10px 8px #000000;
-  border-radius: 20px;
+    /* display: grid;
+    place-items: center; */
+    background-color: white;
+    width: 700px;
+    height: 475px;
+    box-shadow: 0 10px 8px #000000;
+    border-radius: 20px;
+    position: absolute;
 }
-.create-group-modal-bar {
-  box-shadow: inset 0px 5px 10px white;
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
-  height: 40px;
-  padding-top: 10px;
-  text-align: center;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  background-color: rgb(75, 118, 127);
+
+.create-group-modal .create-group-modal-bar {
+    box-shadow: inset 0px 5px 6px white;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    height: 60px;
+    width: 700px;
+    text-align: center;
+    line-height: 60px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
 }
-.select-group-box {
-  padding: 10px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+.create-group-modal .select-group-box {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: space-around;
 }
-.select-position-box {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+.create-group-modal .group-box-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
-#position {
-  margin-left: 25px;
-  margin-top: 70px;
-  height: 110px;
-  width: 110px;
-  cursor: pointer;
+
+.create-group-modal .title_box {
+    width: 24%;
 }
-.complete-btn {
-  font-weight: bold;
-  font-size: 25px;
-  padding-top: 7px;
-  text-align: center;
-  margin: 0 auto;
-  margin-top: 50px;
-  color: rgb(255, 255, 255);
-  background-color: rgba(106, 106, 106);
-  width: 130px;
-  height: 40px;
-  border-radius: 15px;
-  cursor: pointer;
+
+.create-group-modal .mode-box {
+    width: 17%;
+}
+
+.create-group-modal .tier-box {
+    width: 14%;
+}
+
+.create-group-modal .people-box {
+    display: none;
+    width: 7%;
+}
+
+.create-group-modal .private-box {
+    width: 11%;
+}
+
+.create-group-modal .select-position-box {
+    height: 210px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.create-group-modal .group-box-item-input {
+    height: 25px;
+}
+
+.create-group-modal .select-position-box img {
+    height: 110px;
+    width: 110px;
+    cursor: pointer;
+}
+
+.create-group-modal .select-position-box .forbidden {
+    pointer-events: none;
+}
+
+.create-group-modal .complete-btn {
+    font-weight: bold;
+    font-size: 25px;
+    padding-top: 7px;
+    text-align: center;
+    margin: 0 auto;
+    color: rgb(255, 255, 255);
+    background-color: rgba(106, 106, 106);
+    width: 130px;
+    height: 40px;
+    border-radius: 15px;
+    cursor: pointer;
 }

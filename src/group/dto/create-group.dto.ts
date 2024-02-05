@@ -1,4 +1,10 @@
-import { IsArray, IsBoolean, IsNumber, IsString } from "class-validator";
+import {
+    IsArray,
+    IsBoolean,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from "class-validator";
 import { Position } from "../type/position.type";
 
 export class CreateGroupDto {
@@ -7,6 +13,13 @@ export class CreateGroupDto {
 
     @IsString()
     mode: string;
+
+    @IsOptional()
+    @IsString()
+    people?: number;
+
+    @IsString()
+    tier: string;
 
     @IsBoolean()
     mic: boolean;

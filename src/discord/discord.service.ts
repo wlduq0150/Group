@@ -1,10 +1,9 @@
 import {
+    forwardRef,
     Inject,
     Injectable,
-    InternalServerErrorException,
     NotFoundException,
     OnModuleInit,
-    forwardRef,
 } from "@nestjs/common";
 import {
     ChannelType,
@@ -33,6 +32,7 @@ export class DiscordService implements OnModuleInit {
     ) {}
 
     async onModuleInit(): Promise<void> {
+        console.log(this.configService.get<string>("DISCORD_BOT_TOKEN"));
         const botToken = this.configService.get<string>("DISCORD_BOT_TOKEN");
         await this.client.login(botToken);
 
@@ -41,74 +41,22 @@ export class DiscordService implements OnModuleInit {
         );
 
         this.client.on("voiceStateUpdate", async (oldState, newState) => {
-            if (oldState.channelId && !newState.channelId) {
+            if (
+                oldState.channelId &&
+                (newState.channelId === lobbyChannelId || !newState.channelId)
+            ) {
                 const channel = oldState.channel;
                 const discordId = newState.member.id;
 
-                if (channel) {
-                    const shouldDelete = this.shouldDeleteChannel(
-                        channel,
-                        lobbyChannelId,
-                    );
-                    if (shouldDelete) {
-                        await this.deleteChannel(channel, discordId);
-                    }
+                const shouldDelete = this.shouldDeleteChannel(
+                    channel,
+                    lobbyChannelId,
+                );
+                if (shouldDelete) {
+                    await this.deleteChannel(channel, discordId);
                 }
             }
         });
-    }
-
-    // 채널 삭제 조건 검증
-    private shouldDeleteChannel(
-        channel: VoiceBasedChannel,
-        lobbyChannelId: string,
-    ): boolean {
-        return channel.id !== lobbyChannelId && this.isChannelEmpty(channel);
-    }
-
-    // 채널 유저 검증
-    private isChannelEmpty(channel: VoiceBasedChannel): boolean {
-        return !channel.guild.members.cache.some(
-            (member) => member.voice.channelId === channel.id,
-        );
-    }
-
-    // 채널 삭제
-    private async deleteChannel(
-        channel: VoiceBasedChannel,
-        discordId: string,
-    ): Promise<void> {
-        try {
-            const guild = this.client.guilds.cache.get(channel.guild.id);
-            const user = await this.userService.findOneByDiscordId(discordId);
-            const role = guild.roles.cache.find(
-                (role) => role.name === `${user.username}-access`,
-            );
-
-            if (role) {
-                await this.deleteRole(guild.id, role.id);
-            }
-
-            await channel.delete();
-        } catch (error) {
-            console.error(`채널 삭제 중 오류 발생: ${channel.id}`, error);
-        }
-    }
-
-    // 역할 삭제
-    private async deleteRole(guildId: string, roleId: string): Promise<void> {
-        const guild = this.client.guilds.cache.get(guildId);
-        const role = guild.roles.cache.get(roleId);
-
-        if (!role) {
-            throw new NotFoundException("해당 역할을 찾을 수 없습니다.");
-        }
-
-        try {
-            await role.delete();
-        } catch (error) {
-            console.error(`역할 삭제 실패: ${error}`);
-        }
     }
 
     // 그룹 취소 시 음성 채널 삭제
@@ -246,16 +194,24 @@ export class DiscordService implements OnModuleInit {
             throw new NotFoundException("해당 그룹을 찾을 수 없습니다.");
         }
 
-        const groupState = await this.groupService.findGroupStateById(groupId);
-        const positions: string[] = ["mid", "adc", "sup", "top", "jg"];
+        let userIds: number[];
 
-        const userIds: number[] = positions
-            .filter(
-                (position) =>
-                    groupState[position].isActive &&
-                    groupState[position].userId,
-            )
-            .map((position) => groupState[position].userId);
+        const groupInfo = await this.groupService.findGroupInfoById(groupId);
+        const groupState = await this.groupService.findGroupStateById(groupId);
+
+        if (groupInfo.mode === "aram") {
+            userIds = await this.groupService.findGroupUsers(groupId);
+        } else {
+            const positions: string[] = ["mid", "adc", "sup", "top", "jg"];
+
+            userIds = positions
+                .filter(
+                    (position) =>
+                        groupState[position].isActive &&
+                        groupState[position].userId,
+                )
+                .map((position) => groupState[position].userId);
+        }
 
         const discordIds: string[] = await Promise.all(
             userIds.map((userId) =>
@@ -272,5 +228,63 @@ export class DiscordService implements OnModuleInit {
             roleId,
             voiceChannelId,
         );
+    }
+
+    // 채널 삭제 조건 검증
+    private shouldDeleteChannel(
+        channel: VoiceBasedChannel,
+        lobbyChannelId: string,
+    ): boolean {
+        return channel.id !== lobbyChannelId && this.isChannelEmpty(channel);
+    }
+
+    // 채널 유저 검증
+    private isChannelEmpty(channel: VoiceBasedChannel): boolean {
+        return !channel.guild.members.cache.some(
+            (member) => member.voice.channelId === channel.id,
+        );
+    }
+
+    // 채널 삭제
+    private async deleteChannel(
+        channel: VoiceBasedChannel,
+        discordId: string,
+    ): Promise<void> {
+        try {
+            const guild = this.client.guilds.cache.get(channel.guild.id);
+            const user = await this.userService.findOneByDiscordId(discordId);
+            const role = guild.roles.cache.find(
+                (role) => role.name === `${user.username}-access`,
+            );
+
+            if (role) {
+                await this.deleteRole(guild.id, role.id);
+            }
+
+            await channel.delete();
+        } catch (error) {
+            if (error.code === 10003) {
+                console.log("이미 삭제 된 채널.");
+                return;
+            }
+
+            console.error(`채널 삭제 중 오류 발생: ${channel.id}`, error);
+        }
+    }
+
+    // 역할 삭제
+    private async deleteRole(guildId: string, roleId: string): Promise<void> {
+        const guild = this.client.guilds.cache.get(guildId);
+        const role = guild.roles.cache.get(roleId);
+
+        if (!role) {
+            throw new NotFoundException("해당 역할을 찾을 수 없습니다.");
+        }
+
+        try {
+            await role.delete();
+        } catch (error) {
+            console.error(`역할 삭제 실패: ${error}`);
+        }
     }
 }

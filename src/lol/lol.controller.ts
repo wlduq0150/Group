@@ -9,7 +9,7 @@ import {
     UseInterceptors,
 } from "@nestjs/common";
 
-import { LolhDto } from "./dto/lol.dto";
+import { LolDto } from "./dto/lol.dto";
 import { LolService } from "./lol.service";
 import { LolUserIdDto } from "./dto/lol-userId.dto";
 import { UserService } from "src/user/user.service";
@@ -22,18 +22,32 @@ export class LolController {
         private readonly userService: UserService,
     ) {}
 
+    //유저 생성
     @Post()
-    async findUser(@Body() lolDto: LolhDto, @Session() session) {
-        const discordUser = await this.userService.findOneByDiscordId(
-            session.discordId,
-        );
+    async findUser(@Body() lolDto: LolDto) {
         return await this.lolService.saveUserAllInfo(
             lolDto.name,
             lolDto.tag,
-            discordUser.id,
+            lolDto.userId,
         );
     }
 
+    @Post("userNameTag")
+    async findUserByNameTag(@Body() lolDto: LolDto, @Session() session) {
+        return await this.lolService.findUserByNameTag(
+            lolDto.name,
+            lolDto.tag,
+            session.userId,
+        );
+    }
+
+    //디코아이디로 롤유저 검색
+    @Get("discordUser/:userId")
+    async findUserByUserId(@Param("userId") userId: number) {
+        return await this.lolService.findUserByUserId(userId);
+    }
+
+    //롤유저 아이디로 롤유저 검색
     @Get("user/:userId")
     async findUserInfo(@Param("userId") userId: number) {
         return await this.lolService.findUserProfile(userId);
@@ -43,4 +57,10 @@ export class LolController {
     async updateUserChampion(@Body() lolUserIdDto: LolUserIdDto) {
         return await this.lolService.updateUserChampion(lolUserIdDto.userId);
     }
+
+    // @Post("getPuuid")
+    // async findUserPuuid(@Body() lolDto: LolDto) {
+    //     const a = await this.lolService.findUserPuuid(lolDto.name, lolDto.tag);
+    //     return a;
+    // }
 }

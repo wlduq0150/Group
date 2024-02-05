@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Grouo Manage</title>
+    <link rel="stylesheet" href="../css/group-manage.css" />
+    <script>
+        function loadHTML(file) {
+            const rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4) {
+                    if (rawFile.status === 200 || rawFile.status === 0) {
+                        const allText = rawFile.responseText;
+                        document.write(allText);
+                    }
+                }
+            };
+            rawFile.send(null);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="group_manage">
+        <div id="group_manage_drag_me" class="group_manage_header">
+            <div class="title"></div>
+            <div class="mode"><span class="number"></span></div>
+            <div class="owner">
+                <span class="owner_name"></span>
+                <span class="crown">
+                    <img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/crown.png" />
+                </span>
+            </div>
+            <div class="state_box">
+                <div class="state">그룹찾기완료</div>
+            </div>
+
+            <div class="group_btn move_discord" onclick="moveDiscord()">
+                <img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/discord.png" />
+            </div>
+            <div class="blank"></div>
+            <div class="group_btn" id="groupPositionSelect">
+                <img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/setting.png" />
+            </div>
+            <div class="blank"></div>
+            <div class="group_btn" id="updateGroupSetting">
+                <img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/gear.png" />
+            </div>
+            <div class="blank"></div>
+            <div class="group_btn leave_group_btn">
+                <img src="https://my-post-bucket.s3.ap-northeast-2.amazonaws.com/icons/enter.png" />
+            </div>
+        </div>
+
+        <div class="hidden" id="positionSelectContainer">
+            <script>
+                loadHTML("./select-position-modal.html");
+            </script>
+        </div>
+        <div class="hidden" id="updateGroupContainer">
+            <script>
+                loadHTML("./update-group-modal.html");
+            </script>
+        </div>
+
+        <div class="group_manage_chat_list"></div>
+
+        <div class="group_manage_chat">
+            <input class="chat_input" type="text" />
+            <button class="chat_send" type="button">보내기</button>
+        </div>
+    </div>
+    <script src="../js/group-manage.js"></script>
+    <script src="../js/drag.js"></script>
+</body>
+
+</html>

@@ -1,56 +1,69 @@
 .select-position-parent {
-  top: 150px;
-  left: 550px;
-  position: absolute;
-  width: 800px;
-  height: 400px;
-  box-shadow: 0 10px 8px #000000;
-  border-radius: 20px;
+    position: absolute;
+    top: 50px;
+    width: 800px;
+    height: 400px;
+    box-shadow: 0 10px 8px #000000;
+    border-radius: 20px;
+    background-color: #fff;
 }
-.select-position-bar {
-  box-shadow: inset 0px 5px 10px white;
-  font-size: 25px;
-  font-weight: bold;
-  color: white;
-  height: 40px;
-  padding-top: 10px;
-  text-align: center;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  background-color: rgb(75, 118, 127);
+.select-position-parent .select-position-bar {
+    box-shadow: inset 0px 5px 6px white;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
 }
-.group-name {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 20px;
-  text-align: center;
+.select-position-parent .group-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: center;
 }
-.select-position-box {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  text-align: center;
+.select-position-parent .select-position-box {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    text-align: center;
 }
-#userName {
-  font-weight: bold;
-  margin-top: 10px;
+.select-position-parent .select-position-box img {
+    width: 110px;
+    height: 110px;
 }
-#position {
-  margin-top: 40px;
-  height: 110px;
-  width: 110px;
-  cursor: pointer;
+.select-position-parent #userName {
+    font-weight: bold;
+    margin-top: 10px;
 }
-.complete-btn {
-  font-weight: bold;
-  font-size: 25px;
-  padding-top: 5px;
-  text-align: center;
-  margin: 0 auto;
-  margin-top: 50px;
-  color: rgb(255, 255, 255);
-  background-color: rgba(106, 106, 106);
-  width: 130px;
-  height: 40px;
-  border-radius: 15px;
-  cursor: pointer;
+.select-position-parent #position {
+    margin-top: 40px;
+    height: 110px;
+    width: 110px;
+    cursor: pointer;
+}
+.select-position-parent .complete-btn-box {
+    height: 90px;
+    display: flex;
+    align-items: center;
+}
+.select-position-parent .complete-btn {
+    font-weight: bold;
+    font-size: 25px;
+    padding-top: 5px;
+    text-align: center;
+    margin: 0 auto;
+    color: rgb(255, 255, 255);
+    background-color: rgba(106, 106, 106);
+    width: 130px;
+    height: 40px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.select-position-parent .forbidden {
+    pointer-events: none;
 }

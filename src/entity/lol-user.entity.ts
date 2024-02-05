@@ -65,6 +65,6 @@ export class LolUser {
     @JoinColumn({ name: "userId", referencedColumnName: "id" })
     user: User;
 
-    // @Column({ type: "bigint" })
-    // userId: number;
+    @Column({ type: "bigint" })
+    userId: number;
 }

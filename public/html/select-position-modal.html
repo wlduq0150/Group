@@ -1,24 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/select-position-modal.css" />
-    <title>포지션 선택</title>
-  </head>
-  <body>
-    <div class="select-position-parent">
-      <div class="select-position-bar">역할 선택</div>
-      <div class="group-name">님의 그룹</div>
-      <div class="select-position-box">
-        <div class="position-jg"></div>
-        <div class="position-top"></div>
-        <div class="position-mid"></div>
-        <div class="position-adc"></div>
-        <div class="position-sup"></div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/select-position-modal.css" />
+  <title>포지션 선택</title>
+</head>
+
+<body>
+  <div class="select-position-parent">
+    <div class="select-position-bar">역할 선택</div>
+    <!-- <div class="group-name">님의 그룹</div> -->
+    <div class="select-position-box">
+      <div id="position-box" class="position-jg">
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" alt="" />
+        <div id="userName" class="jg-user-name"><br></div>
       </div>
+      <div id="position-box" class="position-top">
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png" alt="" />
+        <div id="userName" class="top-user-name"><br></div>
+      </div>
+      <div id="position-box" class="position-mid">
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png" alt="" />
+        <div id="userName" class="mid-user-name"><br></div>
+      </div>
+      <div id="position-box" class="position-adc">
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png" alt="" />
+        <div id="userName" class="adc-user-name"><br></div>
+      </div>
+      <div id="position-box" class="position-sup">
+        <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png" alt="" />
+        <div id="userName" class="sup-user-name"><br></div>
+      </div>
+    </div>
+    <div class="complete-btn-box">
       <div class="complete-btn">완료</div>
     </div>
-    <script src="../js/select-positon-modal.js"></script>
-  </body>
+  </div>
+  <script src="../js/select-positon-modal.js"></script>
+</body>
+
 </html>

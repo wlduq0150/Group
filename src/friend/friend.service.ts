@@ -9,7 +9,6 @@ import { RedisService } from "src/redis/redis.service";
 import { Repository } from "typeorm";
 import IORedis from "ioredis";
 import { UserService } from "src/user/user.service";
-import { randomBytes } from "crypto";
 @Injectable()
 export class FriendService {
     private readonly redisClient: IORedis;
@@ -48,7 +47,7 @@ export class FriendService {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        const [user, requester] = await Promise.all([
+        const [sender, requester] = await Promise.all([
             this.getUserById(senderId),
             this.getUserById(friendId),
         ]);
@@ -66,7 +65,7 @@ export class FriendService {
             oneDaySeconds,
         );
 
-        return { user, requester };
+        return { sender, requester };
     }
 
     // 친구 요청 수락
@@ -92,6 +91,8 @@ export class FriendService {
         await this.userRepository.save([accepter, requester]);
 
         await this.redisService.del(key);
+
+        return accepterId;
     }
 
     // 친구 요청 거절
@@ -202,14 +203,42 @@ export class FriendService {
         const myId = (await this.userService.findOneByDiscordId(myDiscordId))
             .id;
 
-        console.log("친구 조회하는 사람 id: ", myId);
-
         if (!myId) {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
 
         const user = await this.getUserById(myId);
         return user.friends;
+    }
+
+    async getFriendRequestList(myDiscordId: string) {
+        const myId = (await this.userService.findOneByDiscordId(myDiscordId))
+            .id;
+
+        if (!myId) {
+            throw new NotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        const requests = await this.redisClient.keys(
+            `friend-request:*:${myId}`,
+        );
+
+        const requesters = [];
+
+        for (let req of requests) {
+            const requesterId = +req
+                .replace("friend-request:", "")
+                .split(":")[0];
+
+            const requester = await this.userService.findOneById(requesterId);
+            requesters.push({
+                id: requesterId,
+                discordName: requester.username,
+                loltag: requester.lolUser ? requester.lolUser.nameTag : null,
+            });
+        }
+
+        return requesters;
     }
 
     async getBlockedUsers(myDiscordId: string) {
@@ -233,8 +262,6 @@ export class FriendService {
                 reportedUsers: true,
             },
         });
-
-        console.log(user);
 
         if (!user) {
             throw new NotFoundException("해당하는 사용자를 찾을 수 없습니다.");

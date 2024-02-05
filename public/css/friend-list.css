@@ -1,0 +1,204 @@
+@import url("root.css");
+
+.friend_title {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    justify-content: space-between;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    height: 48px;
+    font-weight: bold;
+
+    & > div {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    & > div:first-child {
+        border-right: 2px #e8e8e8 solid;
+    }
+}
+
+#friends {
+    display: none;
+
+    & + label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 35px;
+        padding: 12px 12px 10px 12px;
+        border-radius: 12px;
+        transition: background-color 0.3s;
+    }
+
+    &:checked + label {
+        background-color: rgb(75, 118, 127);
+        color: white;
+    }
+}
+
+#friend_request {
+    display: none;
+
+    & + label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 35px;
+        padding: 4px;
+        border-radius: 12px;
+        transition: background-color 0.3s;
+    }
+
+    &:checked + label {
+        background-color: rgb(75, 118, 127);
+        color: white;
+        width: 60%;
+    }
+}
+
+.friend_list_background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 298px;
+    height: 514px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 5px 6px #000000;
+    position: absolute;
+}
+
+.friend_list_title {
+    box-shadow: inset 0px 5px 6px white;
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    height: 50px;
+    padding-top: 6px;
+    text-align: center;
+    line-height: 50px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
+}
+
+.friend_list > div:nth-child(n + 2),
+.friend_request_list > div:nth-child(n + 2) {
+    border-top: 2px #e8e8e8 solid;
+}
+
+.friend_content_wrapper {
+    overflow-y: auto;
+    height: 400px;
+}
+
+.friend_list > div,
+.friend_request_list > div {
+    padding: 4px 0;
+    margin: 0 10px;
+
+    .friend_request_button {
+        display: flex;
+        justify-content: space-between;
+
+        & > div {
+            font-weight: bold;
+            font-size: 16px;
+            padding: 6px;
+            text-align: center;
+            width: 72px;
+            height: 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            box-sizing: content-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px black solid;
+        }
+
+        .accept_btn {
+            background-color: #4b767f;
+            color: rgb(255, 255, 255);
+        }
+
+        .deny_btn {
+            color: #4b767f;
+        }
+    }
+}
+
+.friend_list,
+.friend_request_list {
+    & > div > div:first-child {
+        display: grid;
+        grid-template-columns: 28% 68% 4%;
+        align-items: center;
+        padding: 8px;
+    }
+
+    & > div > div > div {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 8px;
+    }
+
+    & img {
+        height: 48px;
+        object-fit: contain;
+    }
+}
+
+.friend_name {
+    font-size: 14px;
+    gap: 3px;
+    display: flex;
+    flex-direction: column;
+}
+
+.friend_online {
+    display: flex;
+    height: 48px;
+    padding: 4px 0;
+}
+
+.circle {
+    display: flex;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px black;
+    background-color: rgb(77, 188, 86);
+}
+.search_name {
+    background-color: #e9e9e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 30px;
+    border-radius: 12px;
+    border-color: #e9e9e9;
+    color: #505050;
+    padding: 10px 0;
+    margin: 15px;
+
+    > input {
+        background-color: rgba(255, 255, 255, 0);
+        color: black;
+        font-size: 13px;
+
+        outline: none;
+        border: 1px solid rgba(255, 255, 255, 0);
+    }
+}
+
+.hidden {
+    display: none;
+}

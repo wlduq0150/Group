@@ -14,6 +14,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
 import { Repository } from "typeorm";
+import { UserService } from "src/user/user.service";
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
         private readonly configService: ConfigService,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly userSerivce: UserService,
     ) {
         const discordConfig: DiscordConfig = this.configService.get("discord");
 
@@ -43,6 +45,32 @@ export class AuthService {
         const redirectUriEncoded: string = encodeURIComponent(this.redirectUri);
 
         return `https://discord.com/api/oauth2/authorize?client_id=${this.clientId}&redirect_uri=${redirectUriEncoded}&response_type=code&scope=${this.scope}`;
+    }
+
+    async handleDiscordCallback(code: string) {
+        const accessTokenResponse: DiscordAuthResponse =
+            await this.getAccessToken(code);
+        const accessToken: string = accessTokenResponse.access_token;
+
+        const discordUser: DiscordUser = await this.getDiscordUser(accessToken);
+
+        const isMember: Boolean = await this.isUserInGuild(discordUser.id);
+
+        if (!isMember) {
+            await this.addUserToGuild(accessToken, discordUser.id);
+        }
+
+        await this.saveDiscordUser(discordUser);
+
+        const user: User = await this.userSerivce.findOneByDiscordId(
+            discordUser.id,
+        );
+
+        return {
+            discordUserId: discordUser.id,
+            userId: user.id,
+            accessToken,
+        };
     }
 
     async getAccessToken(code: string): Promise<DiscordAuthResponse> {
@@ -153,10 +181,19 @@ export class AuthService {
             discordId: discordUser.id,
         });
 
+        const isValidDiscriminator =
+            discordUser.discriminator &&
+            discordUser.discriminator !== "0" &&
+            discordUser.discriminator !== "0000";
+
+        const fullUsername = isValidDiscriminator
+            ? `${discordUser.username}#${discordUser.discriminator}`
+            : discordUser.username;
+
         if (!user) {
             user = this.userRepository.create({
                 discordId: discordUser.id,
-                username: discordUser.username,
+                username: fullUsername,
                 avatar:
                     discordUser.avatar !== undefined
                         ? discordUser.avatar
