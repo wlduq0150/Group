@@ -1,6 +1,13 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+    IsBoolean,
+    IsDate,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from "class-validator";
 import {
     Column,
+    CreateDateColumn,
     Entity,
     ManyToOne,
     OneToMany,
@@ -15,7 +22,10 @@ export class ReportList {
     id: number;
 
     @ManyToOne(() => User, (user) => user.reportLists)
-    reportUser: User;
+    reportedUser: User;
+
+    @ManyToOne(() => User, (user) => user.reportLists)
+    reportedAgainstUser: User;
 
     @Column()
     @IsString()
@@ -33,6 +43,9 @@ export class ReportList {
     @Column()
     @IsString()
     reportDetail: string;
+
+    @CreateDateColumn()
+    reportDate: Date;
 
     @Column({ default: false })
     @IsBoolean()

@@ -50,11 +50,17 @@ export class ReportService implements IReportServive {
 
     // 신고 생성
     async createReport(reportData: CreateReportDto): Promise<ReportList> {
-        const user = await this.userService.findOneById(reportData.reportUser);
+        const reportedUser: User = await this.userService.findOneById(
+            reportData.reportedUser,
+        );
+        const reportedAgainstUser: User = await this.userService.findOneById(
+            reportData.reportedAgainstUser,
+        );
 
         const newReport: ReportList = this.reportRepository.create({
             ...reportData,
-            reportUser: user,
+            reportedUser,
+            reportedAgainstUser,
         });
 
         if (reportData.reportContent) {
@@ -63,11 +69,11 @@ export class ReportService implements IReportServive {
             );
 
             if (isAbusive) {
-                user.reportCount += 3;
+                reportedAgainstUser.reportCount += 3;
             } else {
-                user.reportCount += 1;
+                reportedAgainstUser.reportCount += 1;
             }
-            await this.userService.save(user);
+            await this.userService.save(reportedAgainstUser);
         }
 
         return this.reportRepository.save(newReport);
@@ -86,5 +92,10 @@ export class ReportService implements IReportServive {
         });
 
         return isAbusive;
+    }
+
+    // 신고 목록 가져오기
+    async getReportList(): Promise<ReportList[]> {
+        return this.reportRepository.find();
     }
 }

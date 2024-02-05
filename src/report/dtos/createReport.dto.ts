@@ -10,5 +10,8 @@ export class CreateReportDto extends PickType(ReportList, [
     "isProcessed",
 ]) {
     @IsNumber()
-    reportUser: number;
+    reportedUser: number;
+
+    @IsNumber()
+    reportedAgainstUser: number;
 }
