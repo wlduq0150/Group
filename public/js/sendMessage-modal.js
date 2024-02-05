@@ -2,11 +2,12 @@ clickBackBtn = document
     .querySelector(".sendMessage-parent .back-btn")
     .addEventListener("click", (e) => {
         document.getElementById("sendMessageContainer").classList.add("hidden");
-        saveMessage(
-            userId,
-            document.querySelector(".sendMessage-parent .discordUser-name")
-                .dataset.id,
-        );
+        //showFriendList();
+        // saveMessage(
+        //     userId,
+        //     document.querySelector(".sendMessage-parent .discordUser-name")
+        //         .dataset.id,
+        // );
     });
 
 //모달창 껏을때 메세지 저장

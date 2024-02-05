@@ -5,6 +5,7 @@ function dblclickFriend() {
     );
     for (let myFriend of allFriends) {
         myFriend.addEventListener("dblclick", (e) => {
+            hideFriendList();
             openSendMessage(e.target.innerText, myFriend.dataset.id);
             getSendAccept(myFriend.dataset.id, userId, e.target.innerText);
         });

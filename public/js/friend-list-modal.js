@@ -176,7 +176,7 @@ async function showFriendList() {
     getFriendList(friends).then(() => {
         dblclickFriend();
     });
-    document.querySelector("#friendListContanier").classList.remove("hidden");
+    document.querySelector("#friendListContainer").classList.remove("hidden");
 }
 
 function hideFriendList() {
