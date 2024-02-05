@@ -110,6 +110,15 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             }),
         );
 
+        this.saveOneMessage(
+            client["userId"],
+            +sendMessageDto.friendId,
+            sendMessageDto.message,
+            date,
+            +messageRoom.id,
+        );
+
+        /*
         //배열형태인 redis 키값
         const messageCount = await this.getRedisKey(
             client["userId"],
@@ -122,7 +131,7 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
                     this.redisService.del(ms);
                 }
             });
-        }
+        }*/
     }
 
     async saveMessages(myId: number, friendId: number) {
@@ -141,6 +150,25 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         );
     }
 
+    //메세지 저장
+    private saveOneMessage(
+        senderId: number,
+        accepterId: number,
+        message: string,
+        sendDate: Date,
+        messageRoomId: number,
+    ) {
+        let oneMessage = {
+            senderId,
+            accepterId,
+            message,
+            sendDate,
+            messageRoomId,
+        };
+        this.friendService.saveOneMessage(oneMessage);
+    }
+
+    //배열형태로 메세지 저장
     private async saveSendedMessage(messageCount: string[]) {
         let sendMessages = [];
         for (let message of messageCount) {

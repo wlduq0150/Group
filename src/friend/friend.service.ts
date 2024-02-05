@@ -297,7 +297,12 @@ export class FriendService {
         return `friend-request:${senderId}:${friendId}`;
     }
 
-    //메세지 저장
+    //메세지 비동기적 저장
+    saveOneMessage(sendMessages: SendMessageType) {
+        this.sendMessageRepository.save(sendMessages);
+    }
+
+    //메세지 배열 저장
     async saveSendMessage(sendMessages: SendMessageType[]) {
         for (let oneMessage of sendMessages) {
             oneMessage.sendDate = new Date(oneMessage.sendDate);
