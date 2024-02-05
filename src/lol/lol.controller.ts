@@ -1,13 +1,4 @@
-import {
-    Body,
-    Controller,
-    Get,
-    Param,
-    Post,
-    Put,
-    Session,
-    UseInterceptors,
-} from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Session } from "@nestjs/common";
 
 import { LolDto } from "./dto/lol.dto";
 import { LolService } from "./lol.service";
@@ -19,8 +10,9 @@ import { UserService } from "src/user/user.service";
 export class LolController {
     constructor(
         private readonly lolService: LolService,
-        private readonly userService: UserService,
-    ) {}
+        private readonly userService: UserService
+    ) {
+    }
 
     //유저 생성
     @Post()
@@ -28,7 +20,7 @@ export class LolController {
         return await this.lolService.saveUserAllInfo(
             lolDto.name,
             lolDto.tag,
-            lolDto.userId,
+            lolDto.userId
         );
     }
 
@@ -37,7 +29,7 @@ export class LolController {
         return await this.lolService.findUserByNameTag(
             lolDto.name,
             lolDto.tag,
-            session.userId,
+            session.userId
         );
     }
 
@@ -63,4 +55,5 @@ export class LolController {
     //     const a = await this.lolService.findUserPuuid(lolDto.name, lolDto.tag);
     //     return a;
     // }
+
 }

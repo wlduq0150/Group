@@ -1,16 +1,10 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    OneToMany,
-    OneToOne,
-    PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { LolChampion } from "./lol-champion.entity";
 import { User } from "./user.entity";
+import { GroupRecord } from "./group-record.entity";
 
 @Entity({
-    name: "lolUsers", // 데이터베이스 테이블의 이름
+    name: "lolUsers" // 데이터베이스 테이블의 이름
 })
 export class LolUser {
     @PrimaryGeneratedColumn()
@@ -60,6 +54,9 @@ export class LolUser {
 
     @OneToMany(() => LolChampion, (lolChampions) => lolChampions.lolUser)
     lolChampions: LolChampion[];
+
+    @OneToMany(() => GroupRecord, (groupRecord) => groupRecord.lolUser)
+    groupRecord: GroupRecord[];
 
     @OneToOne(() => User, (user) => user.lolUser)
     @JoinColumn({ name: "userId", referencedColumnName: "id" })

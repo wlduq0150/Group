@@ -6,6 +6,7 @@ import { LolChampion } from "src/entity/lol-champion.entity";
 import { LolUser } from "src/entity/lol-user.entity";
 import { ReportList } from "src/entity/report-list.entity";
 import { User } from "src/entity/user.entity";
+import { GroupRecord } from "../entity/group-record.entity";
 
 @Module({})
 export class TypeormModule {
@@ -18,7 +19,7 @@ export class TypeormModule {
                 username: configService.get<string>("DATABASE_USERNAME"),
                 password: configService.get<string>("DATABASE_PASSWORD"),
                 database: configService.get<string>("DATABASE_NAME"),
-                entities: [User, LolChampion, LolUser, FilterWords, ReportList],
+                entities: [User, LolChampion, LolUser, FilterWords, ReportList, GroupRecord],
                 synchronize: true,
                 logging: false
             }),
