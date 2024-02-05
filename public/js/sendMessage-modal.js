@@ -2,7 +2,7 @@ clickBackBtn = document
     .querySelector(".sendMessage-parent .back-btn")
     .addEventListener("click", (e) => {
         document.getElementById("sendMessageContainer").classList.add("hidden");
-        //showFriendList();
+        showFriendList();
         // saveMessage(
         //     userId,
         //     document.querySelector(".sendMessage-parent .discordUser-name")
@@ -68,6 +68,7 @@ function enterkey() {
 //메세지 소켓으로 보내기
 function sendMessage(friendId, message) {
     const privateMessage = { friendId, message };
+    console.log(privateMessage);
     friendSocket.emit("sendMessage", privateMessage);
 }
 
