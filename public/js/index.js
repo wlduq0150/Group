@@ -2,7 +2,8 @@ let userId;
 let groupId;
 let blockedUsers = [];
 let friends = [];
-const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
+//const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
+const socketURL = "";
 const friendSocket = io(socketURL + "/friend", {
     transports: ["websocket"],
 });

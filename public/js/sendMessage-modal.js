@@ -29,7 +29,7 @@ async function openSendMessage(friendName, friendId) {
     document.getElementById("sendMessageContainer").classList.remove("hidden");
 }
 
-//메세지 생성 모달
+//메세지 데이터를 배열로 해서 db에서 가져옮
 async function getSendAccept(friendId, myId, friendName) {
     const response = await fetch("/friend/messageRoom", {
         method: "POST",
@@ -60,16 +60,24 @@ function enterkey() {
         );
         const friendId = document.querySelector(".sendMessage-parent .friend")
             .dataset.id;
-        sendMessage(friendId, messageInput.value);
+        sendMessage(+friendId, messageInput.value);
         messageInput.value = "";
     }
 }
 
+//스크롤 가장 밑으로 이동
+function downScroll() {
+    let scroll = document.querySelector(
+        ".sendMessage-parent .sendMessage-list-box ",
+    );
+
+    scroll.scrollTop = scroll.scrollHeight;
+}
+
 //메세지 소켓으로 보내기
 function sendMessage(friendId, message) {
-    const privateMessage = { friendId, message };
-    console.log(privateMessage);
-    friendSocket.emit("sendMessage", privateMessage);
+    const sendMessageDto = { friendId, message };
+    friendSocket.emit("sendMessage", sendMessageDto);
 }
 
 //메세지 소켓에서 받아서 생성하기
@@ -89,7 +97,6 @@ function createMessage(data) {
     }
     let newMessage = "";
     let tailMessage = "";
-    let senderName;
     let messageChild = document.createElement("div");
     messageChild.setAttribute("data-day", `${day[0]}`);
     messageList.appendChild(messageChild);
@@ -126,9 +133,11 @@ function createMessage(data) {
         </div>`;
     }
     if (lastChild != null && lastChild.dataset.day == day[0]) {
+        console.log(lastChild.childNodes[0]);
         if (
             lastChild.querySelector(".message-time").innerText ==
-            day[1].substr(0, 5)
+                day[1].substr(0, 5) &&
+            lastChild.childNodes[0].dataset.id == data.senderId
         ) {
             lastChild.querySelector(".message-time").innerHTML = "";
         } else {
@@ -141,4 +150,5 @@ function createMessage(data) {
     }
     newMessage = newMessage + tailMessage;
     messageChild.innerHTML = newMessage;
+    downScroll();
 }
