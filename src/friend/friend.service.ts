@@ -266,7 +266,6 @@ export class FriendService {
             relations: {
                 friends: true,
                 blockedUsers: true,
-                reportedUsers: true,
             },
         });
 

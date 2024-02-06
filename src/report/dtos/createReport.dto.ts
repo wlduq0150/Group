@@ -1,8 +1,8 @@
 import { PickType } from "@nestjs/mapped-types";
 import { IsNumber } from "class-validator";
-import { ReportList } from "src/entity/report-list.entity";
+import { Report } from "src/entity/report-list.entity";
 
-export class CreateReportDto extends PickType(ReportList, [
+export class CreateReportDto extends PickType(Report, [
     "reportCategory",
     "reportLocation",
     "reportContent",
