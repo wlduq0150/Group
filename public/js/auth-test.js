@@ -171,7 +171,8 @@ async function report() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                reportUser: 3,
+                reportedUser: 1,
+                reportedAgainstUser: 3,
                 reportCategory: "언어 폭력",
                 reportLocation: "채팅방",
                 reportContent:
@@ -184,5 +185,20 @@ async function report() {
         console.log("신고 성공: ", data);
     } catch (err) {
         console.log("신고 실패: ", err);
+    }
+}
+
+// DB에 필터링 단어 저장
+async function saveFilterWords() {
+    try {
+        const response = await fetch("/report/loadFilterWords", {
+            method: "POST",
+        });
+
+        if (!response.ok) {
+            throw new Error("DB에 필터링 단어 저장 실패");
+        }
+    } catch (err) {
+        console.log(err);
     }
 }

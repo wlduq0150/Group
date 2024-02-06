@@ -1,6 +1,13 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import {
+    IsBoolean,
+    IsDate,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from "class-validator";
 import {
     Column,
+    CreateDateColumn,
     Entity,
     ManyToOne,
     OneToMany,
@@ -9,13 +16,16 @@ import {
 import { User } from "./user.entity";
 import { PickType } from "@nestjs/mapped-types";
 
-@Entity({ name: "reportList" })
-export class ReportList {
+@Entity({ name: "report" })
+export class Report {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, (user) => user.reportLists)
-    reportUser: User;
+    @ManyToOne(() => User, (user) => user.reports)
+    reportedUser: User;
+
+    @ManyToOne(() => User, (user) => user.reporteds)
+    reportedAgainstUser: User;
 
     @Column()
     @IsString()
@@ -33,4 +43,12 @@ export class ReportList {
     @Column()
     @IsString()
     reportDetail: string;
+
+    @CreateDateColumn()
+    reportDate: Date;
+
+    @Column({ default: false })
+    @IsOptional()
+    @IsBoolean()
+    isProcessed: boolean;
 }
