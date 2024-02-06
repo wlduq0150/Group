@@ -16,15 +16,15 @@ import {
 import { User } from "./user.entity";
 import { PickType } from "@nestjs/mapped-types";
 
-@Entity({ name: "reportList" })
-export class ReportList {
+@Entity({ name: "report" })
+export class Report {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, (user) => user.reportLists)
+    @ManyToOne(() => User, (user) => user.reports)
     reportedUser: User;
 
-    @ManyToOne(() => User, (user) => user.reportLists)
+    @ManyToOne(() => User, (user) => user.reporteds)
     reportedAgainstUser: User;
 
     @Column()
