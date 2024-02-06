@@ -55,6 +55,6 @@ export class User {
     @OneToOne(() => LolUser, (lolUser) => lolUser.user)
     lolUser: LolUser;
 
-    @OneToMany(() => ReportList, (reportList) => reportList.reportUser)
+    @OneToMany(() => ReportList, (reportList) => reportList.reportedUser)
     reportLists: ReportList[];
 }

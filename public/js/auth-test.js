@@ -171,7 +171,8 @@ async function report() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                reportUser: 3,
+                reportedUser: 1,
+                reportedAgainstUserId: 2,
                 reportCategory: "언어 폭력",
                 reportLocation: "채팅방",
                 reportContent:
