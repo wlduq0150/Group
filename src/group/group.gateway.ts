@@ -112,8 +112,6 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         createGroupDto: CreateGroupDto
     ): Promise<void> {
-        console.log(
-            "tq", createGroupDto);
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
             "userId"

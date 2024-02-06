@@ -17,6 +17,7 @@ import { GroupGateway } from "./group.gateway";
 import { GroupRecord } from "../entity/group-record.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class GroupService {
@@ -30,7 +31,8 @@ export class GroupService {
         @Inject(forwardRef(() => GroupGateway))
         private readonly groupGateway: GroupGateway,
         @InjectRepository(GroupRecord)
-        private readonly groupRecord: Repository<GroupRecord>
+        private readonly groupRecord: Repository<GroupRecord>,
+        private readonly configService: ConfigService
     ) {
         this.clear();
 
@@ -274,7 +276,6 @@ export class GroupService {
         } catch (e) {
             throw new WsException(e.message);
         } finally {
-            console.log("w", await this.redisService.get(groupStateKey), "\n");
             await lock.release();
         }
 
@@ -346,6 +347,30 @@ export class GroupService {
         } catch (e) {
             throw new WsException(e.message);
         } finally {
+            const groupMaxRecord = this.configService.get("GROUP_RECORD");
+            const groupKeys = await this.groupRecord.createQueryBuilder("gRecord")
+                .select("gRecord.groupId", "groupId")
+                .where("gRecord.userId = :id", {
+                    id: userId
+                })
+                .orderBy("gRecord.createdAt", "DESC")
+                .limit(groupMaxRecord)
+                .getRawMany()
+                .then(result => {
+                    return result.map(item => item.groupId);
+                });
+            console.log(groupKeys, userId);
+
+            await this.groupRecord.createQueryBuilder()
+                .delete()
+                .where("groupId NOT IN (:ids)", {
+                    ids: groupKeys
+                })
+                .andWhere("userId = :id", {
+                    id: userId
+                })
+                .execute();
+
             await lock.release();
         }
     }
@@ -419,6 +444,7 @@ export class GroupService {
         return { userId, name, message };
     }
 
+
     async insertGroupRecord(ids: number[], groupId: string) {
         const groupRecordKey = this.generateGroupRecordKey(groupId);
         const group = this.groupRecord.find({ where: { groupId } });
@@ -433,6 +459,7 @@ export class GroupService {
                 playerIds: players
             }, ["userId", "groupId"]);
         });
+        await this.redisService.set(groupId, JSON.stringify(ids));
         return groupRecordKey;
     }
 
