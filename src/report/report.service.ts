@@ -5,7 +5,7 @@ import { FilterWords } from "src/entity/filter-word.entity";
 import { Repository } from "typeorm";
 import fs from "fs";
 import { CreateReportDto } from "./dtos/createReport.dto";
-import { ReportList } from "src/entity/report-list.entity";
+import { Report } from "src/entity/report-list.entity";
 import { UserService } from "src/user/user.service";
 import { User } from "src/entity/user.entity";
 import { IReportServive } from "./interfaces/report.service.interface";
@@ -15,8 +15,8 @@ export class ReportService implements IReportServive {
     constructor(
         @InjectRepository(FilterWords)
         private readonly filterWordRepository: Repository<FilterWords>,
-        @InjectRepository(ReportList)
-        private readonly reportRepository: Repository<ReportList>,
+        @InjectRepository(Report)
+        private readonly reportRepository: Repository<Report>,
         private readonly userService: UserService,
     ) {}
 
@@ -49,7 +49,7 @@ export class ReportService implements IReportServive {
     }
 
     // 신고 생성
-    async createReport(reportData: CreateReportDto): Promise<ReportList> {
+    async createReport(reportData: CreateReportDto): Promise<Report> {
         const reportedUser: User = await this.userService.findOneById(
             +reportData.reportedUser,
         );
@@ -57,7 +57,7 @@ export class ReportService implements IReportServive {
             +reportData.reportedAgainstUser,
         );
 
-        const newReport: ReportList = this.reportRepository.create({
+        const newReport: Report = this.reportRepository.create({
             ...reportData,
             reportedUser,
             reportedAgainstUser,
@@ -95,7 +95,7 @@ export class ReportService implements IReportServive {
     }
 
     // 신고 목록 가져오기
-    async getReportList(): Promise<ReportList[]> {
+    async getReportList(): Promise<Report[]> {
         return this.reportRepository.find();
     }
 }

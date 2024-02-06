@@ -46,7 +46,8 @@ export class AppModule implements OnModuleInit {
 
     async onModuleInit() {
         const client = this.redisService.getRedisClient();
-        const filterWords = await this.filterWordRepository.find();
+        const filterWords: FilterWords[] =
+            await this.filterWordRepository.find();
 
         await client.set("filterWords", JSON.stringify(filterWords));
     }
