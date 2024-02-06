@@ -354,12 +354,11 @@ export class GroupService {
                     id: userId
                 })
                 .orderBy("gRecord.createdAt", "DESC")
-                .limit(groupMaxRecord)
+                .take(groupMaxRecord)
                 .getRawMany()
                 .then(result => {
                     return result.map(item => item.groupId);
                 });
-            console.log(groupKeys, userId);
 
             await this.groupRecord.createQueryBuilder()
                 .delete()
@@ -453,11 +452,13 @@ export class GroupService {
         }
         ids.map(async (id) => {
             const players = ids.filter(item => item !== id);
-            await this.groupRecord.upsert({
-                userId: id,
-                groupId: groupId,
-                playerIds: players
-            }, ["userId", "groupId"]);
+            await this.groupRecord.save(
+                this.groupRecord.create({
+                    userId: id,
+                    groupId: groupId,
+                    playerIds: players
+                })
+            );
         });
         await this.redisService.set(groupId, JSON.stringify(ids));
         return groupRecordKey;
