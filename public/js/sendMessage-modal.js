@@ -1,4 +1,4 @@
-clickBackBtn = document
+document
     .querySelector(".sendMessage-parent .back-btn")
     .addEventListener("click", (e) => {
         document.getElementById("sendMessageContainer").classList.add("hidden");
@@ -31,15 +31,18 @@ async function openSendMessage(friendName, friendId) {
 
 //메세지 데이터를 배열로 해서 db에서 가져옮
 async function getSendAccept(friendId, myId, friendName) {
-    const response = await fetch("/friend/messageRoom", {
+    const response = await fetch("/friend/setMessageRedis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userOne: +friendId, userTwo: +myId }),
     });
     const messages = await response.json();
+    //tMessages count
 
-    fillMessage(messages, friendName);
+    fillMessage(messages.roomId, messages.count, friendName);
 }
+
+function getRedisMessage(roomId, count) {}
 
 //매세지 생성
 function fillMessage(messages) {
@@ -48,7 +51,9 @@ function fillMessage(messages) {
     );
     messageList.innerHTML = "";
     for (let i = 0; i < messages.sendMessage.length; i++) {
-        createMessage(messages.sendMessage[i]);
+        if (messages != null) {
+            createMessage(messages.sendMessage[i]);
+        }
     }
 }
 
@@ -58,8 +63,10 @@ function enterkey() {
         let messageInput = document.querySelector(
             ".sendMessage-parent .sendMessage-input",
         );
-        const friendId = document.querySelector(".sendMessage-parent .friend")
-            .dataset.id;
+        const friendId = document.querySelector(
+            ".sendMessage-parent .discordUser-name",
+        ).dataset.id;
+
         sendMessage(+friendId, messageInput.value);
         messageInput.value = "";
     }
@@ -133,7 +140,6 @@ function createMessage(data) {
         </div>`;
     }
     if (lastChild != null && lastChild.dataset.day == day[0]) {
-        console.log(lastChild.childNodes[0]);
         if (
             lastChild.querySelector(".message-time").innerText ==
                 day[1].substr(0, 5) &&

@@ -344,15 +344,36 @@ export class FriendService {
     //db에 메세지를 redis에 저장
     async setMessageRedis(userOne: number, userTwo: number) {
         const messages = await this.checkMessageRoom(userOne, userTwo);
-        if (messages.sendMessage.length) {
-            for (let i = 0; i < messages.sendMessage.length; i++) {
-                await this.saveMessageRedis(messages.sendMessage[i], i);
-            }
-        }
-        return messages.id;
+        // if (messages.sendMessage.length) {
+        //     for (let i = 0; i < messages.sendMessage.length; i++) {
+        //         this.saveMessageRedis(messages.sendMessage[i], i);
+        //     }
+        // }
+        const a = await this.redisService.set(
+            `messageRoom:${messages.id}`,
+            JSON.stringify(messages.sendMessage),
+        );
+        return a;
+        // const a = await this.redisService.get(`messageRoom:${messages.id}`);
+        // return a;
+        // const pack = {
+        //     roomId: messages.id,
+        //     count: messages.sendMessage.length,
+        // };
+        // return pack;
     }
 
-    async getMessageRedis(roomId: number) {}
+    //redis에서 채팅 불러오기
+    async getMessageRedis(roomId: number) {
+        const messagePack = await this.redisService.get(`messageRoom${roomId}`);
+        return messagePack;
+    }
+
+    //redis에 새 채팅 저장
+    async saveNewMessage(roomId: number, message: SendMessageType) {
+        await this.redisService.rpush(`messageRoom:${roomId}`, message);
+        return await this.redisService.get(`messageRoom:${roomId}`);
+    }
 
     //메세지방 생성
     private async createMessageRoom(smallId: number, bigId: number) {
@@ -360,13 +381,22 @@ export class FriendService {
         return await this.findMessageRoom(smallId, bigId);
     }
 
-    //메세지방 검색
+    //메세지방+메세지 검색
     private async findMessageRoom(smallId: number, bigId: number) {
         return await this.messageRoomRepository.findOne({
             where: { bigId, smallId },
             relations: { sendMessage: true },
         });
     }
+
+    /*
+   private async findMessageRoom(smallId: number, bigId: number) {
+        return await this.messageRoomRepository.findOne({
+            where: { bigId, smallId },
+            relations: { sendMessage: true },
+        });
+    }
+   */
 
     //메세지 redis에 저장
     private async saveMessageRedis(message: SendMessageType, i: number) {

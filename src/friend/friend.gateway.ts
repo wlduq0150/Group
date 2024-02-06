@@ -147,7 +147,9 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //redis에서 유저id 두개로 키값 찾기
     private async getRedisKey(myId: number, friendId: number) {
         return await this.redisService.scan(
+            0,
             `friendMessage:${myId}:${friendId}`,
+            30,
         );
     }
 

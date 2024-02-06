@@ -69,7 +69,17 @@ export class RedisService {
         return await this.redisClient.keys("*");
     }
 
-    async scan(keyName: string) {
-        return await this.redisClient.scan(0, "MATCH", `${keyName}*`);
+    async scan(cursor: number, keyName: string, count: number) {
+        return await this.redisClient.scan(
+            cursor,
+            "MATCH",
+            `${keyName}*`,
+            "COUNT",
+            count,
+        );
+    }
+
+    async rpush(key: string, value: any) {
+        await this.redisClient.rpush(key, value);
     }
 }
