@@ -341,6 +341,19 @@ export class FriendService {
         return checkRoom;
     }
 
+    //db에 메세지를 redis에 저장
+    async setMessageRedis(userOne: number, userTwo: number) {
+        const messages = await this.checkMessageRoom(userOne, userTwo);
+        if (messages.sendMessage.length) {
+            for (let i = 0; i < messages.sendMessage.length; i++) {
+                await this.saveMessageRedis(messages.sendMessage[i], i);
+            }
+        }
+        return messages.id;
+    }
+
+    async getMessageRedis(roomId: number) {}
+
     //메세지방 생성
     private async createMessageRoom(smallId: number, bigId: number) {
         await this.messageRoomRepository.save({ smallId, bigId });
@@ -353,5 +366,19 @@ export class FriendService {
             where: { bigId, smallId },
             relations: { sendMessage: true },
         });
+    }
+
+    //메세지 redis에 저장
+    private async saveMessageRedis(message: SendMessageType, i: number) {
+        await this.redisService.set(
+            `messageRoom:${message.messageRoomId}:${i}`,
+            JSON.stringify({
+                senderId: message.senderId,
+                accepterId: message.accepterId,
+                message: message.message,
+                sendDate: message.sendDate,
+                messageRoomId: message.messageRoomId,
+            }),
+        );
     }
 }

@@ -187,4 +187,19 @@ export class FriendController {
             messageRoomDto.userTwo,
         );
     }
+
+    //유저 id 두개로 redis에 메세지 저장
+    @Post("/setMessageRedis")
+    async setMessageRedis(@Body() messageRoomDto: MessageRoomDto) {
+        return await this.friendService.setMessageRedis(
+            messageRoomDto.userOne,
+            messageRoomDto.userTwo,
+        );
+    }
+
+    //redis의 메세지 데이터 가져오기 roomId로
+    @Post("/getMessageRedis")
+    async getMessageRedis(roomId: number) {
+        return await this.friendService.getMessageRedis(roomId);
+    }
 }
