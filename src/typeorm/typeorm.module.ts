@@ -4,7 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "src/entity/filter-word.entity";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { LolUser } from "src/entity/lol-user.entity";
-import { ReportList } from "src/entity/report-list.entity";
+import { Report } from "src/entity/report-list.entity";
 import { User } from "src/entity/user.entity";
 
 @Module({})
@@ -18,17 +18,17 @@ export class TypeormModule {
                 username: configService.get<string>("DATABASE_USERNAME"),
                 password: configService.get<string>("DATABASE_PASSWORD"),
                 database: configService.get<string>("DATABASE_NAME"),
-                entities: [User, LolChampion, LolUser, FilterWords, ReportList],
+                entities: [User, LolChampion, LolUser, FilterWords, Report],
                 synchronize: true,
-                logging: false
+                logging: false,
             }),
-            inject: [ConfigService]
+            inject: [ConfigService],
         });
 
         return {
             module: TypeOrmModule,
             imports: [typeormModule],
-            exports: [typeormModule]
+            exports: [typeormModule],
         };
     }
 }
