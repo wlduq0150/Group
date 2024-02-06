@@ -343,35 +343,19 @@ export class FriendService {
     //db에 메세지를 redis에 저장
     async setMessageRedis(userOne: number, userTwo: number) {
         const messages = await this.checkMessageRoom(userOne, userTwo);
-        // if (messages.sendMessage.length) {
-        //     for (let i = 0; i < messages.sendMessage.length; i++) {
-        //         this.saveMessageRedis(messages.sendMessage[i], i);
-        //     }
-        // }
-        const a = await this.redisService.set(
-            `messageRoom:${messages.id}`,
-            JSON.stringify(messages.sendMessage),
-        );
-        return a;
-        // const a = await this.redisService.get(`messageRoom:${messages.id}`);
-        // return a;
-        // const pack = {
-        //     roomId: messages.id,
-        //     count: messages.sendMessage.length,
-        // };
-        // return pack;
-    }
-
-    //redis에서 채팅 불러오기
-    async getMessageRedis(roomId: number) {
-        const messagePack = await this.redisService.get(`messageRoom${roomId}`);
-        return messagePack;
+        if (messages.sendMessage.length) {
+            await this.redisService.arrayRpush(
+                `messageRoom:${messages.id}`,
+                messages.sendMessage,
+            );
+        }
+        return await this.redisService.getAllKey(`messageRoom:${messages.id}`);
     }
 
     //redis에 새 채팅 저장
     async saveNewMessage(roomId: number, message: SendMessageType) {
         await this.redisService.rpush(`messageRoom:${roomId}`, message);
-        return await this.redisService.get(`messageRoom:${roomId}`);
+        return await this.redisService.getAllKey(`messageRoom:${roomId}`);
     }
 
     //메세지방 생성

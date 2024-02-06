@@ -37,8 +37,8 @@ async function getSendAccept(friendId, myId, friendName) {
         body: JSON.stringify({ userOne: +friendId, userTwo: +myId }),
     });
     const messages = await response.json();
-    //tMessages count
-
+    console.log(messages);
+    return;
     fillMessage(messages.roomId, messages.count, friendName);
 }
 
