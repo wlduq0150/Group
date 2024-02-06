@@ -1,16 +1,16 @@
 const friendRequestButton = document.querySelector("#friend_request");
-friendRequestButton.addEventListener("change", function() {
+friendRequestButton.addEventListener("change", function () {
     getFriendRequestList();
 });
 
 const friendButton = document.querySelector("#friends");
-friendButton.addEventListener("change", function() {
+friendButton.addEventListener("change", function () {
     getFriendList(friends);
 });
 
 async function getFriendList(userIds) {
     const friendListContainer = document.querySelector(
-        ".friend_content_wrapper .friend_list"
+        ".friend_content_wrapper .friend_list",
     );
 
     friendListContainer.classList.remove("hidden");
@@ -84,7 +84,7 @@ async function getFriendList(userIds) {
 
 async function getFriendRequestList() {
     const friendRequestListContainer = document.querySelector(
-        ".friend_content_wrapper .friend_request_list"
+        ".friend_content_wrapper .friend_request_list",
     );
 
     friendRequestListContainer.classList.remove("hidden");
@@ -94,7 +94,7 @@ async function getFriendRequestList() {
 
     while (friendRequestListContainer.firstChild) {
         friendRequestListContainer.removeChild(
-            friendRequestListContainer.firstChild
+            friendRequestListContainer.firstChild,
         );
     }
 
@@ -103,7 +103,7 @@ async function getFriendRequestList() {
 
     for (const friendRequest of data.data) {
         const userDetailResponse = await fetch(
-            `/user/detail/${friendRequest.id}`
+            `/user/detail/${friendRequest.id}`,
         );
 
         const userDetail = await userDetailResponse.json();
@@ -173,7 +173,9 @@ async function getFriendRequestList() {
 }
 
 async function showFriendList() {
-    getFriendList(friends);
+    getFriendList(friends).then(() => {
+        dblclickFriend();
+    });
     document.querySelector("#friendListContainer").classList.remove("hidden");
 }
 
@@ -192,7 +194,7 @@ document
 async function acceptFriendRequestInList(senderId, friendRequestDiv) {
     try {
         await fetch(`/friend/${senderId}/accept`, {
-            method: "POST"
+            method: "POST",
         });
 
         friendRequestDiv.remove(); // 친구 요청 항목 삭제
@@ -205,7 +207,7 @@ async function acceptFriendRequestInList(senderId, friendRequestDiv) {
 async function rejectFriendRequestInList(senderId, friendRequestDiv) {
     try {
         await fetch(`/friend/${senderId}/decline`, {
-            method: "DELETE"
+            method: "DELETE",
         });
 
         friendRequestDiv.remove(); // 친구 요청 항목 삭제

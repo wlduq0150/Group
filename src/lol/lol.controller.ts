@@ -24,14 +24,14 @@ export class LolController {
         );
     }
 
-    @Post("userNameTag")
-    async findUserByNameTag(@Body() lolDto: LolDto, @Session() session) {
-        return await this.lolService.findUserByNameTag(
-            lolDto.name,
-            lolDto.tag,
-            session.userId
-        );
-    }
+    // @Post("userNameTag")
+    // async findUserByNameTag(@Body() lolDto: LolDto, @Session() session) {
+    //     return await this.lolService.findUserByNameTag(
+    //         lolDto.name,
+    //         lolDto.tag,
+    //         session.userId,
+    //     );
+    // }
 
     //디코아이디로 롤유저 검색
     @Get("discordUser/:userId")

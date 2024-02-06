@@ -10,6 +10,7 @@ export class DiscordService implements OnModuleInit {
         intents: ["Guilds", "GuildVoiceStates", "GuildMembers"]
     });
     private groupChannelMap = new Map<string, string>();
+    private creatingChannels = new Map<string, boolean>();
 
     constructor(
         private readonly configService: ConfigService,
@@ -30,8 +31,8 @@ export class DiscordService implements OnModuleInit {
 
         this.client.on("voiceStateUpdate", async (oldState, newState) => {
             if (
-                oldState.channelId &&
-                (newState.channelId === lobbyChannelId || !newState.channelId)
+                oldState.channelId !== lobbyChannelId &&
+                (!newState.channelId || newState.channelId !== lobbyChannelId)
             ) {
                 const channel = oldState.channel;
                 const discordId = newState.member.id;
@@ -89,43 +90,64 @@ export class DiscordService implements OnModuleInit {
         guildId: string,
         discordId: string
     ): Promise<{ voiceChannel: VoiceChannel; role: Role }> {
-        const guild = this.client.guilds.cache.get(guildId);
-
-        if (!guild) {
-            throw new NotFoundException("해당 서버를 찾을 수 없습니다.");
+        if (this.creatingChannels.get(discordId)) {
+            throw new Error("이미 채널 생성 요청이 진행 중입니다.");
         }
 
-        const user = await this.userService.findOneByDiscordId(discordId);
+        this.creatingChannels.set(discordId, true);
 
-        const groupId: string = await this.groupService.findGroupIdByOwner(
-            user.id
-        );
+        try {
+            const guild = this.client.guilds.cache.get(guildId);
 
-        // 역할 생성
-        const role = await guild.roles.create({
-            name: `${user.username}-access`,
-            permissions: []
-        });
+            if (!guild) {
+                throw new NotFoundException("해당 서버를 찾을 수 없습니다.");
+            }
 
-        // 음성 채널 생성
-        const voiceChannel = await guild.channels.create({
-            name: user.username,
-            type: ChannelType.GuildVoice,
-            parent: this.configService.get<string>("DISCORD_PARENT_ID"),
-            permissionOverwrites: [
-                {
-                    id: guild.roles.everyone.id,
-                    deny: ["ViewChannel"]
-                },
-                {
-                    id: role.id,
-                    allow: ["ViewChannel", "Connect", "Speak"]
+            const user = await this.userService.findOneByDiscordId(discordId);
+
+            const groupId: string = await this.groupService.findGroupIdByOwner(
+                user.id,
+            );
+
+            // 역할 생성
+            const role = await guild.roles.create({
+                name: `${user.username}-access`,
+                permissions: [],
+            });
+
+            // 음성 채널 생성
+            const voiceChannel = await guild.channels.create({
+                name: user.username,
+                type: ChannelType.GuildVoice,
+                parent: this.configService.get<string>("DISCORD_PARENT_ID"),
+                permissionOverwrites: [
+                    {
+                        id: guild.roles.everyone.id,
+                        deny: ["ViewChannel"],
+                    },
+                    {
+                        id: role.id,
+                        allow: ["ViewChannel", "Connect", "Speak"],
+                    },
+                ],
+            });
+            this.groupChannelMap.set(groupId, voiceChannel.id);
+
+            const existingChannelId = this.groupChannelMap.get(groupId);
+            if (existingChannelId) {
+                const existingChannel =
+                    guild.channels.cache.get(existingChannelId);
+                if (existingChannel) {
+                    await this.deleteVoiceChannelForGroup(groupId, discordId);
                 }
-            ]
-        });
-        this.groupChannelMap.set(groupId, voiceChannel.id);
+            }
 
-        return { voiceChannel, role };
+            return { voiceChannel, role };
+        } catch (error) {
+            console.error("채널 생성 중 오류 발생", error);
+        } finally {
+            this.creatingChannels.set(discordId, false);
+        }
     }
 
     // 채널 및 역할 추가
@@ -137,6 +159,9 @@ export class DiscordService implements OnModuleInit {
     ): Promise<void> {
         const guild = this.client.guilds.cache.get(guildId);
         const channel = guild.channels.cache.get(channelId) as VoiceChannel;
+        const lobbyChannelId = this.configService.get<string>(
+            "DISCORD_LOBBY_CHANNEL_ID",
+        );
 
         if (!channel) {
             throw new NotFoundException("해당 채널을 찾을 수 없습니다.");
@@ -146,14 +171,14 @@ export class DiscordService implements OnModuleInit {
             const member = await guild.members.fetch(discordId);
 
             if (member) {
-                try {
-                    await member.roles.add(roleId);
-                    await member.voice.setChannel(channel);
-                } catch (err) {
+                if (member.voice.channelId !== lobbyChannelId) {
                     throw new NotFoundException(
-                        "유저가 대기실에 존재하지 않습니다."
+                        "유저가 대기실에 존재하지 않습니다.",
                     );
                 }
+
+                await member.roles.add(roleId);
+                await member.voice.setChannel(channel);
             }
         }
     }
