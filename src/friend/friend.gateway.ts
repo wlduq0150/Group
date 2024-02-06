@@ -78,7 +78,7 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             `friend:${sendMessageDto.friendId}`,
         );
 
-        const messageRoom = await this.friendService.checkMessageRoom(
+        const messageRoom = await this.friendService.getMessageRoomId(
             client["userId"],
             +sendMessageDto.friendId,
         );
@@ -96,7 +96,23 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             message: sendMessageDto.message,
             sendDate: date,
         });
+        const messageData = {
+            senderId: client["userId"],
+            accepterId: +sendMessageDto.friendId,
+            message: sendMessageDto.message,
+            sendDate: date,
+            messageRoomId: messageRoom.id,
+        };
 
+        await this.friendService.saveNewMessage(messageRoom.id, messageData);
+
+        /*
+        senderId: number;
+    accepterId: number;
+    message: string;
+    sendDate: Date;
+    messageRoomId: number;
+        */
         // await this.redisService.set(
         //     `friendMessage:${client["userId"]}:${
         //         sendMessageDto.friendId
@@ -134,24 +150,27 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }*/
     }
 
-    //배열형태인 메세지를 저장
-    async saveMessages(myId: number, friendId: number) {
-        const messageCount = await this.getRedisKey(myId, friendId);
-        this.saveSendedMessage(messageCount[1]).then((e) => {
-            for (let ms of messageCount[1]) {
-                this.redisService.del(ms);
-            }
-        });
-    }
+    //redis에 추가 저장
+    private async saveMessageRedis() {}
 
-    //redis에서 유저id 두개로 키값 찾기
-    private async getRedisKey(myId: number, friendId: number) {
-        return await this.redisService.scan(
-            0,
-            `friendMessage:${myId}:${friendId}`,
-            30,
-        );
-    }
+    //배열형태인 메세지를 저장
+    // private async saveMessages(myId: number, friendId: number) {
+    //     const messageCount = await this.getRedisKey(myId, friendId);
+    //     this.saveSendedMessage(messageCount[1]).then((e) => {
+    //         for (let ms of messageCount[1]) {
+    //             this.redisService.del(ms);
+    //         }
+    //     });
+    // }
+
+    // //redis에서 유저id 두개로 키값 찾기
+    // private async getRedisKey(myId: number, friendId: number) {
+    //     return await this.redisService.scan(
+    //         0,
+    //         `friendMessage:${myId}:${friendId}`,
+    //         30,
+    //     );
+    // }
 
     //메세지 저장
     private saveOneMessage(

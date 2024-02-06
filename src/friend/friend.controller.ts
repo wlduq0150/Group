@@ -181,14 +181,14 @@ export class FriendController {
         );
     }
 
-    //유저 id 두개로 메세지 저장
-    @Post("/saveMessage")
-    async saveMessages(@Body() messageRoomDto: MessageRoomDto) {
-        await this.friendGateway.saveMessages(
-            messageRoomDto.userOne,
-            messageRoomDto.userTwo,
-        );
-    }
+    // //유저 id 두개로 메세지 저장
+    // @Post("/saveMessage")
+    // async saveMessages(@Body() messageRoomDto: MessageRoomDto) {
+    //     await this.friendGateway.saveMessages(
+    //         messageRoomDto.userOne,
+    //         messageRoomDto.userTwo,
+    //     );
+    // }
 
     //유저 id 두개로 redis에 메세지 저장
     @Post("/setMessageRedis")
@@ -198,6 +198,12 @@ export class FriendController {
             messageRoomDto.userTwo,
         );
     }
+
+    //redis의 메세지 데이터 가져오기 roomId로
+    // @Post("/getMessageRedis")
+    // async getMessageRedis(roomId: number) {
+    //     return await this.friendService.getMessageRedis(roomId);
+    // }
 
     //redis에 새로운 채팅 추가
     @Post("/saveNewMessage")

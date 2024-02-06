@@ -37,23 +37,23 @@ async function getSendAccept(friendId, myId, friendName) {
         body: JSON.stringify({ userOne: +friendId, userTwo: +myId }),
     });
     const messages = await response.json();
-    console.log(messages);
-    return;
-    fillMessage(messages.roomId, messages.count, friendName);
+
+    fillMessage(messages);
 }
 
 function getRedisMessage(roomId, count) {}
 
-//매세지 생성
+//배열화된 매세지 하나씩 생성
 function fillMessage(messages) {
     const messageList = document.querySelector(
         ".sendMessage-parent .sendMessage-list-box",
     );
     messageList.innerHTML = "";
-    for (let i = 0; i < messages.sendMessage.length; i++) {
-        if (messages != null) {
-            createMessage(messages.sendMessage[i]);
-        }
+    document
+        .querySelector("#sendMessageContainer .discordUser-name")
+        .setAttribute("data-roomId", `${messages[0].messageRoomId}`);
+    for (let i = 0; i < messages.length; i++) {
+        createMessage(messages[i]);
     }
 }
 
@@ -97,6 +97,7 @@ function createMessage(data) {
     const messageList = document.querySelector(
         ".sendMessage-parent .sendMessage-list-box",
     );
+
     const day = data.sendDate.split("T");
     let lastChild = null;
     if (messageList.childNodes.length) {

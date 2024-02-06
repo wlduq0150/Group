@@ -340,22 +340,41 @@ export class FriendService {
         return checkRoom;
     }
 
+    //메세지방 id만 반환
+    async getMessageRoomId(userOne: number, userTwo: number) {
+        let smallId: number, bigId: number;
+        if (userOne > userTwo) {
+            bigId = userOne;
+            smallId = userTwo;
+        } else {
+            bigId = userTwo;
+            smallId = userOne;
+        }
+        return await this.messageRoomRepository.findOneBy({ smallId, bigId });
+    }
+
     //db에 메세지를 redis에 저장
     async setMessageRedis(userOne: number, userTwo: number) {
         const messages = await this.checkMessageRoom(userOne, userTwo);
-        if (messages.sendMessage.length) {
+        const checkRoom = await this.redisService.getAllKey(
+            `messageRoom:${messages.id}`,
+        );
+        if (messages.sendMessage.length && !checkRoom.length) {
             await this.redisService.arrayRpush(
                 `messageRoom:${messages.id}`,
                 messages.sendMessage,
             );
+            return await this.redisService.getAllKey(
+                `messageRoom:${messages.id}`,
+            );
         }
-        return await this.redisService.getAllKey(`messageRoom:${messages.id}`);
+        return checkRoom;
     }
 
     //redis에 새 채팅 저장
     async saveNewMessage(roomId: number, message: SendMessageType) {
         await this.redisService.rpush(`messageRoom:${roomId}`, message);
-        return await this.redisService.getAllKey(`messageRoom:${roomId}`);
+        //return await this.redisService.getAllKey(`messageRoom:${roomId}`);
     }
 
     //메세지방 생성
