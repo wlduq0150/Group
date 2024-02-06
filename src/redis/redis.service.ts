@@ -69,7 +69,34 @@ export class RedisService {
         return await this.redisClient.keys("*");
     }
 
-    async scan(keyName: string) {
-        return await this.redisClient.scan(0, "MATCH", `${keyName}*`);
+    async scan(cursor: number, keyName: string, count: number) {
+        return await this.redisClient.scan(
+            cursor,
+            "MATCH",
+            `${keyName}*`,
+            "COUNT",
+            count,
+        );
+    }
+
+    async arrayRpush(key: string, value: any[]) {
+        const newValue = value.map((e) => JSON.stringify(e));
+        await this.redisClient.rpush(key, ...newValue);
+    }
+
+    async rpush(key: string, value: object) {
+        await this.redisClient.rpush(key, JSON.stringify(value));
+    }
+
+    async getAllKey(key: string) {
+        const values = await this.redisClient.lrange(key, 0, -1);
+        return values.map((value) => {
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                console.error(`Error parsing value: ${value}`, error);
+                return value;
+            }
+        });
     }
 }

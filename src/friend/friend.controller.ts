@@ -12,6 +12,8 @@ import {
 import { FriendService } from "./friend.service";
 import { FriendGateway } from "./friend.gateway";
 import { MessageRoomDto } from "./dto/friend-send-accept.dto";
+import { SendMessageDto } from "./dto/firend-message.dto";
+import { RoomMessageDto } from "./dto/friend-message-room.dto";
 
 @Controller("friend")
 export class FriendController {
@@ -185,6 +187,24 @@ export class FriendController {
         await this.friendGateway.saveMessages(
             messageRoomDto.userOne,
             messageRoomDto.userTwo,
+        );
+    }
+
+    //유저 id 두개로 redis에 메세지 저장
+    @Post("/setMessageRedis")
+    async setMessageRedis(@Body() messageRoomDto: MessageRoomDto) {
+        return await this.friendService.setMessageRedis(
+            messageRoomDto.userOne,
+            messageRoomDto.userTwo,
+        );
+    }
+
+    //redis에 새로운 채팅 추가
+    @Post("/saveNewMessage")
+    async saveNewMessage(@Body() roomMessageDto: RoomMessageDto) {
+        return await this.friendService.saveNewMessage(
+            roomMessageDto.roomId,
+            roomMessageDto.message,
         );
     }
 }
