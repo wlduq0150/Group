@@ -32,6 +32,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         private readonly groupService: GroupService,
     ) {}
 
+    async findGroupSocketById(groupClientId: string) {
+        const client = this.server.to(groupClientId).fetchSockets();
+        return client[0];
+    }
+
     handleConnection(client: Socket) {
         console.log(`[Group]client connected: ${client.id}`);
     }

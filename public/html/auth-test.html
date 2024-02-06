@@ -36,6 +36,7 @@
   <button onclick="leaveGroup()">Leave Group</button>
   <button onclick="clearGroup()">Clear Group</button>
   <button onclick="getAllGroup()">getAll Group</button>
+  <button onclick="match()">매칭 테스트</button>
 
   <div>|</div>
   <div>|</div>
@@ -155,6 +156,18 @@
     let position;
     let allGroup;
     let eventSource;
+    let matchingSocket;
+
+    function match() {
+
+      console.log(socket.id);
+      matchingSocket = io("http://localhost:5001/matching", {
+        transports: ['websocket'],
+        query: {
+          groupClientId: socket.id
+        }
+      });
+    }
 
     //http://localhost:5001/group
     //http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com
