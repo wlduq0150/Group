@@ -4,8 +4,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "src/entity/filter-word.entity";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { LolUser } from "src/entity/lol-user.entity";
+import { Report } from "src/entity/report-list.entity";
 import { MessageRoom } from "src/entity/messageRoom.endtity";
-import { ReportList } from "src/entity/report-list.entity";
 import { SendMessage } from "src/entity/sendMessage.entity";
 import { User } from "src/entity/user.entity";
 
@@ -27,9 +27,8 @@ export class TypeormModule {
                     SendMessage,
                     MessageRoom,
                     FilterWords,
-                    ReportList,
+                    Report,
                 ],
-
                 synchronize: true,
                 logging: false,
             }),

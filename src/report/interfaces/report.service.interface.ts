@@ -1,9 +1,9 @@
+import { Report } from "src/entity/report-list.entity";
 import { CreateReportDto } from "../dtos/createReport.dto";
-import { ReportList } from "src/entity/report-list.entity";
 
 export interface IReportServive {
     loadFilterWords(): Promise<string[]>;
-    createReport(reportData: CreateReportDto): Promise<ReportList>;
+    createReport(reportData: CreateReportDto): Promise<Report>;
     processReport(reportContent: string): Promise<boolean>;
-    getReportList(): Promise<ReportList[]>;
+    getReportList(): Promise<Report[]>;
 }

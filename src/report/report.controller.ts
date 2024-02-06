@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpStatus, Post } from "@nestjs/common";
 import { ReportService } from "./report.service";
 import { CreateReportDto } from "./dtos/createReport.dto";
 import { IReportController } from "./interfaces/report.controller.interface";
-import { ReportList } from "src/entity/report-list.entity";
+import { Report } from "src/entity/report-list.entity";
 
 @Controller("report")
 export class ReportController implements IReportController {
@@ -14,12 +14,12 @@ export class ReportController implements IReportController {
     }
 
     @Post("/create")
-    createReport(@Body() reportData: CreateReportDto): Promise<ReportList> {
+    createReport(@Body() reportData: CreateReportDto): Promise<Report> {
         return this.reportService.createReport(reportData);
     }
 
     @Get("/getReportList")
-    async getReportList(): Promise<ReportList[]> {
+    async getReportList(): Promise<Report[]> {
         return await this.reportService.getReportList();
     }
 }
