@@ -51,10 +51,10 @@ export class ReportService implements IReportServive {
     // 신고 생성
     async createReport(reportData: CreateReportDto): Promise<ReportList> {
         const reportedUser: User = await this.userService.findOneById(
-            reportData.reportedUser,
+            +reportData.reportedUser,
         );
         const reportedAgainstUser: User = await this.userService.findOneById(
-            reportData.reportedAgainstUser,
+            +reportData.reportedAgainstUser,
         );
 
         const newReport: ReportList = this.reportRepository.create({

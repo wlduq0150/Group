@@ -172,7 +172,7 @@ async function report() {
             },
             body: JSON.stringify({
                 reportedUser: 1,
-                reportedAgainstUserId: 2,
+                reportedAgainstUser: 3,
                 reportCategory: "언어 폭력",
                 reportLocation: "채팅방",
                 reportContent:

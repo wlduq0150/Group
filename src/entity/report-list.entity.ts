@@ -48,6 +48,7 @@ export class ReportList {
     reportDate: Date;
 
     @Column({ default: false })
+    @IsOptional()
     @IsBoolean()
     isProcessed: boolean;
 }
