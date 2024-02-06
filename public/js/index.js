@@ -732,3 +732,8 @@ friendSocket.on("friendRequest", (data) => {
 friendSocket.on("friendComplete", (data) => {
     friends.push(data.friendId);
 });
+
+friendSocket.on("sendMessage", (data) => {
+    console.log(data);
+    socketMessage(data);
+});

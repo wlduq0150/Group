@@ -68,4 +68,8 @@ export class RedisService {
     async getAll() {
         return await this.redisClient.keys("*");
     }
+
+    async scan(keyName: string) {
+        return await this.redisClient.scan(0, "MATCH", `${keyName}*`);
+    }
 }

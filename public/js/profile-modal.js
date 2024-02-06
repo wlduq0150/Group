@@ -37,11 +37,12 @@ async function getUserProfile(lolUserId, discordUserName) {
             document.querySelector(".league-points").innerHTML =
                 `${data.user.leaguePoints} LP`;
 
-            const winRate = Math.round(
+            let winRate = Math.round(
                 (Number(data.user.wins) /
                     (Number(data.user.wins) + Number(data.user.losses))) *
                     100,
             );
+            isNaN(winRate) ? (winRate = 0) : winRate;
             document.querySelector(".win-rate").innerHTML =
                 `<div class="win-rate" onmouseenter="mouseenterHandler()" onmouseleave="mouseleaveHandler()"  style="background:conic-gradient(#5383e8 0% ${winRate}%, #E84057 25% ${
                     100 - winRate
@@ -52,49 +53,65 @@ async function getUserProfile(lolUserId, discordUserName) {
                 ".champion-box-parent",
             );
             let mostChampionsBox = "";
-            for (let i = 0; i < mostChampionCount; i++) {
-                const champKda = (
-                    (Number(data.champion[i].kills) +
-                        Number(data.champion[i].assists)) /
-                    Number(data.champion[i].deaths)
-                ).toFixed(2);
-                const totalGame =
-                    Number(data.champion[i].wins) +
-                    Number(data.champion[i].losses);
-                const winRate = Math.round(
-                    (Number(data.champion[i].wins) / totalGame) * 100,
-                );
+            console.log(data.user.lolChampions.length);
+            if (data.user.lolChampions.length) {
+                for (let i = 0; i < mostChampionCount; i++) {
+                    const champKda = (
+                        (Number(data.user.lolChampions[i].kills) +
+                            Number(data.user.lolChampions[i].assists)) /
+                        Number(data.user.lolChampions[i].deaths)
+                    ).toFixed(2);
+                    const totalGame =
+                        Number(data.user.lolChampions[i].wins) +
+                        Number(data.user.lolChampions[i].losses);
+                    const winRate = Math.round(
+                        (Number(data.user.lolChampions[i].wins) / totalGame) *
+                            100,
+                    );
 
-                mostChampionsBox =
-                    mostChampionsBox +
-                    `
-        <div class="most-champion-box">
-        <div class="champion-icon-box">
-        <img
-        class="champion-icon"
-          src="https://with-lol.s3.ap-northeast-2.amazonaws.com/champions/${
-              data.champion[i].championName
-          }.png"
-          alt=""
-        />
-        </div>
-        <div class="champion-info-box">
-            <div class="champion-name">${data.champion[i].championName}</div>
+                    mostChampionsBox =
+                        mostChampionsBox +
+                        `
+            <div class="most-champion-box">
+            <div class="champion-icon-box">
+            <img
+            class="champion-icon"
+              src="https://with-lol.s3.ap-northeast-2.amazonaws.com/champions/${
+                  data.user.lolChampions[i].championName
+              }.png"
+              alt=""
+            />
             </div>
-            <div class="champion-kda"><div><span class="kda">${champKda}:1 평점</span></div>
-            <div class="champion-kills-deaths-assists">
-            <span>${(data.champion[i].kills / totalGame).toFixed(1)}/</span>
-            <span>${(data.champion[i].deaths / totalGame).toFixed(1)}/</span>
-            <span>${(data.champion[i].assists / totalGame).toFixed(1)}</span>
-            
+            <div class="champion-info-box">
+                <div class="champion-name">${
+                    data.user.lolChampions[i].championName
+                }</div>
+                </div>
+                <div class="champion-kda"><div><span class="kda">${champKda}:1 평점</span></div>
+                <div class="champion-kills-deaths-assists">
+                <span>${(data.user.lolChampions[i].kills / totalGame).toFixed(
+                    1,
+                )}/</span>
+                <span>${(data.user.lolChampions[i].deaths / totalGame).toFixed(
+                    1,
+                )}/</span>
+                <span>${(data.user.lolChampions[i].assists / totalGame).toFixed(
+                    1,
+                )}</span>
+                
+                </div>
             </div>
-        </div>
-        <div class="champ-win-box">
-          <div>${winRate}%</div>
-          <span>${totalGame} 게임</span>
-         </div>
-         </div>
-        `;
+            <div class="champ-win-box">
+              <div>${winRate}%</div>
+              <span>${totalGame} 게임</span>
+             </div>
+             </div>
+            `;
+                }
+            } else if (tier != "unRanked") {
+                mostChampionsBox = `<div>챔피언 정보를 불러오는 중입니다<div>`;
+            } else {
+                mostChampionsBox = `<div>이번 시즌 솔로 랭크 배치를 완료하지 않아 플레이한 챔피언 정보가 없습니다</div>`;
             }
             mostChampionsParent.innerHTML = `${mostChampionsBox}`;
         })
@@ -102,7 +119,9 @@ async function getUserProfile(lolUserId, discordUserName) {
             const loading = document.querySelector(".parent .loading");
             loading.style.visibility = "hidden";
             loading.classList.add("paused");
-            return console.log("프로필을 불러왔습니다");
+        })
+        .catch((err) => {
+            console.log(err);
         });
 }
 
@@ -192,16 +211,15 @@ function noDataLolUser(discordUserId, discordUserName, me) {
 }
 
 //계정연동 버튼을 눌렀을 떄
-const clickLinkingBtn = document.querySelector(
-    ".not-connect-modal .linking-account-btn",
-);
-clickLinkingBtn.addEventListener("click", (e) => {
-    const lolName = prompt("롤 닉네임을 입력해주세요");
-    const lolTag = prompt("롤 테그를 입력해주세요");
-    showProfileModal();
-    document.querySelector(".not-connect-modal").style.display = "none";
-    linkingLolUser(lolName, lolTag, userId);
-});
+document
+    .querySelector(".not-connect-modal .linking-account-btn")
+    .addEventListener("click", (e) => {
+        const lolName = prompt("롤 닉네임을 입력해주세요");
+        const lolTag = prompt("롤 태그를 입력해주세요");
+        showProfileModal();
+        document.querySelector(".not-connect-modal").style.display = "none";
+        linkingLolUser(lolName, lolTag, userId);
+    });
 
 //계정연동
 async function linkingLolUser(lolName, lolTag, userId) {
@@ -211,14 +229,18 @@ async function linkingLolUser(lolName, lolTag, userId) {
     await fetch(`/lol`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: lolName, tag: lolTag, userId: userId }),
-    }).then((res) => {
-        if (res.status >= 400) {
-            document.querySelector(".parent .loading").style.visibility =
-                "hidden";
-            console.log("잘못된 이름과 태그 입니다");
-        } else {
-            console.log("계정이 연결되었어요");
-        }
-    });
+        body: JSON.stringify({ name: lolName, tag: lolTag, userId: +userId }),
+    })
+        .then((res) => {
+            console.log(res);
+            if (res.status >= 400) {
+                document.querySelector(".parent .loading").style.visibility =
+                    "hidden";
+            } else {
+                console.log("계정이 정보를 저장했어요");
+            }
+        })
+        .catch((e) => {
+            console.log(e);
+        });
 }
