@@ -34,6 +34,12 @@ export class User {
     @Column({ default: false })
     isBanned: boolean;
 
+    @Column({ nullable: true })
+    lastBanLevel: number;
+
+    @Column({ nullable: true })
+    banUntil: Date;
+
     @CreateDateColumn()
     createdAt: Date;
 
