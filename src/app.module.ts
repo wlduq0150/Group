@@ -17,9 +17,14 @@ import { ReportModule } from "./report/report.module";
 import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "./entity/filter-word.entity";
 import { Repository } from "typeorm";
+import { MongooseModule } from "@nestjs/mongoose";
+import { LoggerController } from "./logger/logger.controller";
+import { LoggerModule } from "./logger/logger.module";
 
 @Module({
     imports: [
+        LoggerModule,
+        MongooseModule.forRoot(process.env.MONGO_DB),
         ConfigProjectModule,
         TypeormModule.forRoot(),
         TypeOrmModule.forFeature([FilterWords]),
@@ -32,7 +37,7 @@ import { Repository } from "typeorm";
         DiscordModule,
         ReportModule,
     ],
-    controllers: [AppController],
+    controllers: [AppController, LoggerController],
     providers: [AppService],
 })
 export class AppModule implements OnModuleInit {
