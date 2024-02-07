@@ -56,8 +56,13 @@ export class RedisService {
         return newKey;
     }
 
-    async del(key: string) {
-        await this.redisClient.del(key);
+    async del(key: string | string[]) {
+        if (typeof key === "string") {
+            await this.redisClient.del(key);
+        } else {
+            await this.redisClient.del(...key);
+        }
+
         return key;
     }
 

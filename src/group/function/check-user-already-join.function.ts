@@ -1,6 +1,17 @@
-import { Socket } from "socket.io";
+import { RemoteSocket, Socket } from "socket.io";
+import {
+    DecorateAcknowledgementsWithMultipleResponses,
+    DefaultEventsMap,
+} from "socket.io/dist/typed-events";
 
-export function checkIsUserAlreadyJoin(client: Socket): boolean {
+export function checkIsUserAlreadyJoin(
+    client:
+        | Socket
+        | RemoteSocket<
+              DecorateAcknowledgementsWithMultipleResponses<DefaultEventsMap>,
+              any
+          >,
+): boolean {
     let isJoin = false;
 
     client.rooms.forEach((room) => {

@@ -1,4 +1,151 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
+import { RedisService } from "src/redis/redis.service";
+import IORedis from "ioredis";
+import { StartMatchingDto } from "./dto/start-match.dto";
+import { FindMatchingUserDto } from "./dto/find-match-user.dto";
+import Redlock from "redlock";
+import { WsException } from "src/group/exception/ws-exception.exception";
+import { getDataFromMatchingKey } from "./function/matching-key-to-data.dto";
+import { MatchedUser } from "./interface/matched-user.dto";
+import { Position } from "src/group/type/position.type";
 
 @Injectable()
-export class MatchingService {}
+export class MatchingService {
+    private readonly redisClient: IORedis;
+    private readonly redlock: Redlock;
+
+    constructor(private readonly redisService: RedisService) {
+        this.redisClient = redisService.getRedisClient();
+        this.redlock = new Redlock([this.redisClient], {
+            retryCount: 3,
+            retryDelay: 300,
+        });
+    }
+
+    private genMatchingUserKey(
+        matchingClientId: string,
+        startMatchingDto: StartMatchingDto,
+    ) {
+        const { mode, people, tier, position } = startMatchingDto;
+
+        return `matching:user:${matchingClientId}:${mode}:${people}:${tier}:${position}`;
+    }
+
+    private genMatchingLockKey(startMatchingDto: StartMatchingDto) {
+        const { mode, people, tier } = startMatchingDto;
+
+        return `matching:lock:${mode}:${people}:${tier}`;
+    }
+
+    // 조건을 통해 매칭하는 유저 찾기
+    async findUserMatchingKeysByOption(
+        findMatchingUserDto: FindMatchingUserDto,
+    ) {
+        const { matchingClientId, mode, people, tier, position } =
+            findMatchingUserDto;
+
+        // 매칭 키 조회 옵션
+        const matchingUserKeyOption = `matching:user:${
+            matchingClientId ? matchingClientId : "*"
+        }:${mode ? mode : "*"}:${people ? people : "*"}:${tier ? tier : "*"}:${
+            position ? position : "*"
+        }`;
+
+        console.log(matchingUserKeyOption);
+
+        const matchingUserKeys = await this.redisClient.keys(
+            matchingUserKeyOption,
+        );
+
+        return matchingUserKeys;
+    }
+
+    // 매칭 시작하기
+    async startMatching(
+        matchingClientId: string,
+        startMatchingDto: StartMatchingDto,
+    ) {
+        const { groupClientId } = startMatchingDto;
+        const matchingUserKey = this.genMatchingUserKey(
+            matchingClientId,
+            startMatchingDto,
+        );
+
+        // 매칭 대기열에 추가
+        await this.redisService.set(matchingUserKey, groupClientId);
+
+        // 그룹 매칭
+        const matchingResult = await this.makeMatching(startMatchingDto);
+
+        return matchingResult;
+    }
+
+    // 매칭 종료하기
+    async stopMatching(matchingClientId: string) {
+        const matchingUserKey = (
+            await this.findUserMatchingKeysByOption({ matchingClientId })
+        )[0];
+
+        await this.redisService.del(matchingUserKey);
+    }
+
+    // 들어온 사람을 방장으로 삼아 그룹 형성
+    async makeMatching(startMatchingDto: StartMatchingDto) {
+        const { mode, tier, people } = startMatchingDto;
+
+        const matchingUserLockKey = this.genMatchingLockKey(startMatchingDto);
+        const lock = await this.redlock.acquire([matchingUserLockKey], 1000);
+
+        const matchedGroup: MatchedUser[] = [];
+        const matchedPosition: Position[] = [];
+        const matchedUserKeys: string[] = [];
+        let isMatchComplete = false;
+
+        const matchingUserKeys = await this.findUserMatchingKeysByOption({
+            ...startMatchingDto,
+            position: null,
+        });
+
+        console.log(matchingUserKeys);
+
+        try {
+            for (let key of matchingUserKeys) {
+                const { matchingClientId, position } =
+                    getDataFromMatchingKey(key);
+
+                const groupClientId = await this.redisService.get(key);
+
+                // 포지션이 겹치지 않게 매칭
+                if (matchedPosition.includes(position)) continue;
+
+                // 매칭된 그룹에 참여
+                matchedGroup.push({ matchingClientId, groupClientId });
+                matchedUserKeys.push(key);
+                matchedPosition.push(position);
+
+                // 인원이 가득 차면 매칭 종료
+                if (matchedGroup.length === people) {
+                    isMatchComplete = true;
+                    break;
+                }
+            }
+
+            // 만약 매칭이 성공했다면 대기열에서 삭제
+            if (isMatchComplete) {
+                await this.redisService.del(matchedUserKeys);
+                return {
+                    mode,
+                    tier,
+                    matchedPosition,
+                    matchedGroup,
+                };
+            }
+
+            return null;
+        } catch (e) {
+            throw new WsException(e.message);
+        } finally {
+            await lock.release();
+        }
+    }
+}
