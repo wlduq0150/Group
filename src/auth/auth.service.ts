@@ -70,7 +70,6 @@ export class AuthService {
         if (user.isBanned && user.banUntil < new Date()) {
             user.isBanned = false;
             user.banUntil = null;
-            user.lastBanLevel = null;
             await this.userSerivce.save(user);
         }
 
