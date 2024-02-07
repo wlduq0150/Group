@@ -25,6 +25,7 @@ export class MatchingGateway
 
     constructor(
         private readonly groupGateway: GroupGateway,
+        private readonly groupService: GroupService,
         private readonly matchingService: MatchingService,
     ) {}
 
@@ -34,6 +35,9 @@ export class MatchingGateway
 
     async handleDisconnect(client: Socket) {
         console.log(`[Matching]client disconnected: ${client.id}`);
+
+        // 매칭중이라면 취소시키기
+        this.matchingService.stopMatching(client.id);
     }
 
     @SubscribeMessage("startMatching")
@@ -43,27 +47,58 @@ export class MatchingGateway
             startMatchingDto,
         );
 
+        client.emit("startMatching");
+
         // 매칭 결과가 null이면 즉시 종료
         if (!matchingResult) return;
 
         const { mode, tier, matchedPosition, matchedGroup } = matchingResult;
 
-        const owner = matchedGroup.shift();
+        // 매칭 성공 알림 발송
+        await this.memberMatchingSuccess(matchedGroup);
+
+        // 그룹장 그룹 생성
+        const matchedOwner = matchedGroup.shift();
         const ownerSocket = await this.groupGateway.findGroupSocketById(
-            owner.groupClientId,
+            matchedOwner.groupClientId,
         );
+        const owner = +(await this.groupService.getDataInSocket(
+            matchedOwner.groupClientId,
+            "userId",
+        ));
 
         const groupId = await this.groupGateway.groupCreate(ownerSocket, {
             name: "매칭된 그룹",
             mode,
             tier: MATCH_POSITION[tier],
             mic: false,
-            owner: 0,
+            owner,
             position: matchedPosition,
         });
 
         // 나머지 인원 그룹 참가
         this.memberGroupJoin(groupId, matchedGroup);
+    }
+
+    // 매칭 취소
+    @SubscribeMessage("stopMatching")
+    async stopMatching(client: Socket) {
+        await this.matchingService.stopMatching(client.id);
+
+        client.emit("stopMatching");
+    }
+
+    // 멤버 전원 매칭 성공 알림
+    private async memberMatchingSuccess(matchedGroup: MatchedUser[]) {
+        const promises = matchedGroup.map((matchedUser) => {
+            return this.server.to(matchedUser.matchingClientId).fetchSockets();
+        });
+
+        const memberSockets = await Promise.all(promises);
+
+        for (let memberSocket of memberSockets) {
+            memberSocket[0].emit("completeMatching");
+        }
     }
 
     // 나미지 인원 그룹 참가 함수

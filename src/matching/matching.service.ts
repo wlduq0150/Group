@@ -5,7 +5,7 @@ import { StartMatchingDto } from "./dto/start-match.dto";
 import { FindMatchingUserDto } from "./dto/find-match-user.dto";
 import Redlock from "redlock";
 import { WsException } from "src/group/exception/ws-exception.exception";
-import { getDataFromMatchingKey } from "./function/matching-key-to-data.dto";
+import { getDataFromMatchingKey } from "./function/matching-key-to-data.function";
 import { MatchedUser } from "./interface/matched-user.dto";
 import { Position } from "src/group/type/position.type";
 
@@ -51,13 +51,23 @@ export class MatchingService {
             position ? position : "*"
         }`;
 
-        console.log(matchingUserKeyOption);
-
         const matchingUserKeys = await this.redisClient.keys(
             matchingUserKeyOption,
         );
 
         return matchingUserKeys;
+    }
+
+    async checkIsUserMatching(matchingClientId: string) {
+        const keys = await this.findUserMatchingKeysByOption({
+            matchingClientId,
+        });
+
+        if (keys) {
+            return keys[0];
+        }
+
+        return null;
     }
 
     // 매칭 시작하기
@@ -82,9 +92,10 @@ export class MatchingService {
 
     // 매칭 종료하기
     async stopMatching(matchingClientId: string) {
-        const matchingUserKey = (
-            await this.findUserMatchingKeysByOption({ matchingClientId })
-        )[0];
+        const matchingUserKey =
+            await this.checkIsUserMatching(matchingClientId);
+
+        if (!matchingUserKey) return;
 
         await this.redisService.del(matchingUserKey);
     }
