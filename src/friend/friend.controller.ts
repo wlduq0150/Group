@@ -213,4 +213,9 @@ export class FriendController {
             roomMessageDto.message,
         );
     }
+
+    @Get("/getRedisRoom/:roomId")
+    async getRedisRoom(@Param("roomId") roomId: number) {
+        return await this.friendService.getAllKey(roomId);
+    }
 }

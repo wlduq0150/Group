@@ -41,8 +41,6 @@ async function getSendAccept(friendId, myId, friendName) {
     fillMessage(messages);
 }
 
-function getRedisMessage(roomId, count) {}
-
 //배열화된 매세지 하나씩 생성
 function fillMessage(messages) {
     const messageList = document.querySelector(
@@ -51,10 +49,13 @@ function fillMessage(messages) {
     messageList.innerHTML = "";
     document
         .querySelector("#sendMessageContainer .discordUser-name")
-        .setAttribute("data-roomId", `${messages[0].messageRoomId}`);
-    for (let i = 0; i < messages.length; i++) {
-        createMessage(messages[i]);
+        .setAttribute("data-room_id", `${messages[0].messageRoomId}`);
+    let start = messages.length - 30 <= 0 ? 0 : messages.length - 30;
+    messageList.setAttribute("data-count", `${start}`);
+    for (let i = start; i < messages.length; i++) {
+        messageList.appendChild(createMessage(messages[i]));
     }
+    downScroll();
 }
 
 //엔터 눌렀을 때
@@ -66,9 +67,10 @@ function enterkey() {
         const friendId = document.querySelector(
             ".sendMessage-parent .discordUser-name",
         ).dataset.id;
-
-        sendMessage(+friendId, messageInput.value);
-        messageInput.value = "";
+        if (messageInput.value != "") {
+            sendMessage(+friendId, messageInput.value);
+            messageInput.value = "";
+        }
     }
 }
 
@@ -89,25 +91,33 @@ function sendMessage(friendId, message) {
 
 //메세지 소켓에서 받아서 생성하기
 function socketMessage(data) {
-    createMessage(data);
+    document
+        .querySelector(".sendMessage-parent .sendMessage-list-box")
+        .appendChild(createMessage(data));
+    downScroll();
 }
 
 //메세지 생성
-function createMessage(data) {
+function createMessage(data, lastChild) {
+    if (data == null) {
+        return;
+    }
     const messageList = document.querySelector(
         ".sendMessage-parent .sendMessage-list-box",
     );
 
     const day = data.sendDate.split("T");
-    let lastChild = null;
-    if (messageList.childNodes.length) {
-        lastChild = messageList.lastChild;
+    if (lastChild == null) {
+        if (messageList.childNodes.length) {
+            lastChild = messageList.lastChild;
+        }
     }
+
     let newMessage = "";
     let tailMessage = "";
     let messageChild = document.createElement("div");
     messageChild.setAttribute("data-day", `${day[0]}`);
-    messageList.appendChild(messageChild);
+
     if (data.senderId == userId) {
         senderName = document.querySelector(".discord-user-name").innerText;
         newMessage = newMessage + `<div class="me" data-id=${data.senderId} >`;
@@ -157,5 +167,52 @@ function createMessage(data) {
     }
     newMessage = newMessage + tailMessage;
     messageChild.innerHTML = newMessage;
-    downScroll();
+    return messageChild;
 }
+
+//스크롤을 가장위로 올렸을 때
+let messageCount = document.querySelector(
+    ".sendMessage-parent .sendMessage-list-box",
+);
+
+messageCount.addEventListener("scroll", (e) => {
+    const roomId = document.querySelector(
+        ".sendMessage-parent .discordUser-name",
+    ).dataset.room_id;
+    const count = messageCount.dataset.count;
+    const oldScrollHeight = e.target.scrollHeight;
+    if (count > 0 && e.target.scrollTop == 0) {
+        fetch(`/friend/getRedisRoom/${roomId}`, { method: "GET" })
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                const parent = document.querySelector(
+                    ".sendMessage-parent .sendMessage-list-box",
+                );
+
+                const first = parent.firstElementChild;
+                let lastChild = first;
+                const start = count - 30 <= 0 ? 0 : count - 30;
+                for (let i = start; i < count; i++) {
+                    const oldMessage = createMessage(data[i], lastChild);
+                    parent.insertBefore(oldMessage, first);
+                    lastChild = oldMessage;
+                }
+                console.log(first, lastChild);
+                if (first.dataset.day == lastChild.dataset.day) {
+                    first.querySelector(".message-day").innerHTML = "";
+                    if (
+                        first.querySelector(".message-time").innerText ==
+                        lastChild.querySelector(".message-time").innerText
+                    ) {
+                        lastChild.querySelector(".message-time").innerHTML = "";
+                    }
+                }
+
+                e.target.scrollTop = e.target.scrollHeight - oldScrollHeight;
+                messageCount.setAttribute("data-count", `${start}`);
+                return;
+            });
+    }
+});

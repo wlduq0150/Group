@@ -576,6 +576,7 @@ main {
     justify-content: flex-end;
     align-items: flex-start;
     position: absolute;
+    z-index: 10;
 }
 
 #sendMessageContainer.hidden,

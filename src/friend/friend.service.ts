@@ -364,11 +364,13 @@ export class FriendService {
                 `messageRoom:${messages.id}`,
                 messages.sendMessage,
             );
-            return await this.redisService.getAllKey(
-                `messageRoom:${messages.id}`,
-            );
+            return await this.getAllKey(messages.id);
         }
         return checkRoom;
+    }
+
+    async getAllKey(id: number) {
+        return await this.redisService.getAllKey(`messageRoom:${id}`);
     }
 
     //redis에 새 채팅 저장
