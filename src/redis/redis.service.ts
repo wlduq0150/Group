@@ -88,7 +88,7 @@ export class RedisService {
         await this.redisClient.rpush(key, JSON.stringify(value));
     }
 
-    async getAllKey(key: string) {
+    async getlrange(key: string) {
         const values = await this.redisClient.lrange(key, 0, -1);
         return values.map((value) => {
             try {

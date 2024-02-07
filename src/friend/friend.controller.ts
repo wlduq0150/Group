@@ -172,25 +172,7 @@ export class FriendController {
         };
     }
 
-    //유저 아이디 2개로 메세지방 조회
-    @Post("/messageRoom")
-    async getMessageRoom(@Body() messageRoomDto: MessageRoomDto) {
-        return await this.friendService.checkMessageRoom(
-            messageRoomDto.userOne,
-            messageRoomDto.userTwo,
-        );
-    }
-
-    // //유저 id 두개로 메세지 저장
-    // @Post("/saveMessage")
-    // async saveMessages(@Body() messageRoomDto: MessageRoomDto) {
-    //     await this.friendGateway.saveMessages(
-    //         messageRoomDto.userOne,
-    //         messageRoomDto.userTwo,
-    //     );
-    // }
-
-    //유저 id 두개로 redis에 메세지 저장
+    //데이터베이스의 채팅내역 redis에 저장
     @Post("/setMessageRedis")
     async setMessageRedis(@Body() messageRoomDto: MessageRoomDto) {
         return await this.friendService.setMessageRedis(
@@ -199,23 +181,9 @@ export class FriendController {
         );
     }
 
-    //redis의 메세지 데이터 가져오기 roomId로
-    // @Post("/getMessageRedis")
-    // async getMessageRedis(roomId: number) {
-    //     return await this.friendService.getMessageRedis(roomId);
-    // }
-
-    //redis에 새로운 채팅 추가
-    @Post("/saveNewMessage")
-    async saveNewMessage(@Body() roomMessageDto: RoomMessageDto) {
-        return await this.friendService.saveNewMessage(
-            roomMessageDto.roomId,
-            roomMessageDto.message,
-        );
-    }
-
+    //메세지방 id로 레디스의 값 조회
     @Get("/getRedisRoom/:roomId")
     async getRedisRoom(@Param("roomId") roomId: number) {
-        return await this.friendService.getAllKey(roomId);
+        return await this.friendService.getlrange(roomId);
     }
 }
