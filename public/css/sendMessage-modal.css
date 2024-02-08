@@ -50,6 +50,7 @@
 
 .sendMessage-parent .sendMessage-list-box {
     overflow-y: auto;
+    height: 100%;
 }
 
 .sendMessage-parent .sendMessage-list-box::-webkit-scrollbar {
@@ -69,6 +70,7 @@
 .sendMessage-parent .message-day {
     color: rgb(85, 85, 85);
     font-size: 11px;
+    margin-bottom: 7px;
 }
 
 .sendMessage-parent .discord-name {
@@ -76,9 +78,11 @@
 }
 
 .sendMessage-parent .message-time {
-    margin: 3px;
-    margin-top: 11px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: auto;
     font-size: 13px;
+    color: rgb(85, 85, 85);
 }
 
 .sendMessage-parent .friend {
@@ -86,15 +90,21 @@
     flex-direction: column;
 }
 
+.sendMessage-parent .friend .one-message {
+    margin-left: 19px;
+}
+
 .sendMessage-parent .one-message {
-    margin-top: 5px;
+    margin-bottom: 7px;
     display: flex;
 }
 
 .sendMessage-parent .message-text-box {
     padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     font-size: 16px;
-    box-shadow: 0 1px 2px #000000;
+    box-shadow: 0 1px 2px #00000080;
     border-radius: 5px;
 }
 
@@ -108,9 +118,12 @@
 }
 
 .sendMessage-parent .me {
-    margin-right: 10px;
     display: flex;
     flex-direction: column;
+}
+
+.sendMessage-parent .me .one-message {
+    margin-right: 19px;
 }
 
 .sendMessage-parent .me .message-day {
@@ -134,13 +147,17 @@
 
 .sendMessage-parent .sendMessage-input-box {
     margin-top: auto;
-    margin-bottom: 10px;
+    margin-bottom: 19px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .sendMessage-parent .sendMessage-input {
+    border-width: 2px;
+    border-radius: 3px;
+    border-color: rgb(200, 200, 200);
+    border-style: solid;
     height: 28px;
     width: 260px;
 }

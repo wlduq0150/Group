@@ -1,6 +1,6 @@
-document
-    .getElementById("createGroupBtn")
-    .addEventListener("click", loadExternalHtml);
+// document
+//     .getElementById("createGroupBtn")
+//     .addEventListener("click", loadExternalHtml);
 
 window.onclick = function (e) {
     let modal = document.getElementById("myModal");

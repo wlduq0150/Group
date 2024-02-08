@@ -41,6 +41,14 @@
   <div>|</div>
   <div>|</div>
 
+  <label for="position">Position:</label>
+  <input type="text" id="position" placeholder="Enter Position">
+  <button onclick="match()">매칭 테스트</button>
+
+  <div>|</div>
+  <div>|</div>
+  <div>|</div>
+
   <input type="text" id="groupChat" placeholder="Enter Chat">
   <button onclick="groupChat()">send</button>
   <input type="text" id="kickedUser" placeholder="need to kick">
@@ -162,13 +170,25 @@
 
     //http://localhost:5001/group
     //http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com
-    const socket = io("http://localhost:5001/group", {
+    const socket = io("/group", {
       transports: ['websocket'],
-      cors: {
-        origin: 'http://127.0.0.1:5500/public/auth-test.html', // 클라이언트 도메인
-        methods: ['GET', 'POST'], // 허용할 HTTP 메서드
-      },
     });
+
+    const matchingSocket = io("/matching", {
+      transports: ['websocket'],
+    });
+
+    function match() {
+      const position = document.getElementById("position").value;
+
+      matchingSocket.emit("startMatching", {
+        groupClientId: socket.id,
+        mode: "normal",
+        people: 2,
+        tier: 3,
+        position
+      });
+    }
 
     // 페이지 로딩시 로그인 체크
     document.addEventListener('DOMContentLoaded', async function () {
@@ -264,7 +284,8 @@
     }
 
     socket.on("connect", () => {
-      socket.emit("connectWithUserId", userId);
+      // socket.emit("connectWithUserId", userId);
+      console.log("그룹 소켓 연결");
     });
 
     socket.on('disconnect', () => {
