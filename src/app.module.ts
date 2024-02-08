@@ -17,6 +17,7 @@ import { ReportModule } from "./report/report.module";
 import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "./entity/filter-word.entity";
 import { Repository } from "typeorm";
+import { MatchingModule } from './matching/matching.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { Repository } from "typeorm";
         FriendModule,
         DiscordModule,
         ReportModule,
+        MatchingModule,
     ],
     controllers: [AppController],
     providers: [AppService],
