@@ -13,49 +13,11 @@ import { IoAdapter } from "@nestjs/platform-socket.io";
 import session from "express-session";
 import { RedisIoAdapter } from "./adapters/redis-io.adapter";
 import { RedisService } from "./redis/redis.service";
-import * as winston from "winston";
-import {
-    WinstonModule,
-    utilities as nestWinstonModuleUtilities,
-} from "nest-winston";
-import winstonMongoDB from "winston-mongodb";
-const isProduction = process.env["NODE_ENV"] === "production";
+import { logger } from "./logger/winston.logger";
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-        logger: WinstonModule.createLogger({
-            transports: [
-                new winston.transports.Console({
-                    level: isProduction ? "info" : "silly",
-                    format: isProduction
-                        ? winston.format.simple()
-                        : winston.format.combine(
-                              winston.format.timestamp(),
-                              winston.format.ms(),
-                              nestWinstonModuleUtilities.format.nestLike(
-                                  "MyApp",
-                                  {
-                                      colors: true,
-                                      prettyPrint: true,
-                                  },
-                              ),
-                          ),
-                }),
-
-                new winstonMongoDB.MongoDB({
-                    level: "info",
-                    db: process.env.MONGO_DB,
-                    options: {
-                        useUnifiedTopology: true,
-                    },
-                    collection: "logs",
-                    format: winston.format.combine(
-                        winston.format.timestamp(),
-                        winston.format.json(),
-                    ),
-                }),
-            ],
-        }),
+        logger: logger,
     });
 
     // app.enableCors({
