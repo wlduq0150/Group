@@ -2,7 +2,7 @@ let userId;
 let groupId;
 let blockedUsers = [];
 let friends = [];
-
+let friendIds=[];
 // const socketURL = "";
 
 
@@ -180,9 +180,16 @@ async function updateLoginStatus() {
 
             console.log("차단유저: ", blockedUsers);
 
+            user.friends.map((friend)=>{
+                friendIds[friend.id]=friend.id;
+            })
+            
+
             friends = user.friends.map((friend) => {
                 return friend.id;
             });
+            
+            
 
             console.log("친구: ", friends);
 
@@ -747,9 +754,15 @@ friendSocket.on("friendRequest", (data) => {
 });
 
 friendSocket.on("friendComplete", (data) => {
-    friends.push(data.friendId);
+    friendIds[data.friendId]=data.friendId;
+    getFriendList(friendIds);
 });
 
 friendSocket.on("sendMessage", (data) => {
     socketMessage(data);
 });
+
+friendSocket.on("deleteFriend",(data)=>{
+    friendIds[data.id]="";
+    getFriendList(friendIds);
+})

@@ -14,6 +14,7 @@ import { FriendGateway } from "./friend.gateway";
 import { MessageRoomDto } from "./dto/friend-send-accept.dto";
 import { SendMessageDto } from "./dto/firend-message.dto";
 import { RoomMessageDto } from "./dto/friend-message-room.dto";
+import { Socket } from "socket.io";
 
 @Controller("friend")
 export class FriendController {
@@ -61,8 +62,10 @@ export class FriendController {
             requestId,
             discordId,
         );
-
-        this.friendGateway.sendFriendComplete(requestId, accepterId);
+            
+        const socket: Socket = req.socket; 
+    
+        this.friendGateway.sendFriendComplete(socket,requestId, accepterId);
 
         return true;
     }

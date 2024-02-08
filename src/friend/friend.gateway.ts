@@ -13,6 +13,7 @@ import { RedisService } from "src/redis/redis.service";
 import { SendMessageDto } from "./dto/firend-message.dto";
 import { SendMessageType } from "./interface/sendMessage.interface";
 import { FriendService } from "./friend.service";
+import { DeleteFriendDto } from "./dto/friend-delete.dto";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/friend" })
@@ -53,7 +54,8 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             .emit("friendRequest", { user: friendRequestDto.sender });
     }
 
-    async sendFriendComplete(senderId: number, accepterId: number) {
+    async sendFriendComplete(client:Socket,senderId: number, accepterId: number) {
+       
         const senderClientId = await this.redisService.get(
             `friend:${senderId}`,
         );
@@ -67,6 +69,10 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server
             .to(senderClientId)
             .emit("friendComplete", { friendId: accepterId });
+
+        client.emit("friendComplete", {
+            friendId:accepterId
+        });
     }
 
     //친구에게 메세지 보내기
@@ -141,5 +147,23 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             messageRoomId,
         };
         this.friendService.saveOneMessage(oneMessage);
+    }
+
+    //친구 삭제시 친구였던사람에게 알림
+    @SubscribeMessage("deleteFriend")
+    async deleteFriend(client: Socket,deleteFriendDto:DeleteFriendDto){
+        const friendClientId = await this.redisService.get(
+            `friend:${deleteFriendDto.friendId}`,
+        );
+        console.log(friendClientId);
+        if(friendClientId){
+            this.server.to(friendClientId).emit("deleteFriend", {
+               id:client["userId"],
+            });
+        }
+        
+        client.emit("deleteFriend", {
+            id:deleteFriendDto.friendId,
+        });
     }
 }
