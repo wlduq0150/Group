@@ -49,7 +49,7 @@ function fillMessage(messages) {
     messageList.innerHTML = "";
     document
         .querySelector("#sendMessageContainer .discordUser-name")
-        .setAttribute("data-room_id", `${messages[0].messageRoomId}`);
+        .setAttribute("data-room_id", `${messages.id}`);
     let start = messages.length - 30 <= 0 ? 0 : messages.length - 30;
     messageList.setAttribute("data-count", `${start}`);
     for (let i = start; i < messages.length; i++) {
