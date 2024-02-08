@@ -12,6 +12,8 @@ import {
 import { FriendService } from "./friend.service";
 import { FriendGateway } from "./friend.gateway";
 import { MessageRoomDto } from "./dto/friend-send-accept.dto";
+import { SendMessageDto } from "./dto/firend-message.dto";
+import { RoomMessageDto } from "./dto/friend-message-room.dto";
 
 @Controller("friend")
 export class FriendController {
@@ -170,21 +172,18 @@ export class FriendController {
         };
     }
 
-    //유저 아이디 2개로 메세지방 조회
-    @Post("/messageRoom")
-    async getMessageRoom(@Body() messageRoomDto: MessageRoomDto) {
-        return await this.friendService.checkMessageRoom(
+    //데이터베이스의 채팅내역 redis에 저장
+    @Post("/setMessageRedis")
+    async setMessageRedis(@Body() messageRoomDto: MessageRoomDto) {
+        return await this.friendService.setMessageRedis(
             messageRoomDto.userOne,
             messageRoomDto.userTwo,
         );
     }
 
-    //유저 id 두개로 메세지 저장
-    @Post("/saveMessage")
-    async saveMessages(@Body() messageRoomDto: MessageRoomDto) {
-        await this.friendGateway.saveMessages(
-            messageRoomDto.userOne,
-            messageRoomDto.userTwo,
-        );
+    //메세지방 id로 레디스의 값 조회
+    @Get("/getRedisRoom/:roomId")
+    async getRedisRoom(@Param("roomId") roomId: number) {
+        return await this.friendService.getlrange(roomId);
     }
 }

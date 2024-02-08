@@ -53,7 +53,6 @@ async function getUserProfile(lolUserId, discordUserName) {
                 ".champion-box-parent",
             );
             let mostChampionsBox = "";
-            console.log(data.user.lolChampions.length);
             if (data.user.lolChampions.length) {
                 for (let i = 0; i < mostChampionCount; i++) {
                     const champKda = (
@@ -210,7 +209,7 @@ function noDataLolUser(discordUserId, discordUserName, me) {
     }
 }
 
-//계정연동 버튼을 눌렀을 떄
+//계정연동 버튼을 눌렀을 때
 document
     .querySelector(".not-connect-modal .linking-account-btn")
     .addEventListener("click", (e) => {
