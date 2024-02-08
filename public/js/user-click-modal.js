@@ -23,7 +23,7 @@ function showUserClickModal(e) {
     }
 
     if (!isMe) {
-        if (friends.includes(targetUserId)) {
+        if (friendIds.includes(targetUserId)) {
             attrList.push("delete_friend");
         } else {
             attrList.push("send_friend_request");
@@ -85,7 +85,7 @@ async function deleteFriend() {
             },
         });
         friendSocket.emit("deleteFriend",({friendId:userId}));
-        friends = friends.filter((friend) => friend !== userId);
+        friendIds = friendIds.filter((friend) => friend !== userId);
     } catch (err) {
         console.log(err);
         alert(err.message);
