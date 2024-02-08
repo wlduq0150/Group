@@ -18,6 +18,7 @@ import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "./entity/filter-word.entity";
 import { Repository } from "typeorm";
 import { MongooseModule } from "@nestjs/mongoose";
+import { MatchingModule } from './matching/matching.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { MongooseModule } from "@nestjs/mongoose";
         FriendModule,
         DiscordModule,
         ReportModule,
+        MatchingModule,
     ],
     controllers: [AppController],
     providers: [AppService],

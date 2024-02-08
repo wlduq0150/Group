@@ -15,7 +15,7 @@ export class CreateGroupDto {
     mode: string;
 
     @IsOptional()
-    @IsString()
+    @IsNumber()
     people?: number;
 
     @IsString()
