@@ -84,6 +84,7 @@ async function deleteFriend() {
                 "Content-Type": "application/json",
             },
         });
+        friendSocket.emit("deleteFriend",({friendId:userId}));
         friends = friends.filter((friend) => friend !== userId);
     } catch (err) {
         console.log(err);

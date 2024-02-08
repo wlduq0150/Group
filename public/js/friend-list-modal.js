@@ -5,14 +5,14 @@ friendRequestButton.addEventListener("change", function () {
 
 const friendButton = document.querySelector("#friends");
 friendButton.addEventListener("change", function () {
-    getFriendList(friends);
+    getFriendList(friendIds);
 });
 
 async function getFriendList(userIds) {
     const friendListContainer = document.querySelector(
         ".friend_content_wrapper .friend_list",
     );
-
+    console.log(userIds);
     friendListContainer.classList.remove("hidden");
     document
         .querySelector(".friend_content_wrapper .friend_request_list")
@@ -26,62 +26,65 @@ async function getFriendList(userIds) {
     document
         .querySelector(".friend_content_wrapper .friend_request_list")
         .classList.add("hidden");
-
+    
     for (const userId of userIds) {
-        const userNameResponse = await fetch(`/user/${userId}`);
-        const userDetailResponse = await fetch(`/user/detail/${userId}`);
-
-        const userName = await userNameResponse.text();
-        const userDetail = await userDetailResponse.json();
-
-        console.log(userDetail);
-
-        const userDiv = document.createElement("div");
-        const innerDiv1 = document.createElement("div");
-        const imgDiv = document.createElement("img");
-
-        const nameDiv = document.createElement("div");
-        nameDiv.classList.add("friend_name");
-        const spanWrapDiv = document.createElement("div");
-        const span = document.createElement("span");
-        span.textContent = userName;
-        span.classList.add("user");
-        span.dataset.id = userId;
-        spanWrapDiv.appendChild(span);
-        nameDiv.appendChild(spanWrapDiv);
-
-        const detailDiv = document.createElement("div");
-        detailDiv.textContent = userDetail.lolUser
-            ? userDetail.lolUser.nameTag
-            : "롤 유저 정보 없음";
-        nameDiv.appendChild(detailDiv);
-
-        const onlineDiv = document.createElement("div");
-        const circleDiv = document.createElement("div");
-        onlineDiv.classList.add("friend_online");
-        circleDiv.classList.add("circle");
-        onlineDiv.appendChild(circleDiv);
-
-        const avatarHash = userDetail.avatar;
-        const discordId = userDetail.discordId;
-        const defaultAvatarUrl =
-            "https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png";
-        const avatarUrl = avatarHash
-            ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
-            : defaultAvatarUrl;
-
-        imgDiv.setAttribute("src", avatarUrl);
-        imgDiv.setAttribute("alt", userName);
-
-        innerDiv1.appendChild(imgDiv);
-        innerDiv1.appendChild(nameDiv);
-        innerDiv1.appendChild(onlineDiv);
-        userDiv.appendChild(innerDiv1);
-
-        innerDiv1.setAttribute("class", "one-friend");
-        innerDiv1.dataset.id = userId;
-
-        friendListContainer.appendChild(userDiv);
+        if(userId){
+            const userNameResponse = await fetch(`/user/${userId}`);
+            const userDetailResponse = await fetch(`/user/detail/${userId}`);
+    
+            const userName = await userNameResponse.text();
+            const userDetail = await userDetailResponse.json();
+    
+            console.log(userDetail);
+    
+            const userDiv = document.createElement("div");
+            const innerDiv1 = document.createElement("div");
+            const imgDiv = document.createElement("img");
+    
+            const nameDiv = document.createElement("div");
+            nameDiv.classList.add("friend_name");
+            const spanWrapDiv = document.createElement("div");
+            const span = document.createElement("span");
+            span.textContent = userName;
+            span.classList.add("user");
+            span.dataset.id = userId;
+            spanWrapDiv.appendChild(span);
+            nameDiv.appendChild(spanWrapDiv);
+    
+            const detailDiv = document.createElement("div");
+            detailDiv.textContent = userDetail.lolUser
+                ? userDetail.lolUser.nameTag
+                : "롤 유저 정보 없음";
+            nameDiv.appendChild(detailDiv);
+    
+            const onlineDiv = document.createElement("div");
+            const circleDiv = document.createElement("div");
+            onlineDiv.classList.add("friend_online");
+            circleDiv.classList.add("circle");
+            onlineDiv.appendChild(circleDiv);
+    
+            const avatarHash = userDetail.avatar;
+            const discordId = userDetail.discordId;
+            const defaultAvatarUrl =
+                "https://with-lol.s3.ap-northeast-2.amazonaws.com/profile_icon/0.png";
+            const avatarUrl = avatarHash
+                ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
+                : defaultAvatarUrl;
+    
+            imgDiv.setAttribute("src", avatarUrl);
+            imgDiv.setAttribute("alt", userName);
+    
+            innerDiv1.appendChild(imgDiv);
+            innerDiv1.appendChild(nameDiv);
+            innerDiv1.appendChild(onlineDiv);
+            userDiv.appendChild(innerDiv1);
+    
+            innerDiv1.setAttribute("class", "one-friend");
+            innerDiv1.dataset.id = userId;
+    
+            friendListContainer.appendChild(userDiv);
+        }
+        
     }
 }
 
@@ -176,7 +179,7 @@ async function getFriendRequestList() {
 }
 
 async function showFriendList() {
-    getFriendList(friends).then(() => {
+    getFriendList(friendIds).then(() => {
         dblclickFriend();
     });
     document.querySelector("#friendListContainer").classList.remove("hidden");
@@ -219,3 +222,4 @@ async function rejectFriendRequestInList(senderId, friendRequestDiv) {
         console.log(e);
     }
 }
+
