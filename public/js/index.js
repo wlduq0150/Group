@@ -751,6 +751,5 @@ friendSocket.on("friendComplete", (data) => {
 });
 
 friendSocket.on("sendMessage", (data) => {
-    console.log(data);
     socketMessage(data);
 });
