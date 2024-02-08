@@ -347,29 +347,6 @@ export class GroupService {
         } catch (e) {
             throw new WsException(e.message);
         } finally {
-            const groupMaxRecord = this.configService.get("GROUP_RECORD");
-            const groupKeys = await this.groupRecord.createQueryBuilder("gRecord")
-                .select("gRecord.groupId", "groupId")
-                .where("gRecord.userId = :id", {
-                    id: userId
-                })
-                .orderBy("gRecord.createdAt", "DESC")
-                .take(groupMaxRecord)
-                .getRawMany()
-                .then(result => {
-                    return result.map(item => item.groupId);
-                });
-
-            await this.groupRecord.createQueryBuilder()
-                .delete()
-                .where("groupId NOT IN (:ids)", {
-                    ids: groupKeys
-                })
-                .andWhere("userId = :id", {
-                    id: userId
-                })
-                .execute();
-
             await lock.release();
         }
     }
@@ -445,23 +422,37 @@ export class GroupService {
 
 
     async insertGroupRecord(ids: number[], groupId: string) {
-        const groupRecordKey = this.generateGroupRecordKey(groupId);
         const group = this.groupRecord.find({ where: { groupId } });
         if (group) {
             await this.groupRecord.delete({ groupId });
         }
         ids.map(async (id) => {
-            const players = ids.filter(item => item !== id);
-            await this.groupRecord.save(
-                this.groupRecord.create({
-                    userId: id,
-                    groupId: groupId,
-                    playerIds: players
-                })
-            );
+            let duplicates = [];
+            const players = ids.filter(item => item !== id).map(String);
+            const group = await this.redisService.get(`record_${id}`);
+            const data = JSON.parse(group);
+            const groupMaxRecord = this.configService.get("GROUP_RECORD");
+            // [14, 15] [14, 21, 22] => 13, [15, 14, 21, 22]
+
+            if (data) {
+                players.forEach(item => {
+                    if (data.includes(item)) {
+                        duplicates.push(item);
+                    }
+                });
+
+                duplicates.forEach(item => {
+                    const index = data.indexOf(item);
+                    if (index !== -1) {
+                        data.splice(index, 1);
+                    }
+                });
+            }
+            const array = data ? [...players, ...data].slice(0, groupMaxRecord) : players;
+
+            await this.redisService.set(`record_${id}`, JSON.stringify(array));
+            // record_13음 : [ "14", "17" ]
         });
-        await this.redisService.set(groupId, JSON.stringify(ids));
-        return groupRecordKey;
     }
 
     private generateGroupInfoKey(groupId: string) {
@@ -476,7 +467,4 @@ export class GroupService {
         return `group:lock:${groupId}`;
     }
 
-    private generateGroupRecordKey(groupId: string) {
-        return `group:record:${groupId}`;
-    }
 }

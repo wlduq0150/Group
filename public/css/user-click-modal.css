@@ -3,6 +3,7 @@
 } */
 
 .user_click_modal {
+    margin-top: 2%;
     width: 90px;
     display: flex;
     flex-direction: column;

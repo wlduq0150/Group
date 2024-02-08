@@ -4,13 +4,14 @@ import { LolController } from "./lol.controller";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { LolUser } from "src/entity/lol-user.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserService } from "src/user/user.service";
 import { UserModule } from "src/user/user.module";
+import { RedisModule } from "../redis/redis.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([LolUser, LolChampion]), UserModule],
+    imports: [RedisModule, TypeOrmModule.forFeature([LolUser, LolChampion]), UserModule],
     exports: [LolService],
     controllers: [LolController],
-    providers: [LolService],
+    providers: [LolService]
 })
-export class LolModule {}
+export class LolModule {
+}

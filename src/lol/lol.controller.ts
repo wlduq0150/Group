@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Session } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common";
 
 import { LolDto } from "./dto/lol.dto";
 import { LolService } from "./lol.service";
@@ -48,6 +48,13 @@ export class LolController {
     @Put("")
     async updateUserChampion(@Body() lolUserIdDto: LolUserIdDto) {
         return await this.lolService.updateUserChampion(lolUserIdDto.userId);
+    }
+
+    @Get("/:id/groupList")
+    async getGroupList(@Param("id") userId: number) {
+        const users = await this.lolService.getGroupList(userId);
+
+        return users;
     }
 
     // @Post("getPuuid")
