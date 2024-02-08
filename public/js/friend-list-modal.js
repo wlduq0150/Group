@@ -78,6 +78,9 @@ async function getFriendList(userIds) {
         innerDiv1.appendChild(onlineDiv);
         userDiv.appendChild(innerDiv1);
 
+        innerDiv1.setAttribute("class", "one-friend");
+        innerDiv1.dataset.id = userId;
+
         friendListContainer.appendChild(userDiv);
     }
 }
