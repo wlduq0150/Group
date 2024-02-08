@@ -30,7 +30,7 @@ async function openSendMessage(friendName, friendId) {
 }
 
 //메세지 데이터를 배열로 해서 db에서 가져옮
-async function getSendAccept(friendId, myId, friendName) {
+async function getSendAccept(friendId, myId) {
     const response = await fetch("/friend/setMessageRedis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -46,10 +46,14 @@ function fillMessage(messages) {
     const messageList = document.querySelector(
         ".sendMessage-parent .sendMessage-list-box",
     );
+    let roomId=messages[0].messageRoomId;
+    if(!roomId){
+        roomId=messages.id;
+    }
     messageList.innerHTML = "";
     document
         .querySelector("#sendMessageContainer .discordUser-name")
-        .setAttribute("data-room_id", `${messages.id}`);
+        .setAttribute("data-room_id", `${roomId}`);
     let start = messages.length - 30 <= 0 ? 0 : messages.length - 30;
     messageList.setAttribute("data-count", `${start}`);
     for (let i = start; i < messages.length; i++) {
@@ -196,10 +200,10 @@ messageCount.addEventListener("scroll", (e) => {
                 const start = count - 30 <= 0 ? 0 : count - 30;
                 for (let i = start; i < count; i++) {
                     const oldMessage = createMessage(data[i], lastChild);
+                    
                     parent.insertBefore(oldMessage, first);
                     lastChild = oldMessage;
                 }
-                console.log(first, lastChild);
                 if (first.dataset.day == lastChild.dataset.day) {
                     first.querySelector(".message-day").innerHTML = "";
                     if (
