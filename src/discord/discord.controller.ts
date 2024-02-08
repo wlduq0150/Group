@@ -25,14 +25,6 @@ export class DiscordController {
         const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
         const discordId = session.discordUserId;
 
-        this.logger.log("111Joining voice channel...", DiscordController.name);
-        this.logger.debug("222Joining voice channel...");
-        this.logger.verbose(
-            "333Joining voice channel...",
-            DiscordController.name,
-        );
-        this.logger.warn("444Joining voice channel...");
-
         await this.discordService.setupUserVoiceChannel(guildId, discordId);
 
         return {
