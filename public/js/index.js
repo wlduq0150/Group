@@ -22,6 +22,17 @@ window.onload = function () {
     if (params.get("logout") === "success") {
         alert("로그아웃에 성공했습니다.");
     }
+    if (params.get("banUntil")) {
+        const banUntil = new Date(params.get("banUntil"));
+        const formattedDate = banUntil.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        alert(`${formattedDate}까지 계정 정지 상태입니다.`);
+    }
 
     socket.on("getAllGroup", function (data) {
         let allGroups = [];
