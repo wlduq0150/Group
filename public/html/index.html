@@ -74,16 +74,21 @@
             loadHTML("./blocked-user-modal.html");
         </script>
     </div>
+    <div class="hidden container" id="sendMessageContainer">
+        <script>
+            loadHTML("./sendMessage-modal.html");
+        </script>
+    </div>
     <main>
         <div class="main main_page">
             <div class="user-search">
                 <div class="refresh">
-                    <img style="width: 29px; height: 29px;"
+                    <img style="width: 29px; height: 29px"
                         src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png" />
                 </div>
                 <div class="search">
-                    <input placeholder="Search" type="text">
-                    <img style="width: 23px; height: 23px;"
+                    <input placeholder="Search" type="text" />
+                    <img style="width: 23px; height: 23px"
                         src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png" />
                 </div>
                 <div class="make-group" id="groupOpenButton" type="button">
@@ -103,21 +108,20 @@
                             <td class="title_position">포지션 현황</td>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
         <img alt="" class="chatting-notice-img-btn hidden"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png">
-
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png" />
     </main>
     <div class="chatting_box">
         <img alt="" class="chatting-notice-img-btn hidden"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png">
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png" />
         <img alt="" class="chatting-img-btn"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png" />
     </div>
+    <div class="match_box" onclick="match()">매칭버튼</div>
     <!-- <script src="../js/pop-up.js"></script> -->
 
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
@@ -125,6 +129,7 @@
     <script src="../js/index.js"></script>
     <script src="../js/user-click-modal.js"></script>
     <script src="../js/drag.js"></script>
+    <script src="../js/match.js"></script>
     <!-- <script src="../js/login-modal.js"></script> -->
 </body>
 

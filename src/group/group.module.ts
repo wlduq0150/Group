@@ -7,7 +7,7 @@ import { DiscordModule } from "src/discord/discord.module";
 
 @Module({
     imports: [RedisModule, UserModule, DiscordModule],
-    exports: [GroupService],
+    exports: [GroupService, GroupGateway],
     providers: [GroupService, GroupGateway],
 })
 export class GroupModule {}

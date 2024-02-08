@@ -2,8 +2,14 @@ let userId;
 let groupId;
 let blockedUsers = [];
 let friends = [];
-const socketURL = "group-finding-lb-605044581.ap-northeast-2.elb.amazonaws.com";
+
 // const socketURL = "";
+
+
+//const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
+
+const socketURL = "";
+
 const friendSocket = io(socketURL + "/friend", {
     transports: ["websocket"],
 });
@@ -21,6 +27,17 @@ window.onload = function () {
     }
     if (params.get("logout") === "success") {
         alert("로그아웃에 성공했습니다.");
+    }
+    if (params.get("banUntil")) {
+        const banUntil = new Date(params.get("banUntil"));
+        const formattedDate = banUntil.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        alert(`${formattedDate}까지 계정 정지 상태입니다.`);
     }
 
     socket.on("getAllGroup", function (data) {
@@ -731,4 +748,9 @@ friendSocket.on("friendRequest", (data) => {
 
 friendSocket.on("friendComplete", (data) => {
     friends.push(data.friendId);
+});
+
+friendSocket.on("sendMessage", (data) => {
+    console.log(data);
+    socketMessage(data);
 });

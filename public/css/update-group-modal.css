@@ -100,7 +100,10 @@
     height: 20px;
     width: 20px;
     font-weight: bold;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pswordcursor.cur")
+            5 5,
+        pointer;
 }
 
 .out-box {
