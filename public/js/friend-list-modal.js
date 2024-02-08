@@ -12,7 +12,6 @@ async function getFriendList(userIds) {
     const friendListContainer = document.querySelector(
         ".friend_content_wrapper .friend_list",
     );
-    console.log(userIds);
     friendListContainer.classList.remove("hidden");
     document
         .querySelector(".friend_content_wrapper .friend_request_list")
