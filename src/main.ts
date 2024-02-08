@@ -13,9 +13,12 @@ import { IoAdapter } from "@nestjs/platform-socket.io";
 import session from "express-session";
 import { RedisIoAdapter } from "./adapters/redis-io.adapter";
 import { RedisService } from "./redis/redis.service";
+import { logger } from "./logger/winston.logger";
 
 async function bootstrap() {
-    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+        logger: logger,
+    });
 
     // app.enableCors({
     //     origin: true,
