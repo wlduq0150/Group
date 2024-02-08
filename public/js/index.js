@@ -32,7 +32,7 @@ window.onload = function() {
             month: "2-digit",
             day: "2-digit",
             hour: "2-digit",
-            minute: "2-digit",
+            minute: "2-digit"
         });
         alert(`${formattedDate}까지 계정 정지 상태입니다.`);
     }
@@ -192,6 +192,8 @@ async function updateLoginStatus() {
 
             loginBtn.value = "로그아웃";
 
+            // GroupList 데이터 저장
+            updateGroupList(data.userId);
             socket.emit("connectWithUserId", data.userId);
             friendSocket.emit("connectWithUserId", data.userId);
         } else {
@@ -596,6 +598,16 @@ document.querySelector(".out-cancel-btn").addEventListener("click", (e) => {
 function resetGroupUpdateState() {
 }
 
+const updateGroupList = async (userId) => {
+    const groupRecordResponse = await fetch(`/group-record/${userId}/groupList`, {
+        method: "GET"
+    });
+    const groupRecord = await groupRecordResponse.json();
+
+    console.log(`${userId}'s GroupList`, groupRecord);
+    groupRecordUsers = groupRecord;
+};
+
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
@@ -666,10 +678,12 @@ socket.on("groupJoin", (data) => {
     console.log("유저 그룹 참가 완료: ", data);
     groupId = data.groupId;
     const { groupInfo, groupState, users, userId } = data;
+
     createSystemMessage(userId, "join");
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState, users ? [...users] : []);
     updateSelectPositionState(groupState, users ? [...users] : []);
+    updateGroupList(userId);
 });
 
 socket.on("openGroupUpdate", (data) => {

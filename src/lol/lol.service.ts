@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
+import { RedisService } from "../redis/redis.service";
 
 @Injectable()
 export class LolService {
@@ -17,7 +18,8 @@ export class LolService {
         private lolChampionRepository: Repository<LolChampion>,
         private readonly configService: ConfigService,
         @Inject(CACHE_MANAGER)
-        private readonly cacheManager: Cache
+        private readonly cacheManager: Cache,
+        private readonly redisService: RedisService
     ) {
     }
 
@@ -145,6 +147,7 @@ export class LolService {
             }
         }
     }
+
 
     //이름+태그로 롤 유저 찾기
     private async findUserByNameTag(name: string, tag: string) {
