@@ -1,4 +1,9 @@
-import { ForbiddenException, forwardRef, Inject, Injectable } from "@nestjs/common";
+import {
+    ForbiddenException,
+    Inject,
+    Injectable,
+    forwardRef,
+} from "@nestjs/common";
 import { CreateGroupDto } from "./dto/create-group.dto";
 import { Group } from "./interface/group.interface";
 import { initGroupState } from "./function/init-group-state.function";
@@ -14,10 +19,6 @@ import { UpdateGroupDto } from "./dto/update-group.dto";
 import { updateGroupState } from "./function/update-group-state.function";
 import { POSITION_LIST } from "./constants/position.constants";
 import { GroupGateway } from "./group.gateway";
-import { GroupRecord } from "../entity/group-record.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class GroupService {
@@ -30,20 +31,29 @@ export class GroupService {
         private readonly discordService: DiscordService,
         @Inject(forwardRef(() => GroupGateway))
         private readonly groupGateway: GroupGateway,
-        @InjectRepository(GroupRecord)
-        private readonly groupRecord: Repository<GroupRecord>,
-        private readonly configService: ConfigService
     ) {
         this.clear();
 
         this.redlock = new Redlock([redisService.getRedisClient()], {
             retryCount: 3,
-            retryDelay: 300
+            retryDelay: 300,
         });
     }
 
     async clear() {
         await this.redisService.clear();
+    }
+
+    private generateGroupInfoKey(groupId: string) {
+        return `group:info:${groupId}`;
+    }
+
+    private generateGroupStateKey(groupId: string) {
+        return `group:state:${groupId}`;
+    }
+
+    private generateGroupLockKey(groupId: string) {
+        return `group:lock:${groupId}`;
     }
 
     async saveDataInSocket(clientId: string, attr: string, data: any) {
@@ -70,13 +80,13 @@ export class GroupService {
 
         if (mode === "aram" && !people) {
             throw new WsException(
-                "칼바람나락 모드에서는 인원선택이 필요합니다."
+                "칼바람나락 모드에서는 인원선택이 필요합니다.",
             );
         }
 
         if (mode === "aram" && position.length) {
             throw new WsException(
-                "칼바람나락 모드는 포지션 선택을 할 수 없습니다."
+                "칼바람나락 모드는 포지션 선택을 할 수 없습니다.",
             );
         }
 
@@ -99,7 +109,7 @@ export class GroupService {
     async updateGroup(
         userId: number,
         groupId: string,
-        updateGroupDto: UpdateGroupDto
+        updateGroupDto: UpdateGroupDto,
     ) {
         const { mode } = updateGroupDto;
 
@@ -115,7 +125,7 @@ export class GroupService {
         try {
             if (userId !== groupInfo.owner) {
                 throw new WsException(
-                    "그룹장만이 그룹 설정을 변경 가능합니다."
+                    "그룹장만이 그룹 설정을 변경 가능합니다.",
                 );
             }
 
@@ -126,7 +136,7 @@ export class GroupService {
                 (groupInfo.mode === "aram" || mode === "aram")
             ) {
                 throw new WsException(
-                    "칼바람나락 모드로 그룹을 수정하는 것은 불가능합니다."
+                    "칼바람나락 모드로 그룹을 수정하는 것은 불가능합니다.",
                 );
             }
 
@@ -135,7 +145,7 @@ export class GroupService {
                     groupState = updateGroupState(
                         groupState,
                         updateGroupDto[update],
-                        updateGroupDto["people"]
+                        updateGroupDto["people"],
                     );
                 } else if (update !== "people") {
                     if (update in groupInfo) {
@@ -146,11 +156,11 @@ export class GroupService {
 
             await this.redisService.set(
                 groupInfoKey,
-                JSON.stringify(groupInfo)
+                JSON.stringify(groupInfo),
             );
             await this.redisService.set(
                 groupStateKey,
-                JSON.stringify(groupState)
+                JSON.stringify(groupState),
             );
         } catch (e) {
             throw new WsException(e.message);
@@ -172,7 +182,7 @@ export class GroupService {
 
         const [infoValues, stateValues] = await Promise.all([
             redisClient.mget(...infoKeys),
-            redisClient.mget(...stateKeys)
+            redisClient.mget(...stateKeys),
         ]);
 
         const data = keys.map((key, index) => {
@@ -180,8 +190,8 @@ export class GroupService {
                 [key]: {
                     groupId: key,
                     info: JSON.parse(infoValues[index]),
-                    state: JSON.parse(stateValues[index])
-                }
+                    state: JSON.parse(stateValues[index]),
+                },
             };
         });
 
@@ -207,7 +217,7 @@ export class GroupService {
         }
 
         throw new ForbiddenException(
-            "그룹장만이 디스코드 이동을 결정할 수 있습니다."
+            "그룹장만이 디스코드 이동을 결정할 수 있습니다.",
         );
     }
 
@@ -263,7 +273,7 @@ export class GroupService {
 
             if (groupState.currentUser >= groupState.totalUser) {
                 throw new Error(
-                    "그룹 인원수 제한으로 인해 참여할 수 없습니다."
+                    "그룹 인원수 제한으로 인해 참여할 수 없습니다.",
                 );
             }
 
@@ -271,7 +281,7 @@ export class GroupService {
 
             await this.redisService.set(
                 groupStateKey,
-                JSON.stringify(groupState)
+                JSON.stringify(groupState),
             );
         } catch (e) {
             throw new WsException(e.message);
@@ -329,18 +339,18 @@ export class GroupService {
                 this.removeGroup(groupId);
                 this.discordService.deleteVoiceChannelForGroup(
                     groupId,
-                    discordId
+                    discordId,
                 );
                 return null;
             } else {
                 // 변화 저장
                 await this.redisService.set(
                     groupInfoKey,
-                    JSON.stringify(groupInfo)
+                    JSON.stringify(groupInfo),
                 );
                 await this.redisService.set(
                     groupStateKey,
-                    JSON.stringify(groupState)
+                    JSON.stringify(groupState),
                 );
                 return groupState;
             }
@@ -393,7 +403,7 @@ export class GroupService {
     async deselectPosition(
         groupId: string,
         userId: number,
-        position: Position
+        position: Position,
     ) {
         const groupStateKey = this.generateGroupStateKey(groupId);
 
@@ -419,52 +429,4 @@ export class GroupService {
 
         return { userId, name, message };
     }
-
-
-    async insertGroupRecord(ids: number[], groupId: string) {
-        const group = this.groupRecord.find({ where: { groupId } });
-        if (group) {
-            await this.groupRecord.delete({ groupId });
-        }
-        ids.map(async (id) => {
-            let duplicates = [];
-            const players = ids.filter(item => item !== id).map(String);
-            const group = await this.redisService.get(`record_${id}`);
-            const data = JSON.parse(group);
-            const groupMaxRecord = this.configService.get("GROUP_RECORD");
-            // [14, 15] [14, 21, 22] => 13, [15, 14, 21, 22]
-
-            if (data) {
-                players.forEach(item => {
-                    if (data.includes(item)) {
-                        duplicates.push(item);
-                    }
-                });
-
-                duplicates.forEach(item => {
-                    const index = data.indexOf(item);
-                    if (index !== -1) {
-                        data.splice(index, 1);
-                    }
-                });
-            }
-            const array = data ? [...players, ...data].slice(0, groupMaxRecord) : players;
-
-            await this.redisService.set(`record_${id}`, JSON.stringify(array));
-            // record_13음 : [ "14", "17" ]
-        });
-    }
-
-    private generateGroupInfoKey(groupId: string) {
-        return `group:info:${groupId}`;
-    }
-
-    private generateGroupStateKey(groupId: string) {
-        return `group:state:${groupId}`;
-    }
-
-    private generateGroupLockKey(groupId: string) {
-        return `group:lock:${groupId}`;
-    }
-
 }

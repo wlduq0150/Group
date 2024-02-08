@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { IoAdapter } from "@nestjs/platform-socket.io";
 import IORedis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
@@ -14,7 +13,7 @@ export class RedisService {
         this.redisClient = new IORedis({
             host: this.configService.get<string>("REDIS_HOST"),
             port: this.configService.get<number>("REDIS_PORT"),
-            password: this.configService.get<string>("REDIS_PASSWORD"),
+            password: this.configService.get<string>("REDIS_PASSWORD")
         });
         // (선택) Redis 연결 여부 확인
         this.redisClient.on("connect", () => {
@@ -26,7 +25,7 @@ export class RedisService {
 
         const RedisStore = connectRedis(session);
         this.redisStore = new RedisStore({
-            client: this.redisClient,
+            client: this.redisClient
         });
     }
 
@@ -69,34 +68,7 @@ export class RedisService {
         return await this.redisClient.keys("*");
     }
 
-    async scan(cursor: number, keyName: string, count: number) {
-        return await this.redisClient.scan(
-            cursor,
-            "MATCH",
-            `${keyName}*`,
-            "COUNT",
-            count,
-        );
-    }
-
-    async arrayRpush(key: string, value: any[]) {
-        const newValue = value.map((e) => JSON.stringify(e));
-        await this.redisClient.rpush(key, ...newValue);
-    }
-
-    async rpush(key: string, value: object) {
-        await this.redisClient.rpush(key, JSON.stringify(value));
-    }
-
-    async getAllKey(key: string) {
-        const values = await this.redisClient.lrange(key, 0, -1);
-        return values.map((value) => {
-            try {
-                return JSON.parse(value);
-            } catch (error) {
-                console.error(`Error parsing value: ${value}`, error);
-                return value;
-            }
-        });
+    async scan(keyName: string) {
+        return await this.redisClient.scan(0, "MATCH", `${keyName}*`);
     }
 }

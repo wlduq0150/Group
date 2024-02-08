@@ -50,17 +50,9 @@ export class LolController {
         return await this.lolService.updateUserChampion(lolUserIdDto.userId);
     }
 
-    @Get("/:id/groupList")
-    async getGroupList(@Param("id") userId: number) {
-        const users = await this.lolService.getGroupList(userId);
-
-        return users;
-    }
-
     // @Post("getPuuid")
     // async findUserPuuid(@Body() lolDto: LolDto) {
     //     const a = await this.lolService.findUserPuuid(lolDto.name, lolDto.tag);
     //     return a;
     // }
-
 }

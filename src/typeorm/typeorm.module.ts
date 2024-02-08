@@ -8,7 +8,6 @@ import { Report } from "src/entity/report-list.entity";
 import { MessageRoom } from "src/entity/messageRoom.endtity";
 import { SendMessage } from "src/entity/sendMessage.entity";
 import { User } from "src/entity/user.entity";
-import { GroupRecord } from "../entity/group-record.entity";
 
 @Module({})
 export class TypeormModule {
@@ -29,7 +28,6 @@ export class TypeormModule {
                     MessageRoom,
                     FilterWords,
                     Report,
-                    GroupRecord,
                 ],
                 synchronize: true,
                 logging: false,

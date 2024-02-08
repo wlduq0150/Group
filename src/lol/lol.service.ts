@@ -7,7 +7,6 @@ import { Repository } from "typeorm";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
-import { RedisService } from "../redis/redis.service";
 
 @Injectable()
 export class LolService {
@@ -18,8 +17,7 @@ export class LolService {
         private lolChampionRepository: Repository<LolChampion>,
         private readonly configService: ConfigService,
         @Inject(CACHE_MANAGER)
-        private readonly cacheManager: Cache,
-        private readonly redisService: RedisService
+        private readonly cacheManager: Cache
     ) {
     }
 
@@ -146,19 +144,6 @@ export class LolService {
                 }
             }
         }
-    }
-
-    async getGroupList(userId: number): Promise<LolUser[]> {
-        const result = await this.redisService.get(`record_${userId}`); // record_13
-        const userIds = (JSON.parse(result)); // [ 14, 17 ]
-        if (userIds) {
-            const users = userIds.map(user => {
-                return this.lolUserRepository.findOne({ where: { user: { id: user } } });
-            });
-
-            return users;
-        }
-        return [];
     }
 
     //이름+태그로 롤 유저 찾기

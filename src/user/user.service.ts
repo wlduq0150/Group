@@ -6,7 +6,6 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class UserService {
-
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>
@@ -62,6 +61,4 @@ export class UserService {
     async save(user: User): Promise<User> {
         return this.userRepository.save(user);
     }
-
-
 }
