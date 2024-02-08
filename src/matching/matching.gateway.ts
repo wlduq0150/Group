@@ -14,6 +14,8 @@ import { StartMatchingDto } from "./dto/start-match.dto";
 import { MatchingService } from "./matching.service";
 import { MATCH_POSITION } from "./constants/match-tier.constants";
 import { MatchedUser } from "./interface/matched-user.dto";
+import { checkIsUserAlreadyJoin } from "src/group/function/check-user-already-join.function";
+import { WsException } from "src/group/exception/ws-exception.exception";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/matching", cors: "true" })
@@ -42,6 +44,13 @@ export class MatchingGateway
 
     @SubscribeMessage("startMatching")
     async startMatching(client: Socket, startMatchingDto: StartMatchingDto) {
+        const { groupClientId } = startMatchingDto;
+
+        const isUserInGroup = await this.checkIsUserInGroup(groupClientId);
+        if (isUserInGroup) {
+            throw new WsException("그룹에 이미 참여하고 있습니다.");
+        }
+
         const matchingResult = await this.matchingService.startMatching(
             client.id,
             startMatchingDto,
@@ -86,6 +95,15 @@ export class MatchingGateway
         await this.matchingService.stopMatching(client.id);
 
         client.emit("stopMatching");
+    }
+
+    private async checkIsUserInGroup(groupClientId: string) {
+        const groupSocket =
+            await this.groupGateway.findGroupSocketById(groupClientId);
+
+        const isUserInGroup = checkIsUserAlreadyJoin(groupSocket);
+
+        return isUserInGroup;
     }
 
     // 멤버 전원 매칭 성공 알림

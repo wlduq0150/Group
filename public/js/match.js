@@ -14,6 +14,11 @@ matchingSocket.on("completeMatching", () => {
     alert("매칭 성공!");
 });
 
+matchingSocket.on("error", (data) => {
+    console.log(data);
+    alert(`[error] ${data.message}`);
+});
+
 function match() {
     const mode = prompt(
         "게임 모드를 입력해주세요. (nomal-game, rank-game, team-rank, aram)",
