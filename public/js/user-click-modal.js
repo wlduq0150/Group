@@ -104,7 +104,8 @@ async function blockUser() {
                 "Content-Type": "application/json",
             },
         });
-        blockedUsers.push(userId);
+        
+        blockedUserIds[userId]=userId;
     } catch (err) {
         console.log(err);
         alert(err.message);

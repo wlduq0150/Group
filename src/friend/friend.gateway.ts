@@ -166,4 +166,10 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             id:deleteFriendDto.friendId,
         });
     }
+
+    //친구 차단시
+    @SubscribeMessage("blockUser")
+    async blockUser(client:Socket){
+
+    }
 }
