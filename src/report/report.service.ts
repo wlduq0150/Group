@@ -9,6 +9,10 @@ import { Report } from "src/entity/report-list.entity";
 import { UserService } from "src/user/user.service";
 import { User } from "src/entity/user.entity";
 import { IReportServive } from "./interfaces/report.service.interface";
+import {
+    BanPeriod,
+    ReportCountThreshold,
+} from "./contants/ban-periods.constant";
 
 @Injectable()
 export class ReportService implements IReportServive {
@@ -76,6 +80,8 @@ export class ReportService implements IReportServive {
             await this.userService.save(reportedAgainstUser);
         }
 
+        await this.updateBanStatus(reportedAgainstUser);
+
         return this.reportRepository.save(newReport);
     }
 
@@ -97,5 +103,47 @@ export class ReportService implements IReportServive {
     // 신고 목록 가져오기
     async getReportList(): Promise<Report[]> {
         return this.reportRepository.find();
+    }
+
+    // 정지 상태 업데이트
+    async updateBanStatus(user: User) {
+        if (user.reportCount < ReportCountThreshold.LEVEL_1) {
+            return;
+        }
+
+        user.isBanned = true;
+        const now = new Date().getTime();
+        let banPeriod: number;
+
+        if (
+            user.reportCount >= ReportCountThreshold.LEVEL_4 &&
+            user.lastBanLevel < ReportCountThreshold.LEVEL_4
+        ) {
+            banPeriod = BanPeriod.LEVEL_4;
+            user.lastBanLevel = ReportCountThreshold.LEVEL_4;
+        } else if (
+            user.reportCount >= ReportCountThreshold.LEVEL_3 &&
+            user.lastBanLevel < ReportCountThreshold.LEVEL_3
+        ) {
+            banPeriod = BanPeriod.LEVEL_3;
+            user.lastBanLevel = ReportCountThreshold.LEVEL_3;
+        } else if (
+            user.reportCount >= ReportCountThreshold.LEVEL_2 &&
+            user.lastBanLevel < ReportCountThreshold.LEVEL_2
+        ) {
+            banPeriod = BanPeriod.LEVEL_2;
+            user.lastBanLevel = ReportCountThreshold.LEVEL_2;
+        } else if (user.lastBanLevel < ReportCountThreshold.LEVEL_1) {
+            banPeriod = BanPeriod.LEVEL_1;
+            user.lastBanLevel = ReportCountThreshold.LEVEL_1;
+        } else {
+            user.isBanned = false;
+        }
+
+        if (user.isBanned) {
+            user.banUntil = new Date(now + banPeriod);
+        }
+
+        await this.userService.save(user);
     }
 }
