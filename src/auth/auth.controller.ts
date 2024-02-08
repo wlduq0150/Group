@@ -2,6 +2,7 @@ import {
     BadRequestException,
     Controller,
     Get,
+    HttpException,
     HttpStatus,
     Query,
     Redirect,
@@ -61,7 +62,14 @@ export class AuthController {
             res.redirect("/html/index.html");
         } catch (err) {
             console.error("인증 실패", err);
-            res.redirect("/html/index.html?login=fail");
+            if (err instanceof HttpException) {
+                const banUntil = err.message.split(" ")[4];
+                res.redirect(
+                    `/html/index.html?login=fail&banUntil=${banUntil}`,
+                );
+            } else {
+                res.redirect("/html/index.html?login=fail");
+            }
         }
     }
 

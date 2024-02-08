@@ -1,5 +1,6 @@
 import {
     HttpException,
+    HttpStatus,
     Injectable,
     InternalServerErrorException,
     UnauthorizedException,
@@ -65,6 +66,19 @@ export class AuthService {
         const user: User = await this.userSerivce.findOneByDiscordId(
             discordUser.id,
         );
+
+        if (user.isBanned && user.banUntil < new Date()) {
+            user.isBanned = false;
+            user.banUntil = null;
+            await this.userSerivce.save(user);
+        }
+
+        if (user.isBanned) {
+            throw new HttpException(
+                `You are banned until ${user.banUntil}`,
+                HttpStatus.FORBIDDEN,
+            );
+        }
 
         return {
             discordUserId: discordUser.id,
