@@ -2,7 +2,7 @@ const mostChampionCount = 3;
 
 async function getUserProfile(lolUserId, discordUserName) {
     fetch(`/lol/user/${lolUserId}`, {
-        method: "GET",
+        method: "GET"
     })
         .then((res) => {
             return res.json();
@@ -40,7 +40,7 @@ async function getUserProfile(lolUserId, discordUserName) {
             let winRate = Math.round(
                 (Number(data.user.wins) /
                     (Number(data.user.wins) + Number(data.user.losses))) *
-                    100,
+                100
             );
             isNaN(winRate) ? (winRate = 0) : winRate;
             document.querySelector(".win-rate").innerHTML =
@@ -50,7 +50,7 @@ async function getUserProfile(lolUserId, discordUserName) {
                     data.user.wins
                 }승 ${data.user.losses}패</span></div>`;
             let mostChampionsParent = document.querySelector(
-                ".champion-box-parent",
+                ".champion-box-parent"
             );
             let mostChampionsBox = "";
             if (data.user.lolChampions.length) {
@@ -65,7 +65,7 @@ async function getUserProfile(lolUserId, discordUserName) {
                         Number(data.user.lolChampions[i].losses);
                     const winRate = Math.round(
                         (Number(data.user.lolChampions[i].wins) / totalGame) *
-                            100,
+                        100
                     );
 
                     mostChampionsBox =
@@ -76,27 +76,27 @@ async function getUserProfile(lolUserId, discordUserName) {
             <img
             class="champion-icon"
               src="https://with-lol.s3.ap-northeast-2.amazonaws.com/champions/${
-                  data.user.lolChampions[i].championName
-              }.png"
+                            data.user.lolChampions[i].championName
+                        }.png"
               alt=""
             />
             </div>
             <div class="champion-info-box">
                 <div class="champion-name">${
-                    data.user.lolChampions[i].championName
-                }</div>
+                            data.user.lolChampions[i].championName
+                        }</div>
                 </div>
                 <div class="champion-kda"><div><span class="kda">${champKda}:1 평점</span></div>
                 <div class="champion-kills-deaths-assists">
                 <span>${(data.user.lolChampions[i].kills / totalGame).toFixed(
-                    1,
-                )}/</span>
+                            1
+                        )}/</span>
                 <span>${(data.user.lolChampions[i].deaths / totalGame).toFixed(
-                    1,
-                )}/</span>
+                            1
+                        )}/</span>
                 <span>${(data.user.lolChampions[i].assists / totalGame).toFixed(
-                    1,
-                )}</span>
+                            1
+                        )}</span>
                 
                 </div>
             </div>
@@ -129,7 +129,7 @@ async function getLolUserId(discordUserId) {
     const resp = await fetch(`/user/${discordUserId}`, { method: "GET" });
     const discordUserName = await resp.text();
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
-        method: "GET",
+        method: "GET"
     });
     const me = discordUserId == userId;
     if (res.status >= 400) {
@@ -160,6 +160,7 @@ function mouseleaveHandler() {
     document.getElementById("win-rate").style.display = "block";
     document.querySelector(".wins-losses-box").style.display = "none";
 }
+
 //프로필 보여주거나 감추기
 function showProfileModal() {
     const checkProfile = document.querySelector("#profileContainer");
@@ -192,17 +193,17 @@ function noDataLolUser(discordUserId, discordUserName, me) {
         document.querySelector(".parent").style.display = "none";
         document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
-            ".not-connect-modal .linking-account-btn",
+            ".not-connect-modal .linking-account-btn"
         ).style.visibility = "visible";
     } else {
         document.querySelector(".parent").style.display = "none";
         document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
-            ".not-connect-modal .linking-account-btn",
+            ".not-connect-modal .linking-account-btn"
         ).style.visibility = "hidden";
         console.log(discordUserName + discordUserId);
         const discordName = document.querySelector(
-            ".not-connect-modal .discord-name",
+            ".not-connect-modal .discord-name"
         );
         discordName.innerHTML = `${discordUserName}`;
         discordName.setAttribute("data-id", `${discordUserId}`);
@@ -228,7 +229,7 @@ async function linkingLolUser(lolName, lolTag, userId) {
     await fetch(`/lol`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: lolName, tag: lolTag, userId: +userId }),
+        body: JSON.stringify({ name: lolName, tag: lolTag, userId: +userId })
     })
         .then((res) => {
             console.log(res);

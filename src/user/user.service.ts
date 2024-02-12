@@ -1,23 +1,16 @@
-import {
-    BadRequestException,
-    ConflictException,
-    Injectable,
-    NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity/user.entity";
 import { Repository } from "typeorm";
-import { ConfigService } from "@nestjs/config";
-import { GetUserDto } from "./dto/get-user.dto";
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-        private readonly configService: ConfigService,
-    ) {}
+        private readonly userRepository: Repository<User>
+    ) {
+    }
 
     async findOneById(userId: number): Promise<User> {
         const user = await this.userRepository.findOne({
@@ -25,8 +18,8 @@ export class UserService {
             relations: {
                 lolUser: true,
                 friends: true,
-                blockedUsers: true,
-            },
+                blockedUsers: true
+            }
         });
         if (!user) {
             throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
@@ -47,7 +40,7 @@ export class UserService {
 
     async findDiscordIdByUserId(userId: number): Promise<string> {
         const user = await this.userRepository.findOneBy({
-            id: userId,
+            id: userId
         });
         if (!user) {
             throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
@@ -57,7 +50,7 @@ export class UserService {
 
     async findNameByUserId(userId: number): Promise<string> {
         const user = await this.userRepository.findOneBy({
-            id: userId,
+            id: userId
         });
         if (!user) {
             throw new NotFoundException("해당 유저를 찾을 수 없습니다.");

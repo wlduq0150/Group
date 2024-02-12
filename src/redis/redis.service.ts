@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { IoAdapter } from "@nestjs/platform-socket.io";
 import IORedis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
@@ -14,7 +13,7 @@ export class RedisService {
         this.redisClient = new IORedis({
             host: this.configService.get<string>("REDIS_HOST"),
             port: this.configService.get<number>("REDIS_PORT"),
-            password: this.configService.get<string>("REDIS_PASSWORD"),
+            password: this.configService.get<string>("REDIS_PASSWORD")
         });
         // (선택) Redis 연결 여부 확인
         this.redisClient.on("connect", () => {
@@ -26,7 +25,7 @@ export class RedisService {
 
         const RedisStore = connectRedis(session);
         this.redisStore = new RedisStore({
-            client: this.redisClient,
+            client: this.redisClient
         });
     }
 
@@ -80,7 +79,7 @@ export class RedisService {
             "MATCH",
             `${keyName}*`,
             "COUNT",
-            count,
+            count
         );
     }
 

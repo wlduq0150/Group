@@ -377,7 +377,7 @@ export class FriendService {
         return await this.findMessageRoom(smallId, bigId);
     }
 
-    //메세지방+메세지 검색
+    //메세지방 검색
     private async findMessageRoom(smallId: number, bigId: number) {
         return await this.messageRoomRepository.findOne({
             where: { bigId, smallId },

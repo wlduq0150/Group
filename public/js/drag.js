@@ -6,6 +6,7 @@ dragElement(document.getElementById("profile_modal_login_drag_me"), true);
 dragElement(document.getElementById("friend_list_modal_drag_me"), true);
 dragElement(document.getElementById("friend_request_modal_drag_me"), true);
 dragElement(document.getElementById("blocked_user_modal_drag_me"), true);
+dragElement(document.getElementById("group_list_modal_drag_me"), true);
 
 
 function dragElement(elmnt, leftDraggable) {
