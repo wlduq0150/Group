@@ -79,6 +79,11 @@
             loadHTML("./sendMessage-modal.html");
         </script>
     </div>
+    <div class="hidden container" id="matchingContainer">
+        <script>
+            loadHTML("./matching-modal.html");
+        </script>
+    </div>
     <main>
         <div class="main main_page">
             <div class="user-search">
@@ -121,15 +126,15 @@
         <img alt="" class="chatting-img-btn"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png" />
     </div>
-    <div class="match_box" onclick="match()">매칭버튼</div>
+    <div class="match_box" onclick="openMatching()">매칭버튼</div>
     <!-- <script src="../js/pop-up.js"></script> -->
 
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="../js/constants.js"></script>
     <script src="../js/index.js"></script>
     <script src="../js/user-click-modal.js"></script>
+    <script src="../js/matching-modal.js"></script>
     <script src="../js/drag.js"></script>
-    <script src="../js/match.js"></script>
     <!-- <script src="../js/login-modal.js"></script> -->
 </body>
 
