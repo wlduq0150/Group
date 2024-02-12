@@ -8,6 +8,7 @@ import { WsException } from "src/group/exception/ws-exception.exception";
 import { getDataFromMatchingKey } from "./function/matching-key-to-data.function";
 import { MatchedUser } from "./interface/matched-user.dto";
 import { Position } from "src/group/type/position.type";
+import { genMatchingKeyOption } from "./function/gen-matching-key-option.function";
 
 @Injectable()
 export class MatchingService {
@@ -45,15 +46,40 @@ export class MatchingService {
             findMatchingUserDto;
 
         // 매칭 키 조회 옵션
-        const matchingUserKeyOption = `matching:user:${
-            matchingClientId ? matchingClientId : "*"
-        }:${mode ? mode : "*"}:${people ? people : "*"}:${tier ? tier : "*"}:${
-            position ? position : "*"
-        }`;
-
-        const matchingUserKeys = await this.redisClient.keys(
-            matchingUserKeyOption,
+        const matchingUserKeyOption1 = genMatchingKeyOption(
+            matchingClientId,
+            mode,
+            people,
+            tier - 1,
+            position,
         );
+        const matchingUserKeyOption2 = genMatchingKeyOption(
+            matchingClientId,
+            mode,
+            people,
+            tier,
+            position,
+        );
+        const matchingUserKeyOption3 = genMatchingKeyOption(
+            matchingClientId,
+            mode,
+            people,
+            tier + 1,
+            position,
+        );
+
+        // 매칭 키 옵션을 통해 매칭중인 유저 목록 불러오기
+        const matchingUserKeyLists = await Promise.all([
+            this.redisClient.keys(matchingUserKeyOption1),
+            this.redisClient.keys(matchingUserKeyOption2),
+            this.redisClient.keys(matchingUserKeyOption3),
+        ]);
+
+        const matchingUserKeys = [
+            ...matchingUserKeyLists[0],
+            ...matchingUserKeyLists[1],
+            ...matchingUserKeyLists[2],
+        ];
 
         return matchingUserKeys;
     }
@@ -116,8 +142,6 @@ export class MatchingService {
             ...startMatchingDto,
             position: null,
         });
-
-        console.log(matchingUserKeys);
 
         try {
             for (let key of matchingUserKeys) {
