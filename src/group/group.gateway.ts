@@ -243,7 +243,6 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             const players = users.filter(e => {
                 return e !== user;
             });
-            console.log(`user & players`, user, players);
             this.groupRecordService.setRecentGroupList(players, user);
         });
         console.log(`${userId} join ${groupInfo.owner}'s room`);
