@@ -53,6 +53,7 @@ async function getUserProfile(lolUserId, discordUserName) {
                 ".champion-box-parent",
             );
             let mostChampionsBox = "";
+            console.log(data.user.lolChampions);
             if (data.user.lolChampions.length) {
                 for (let i = 0; i < mostChampionCount; i++) {
                     const champKda = (

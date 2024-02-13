@@ -182,6 +182,9 @@ export class LolService {
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
         );
+        if (response.status >= 400) {
+            throw new NotFoundException("해당하는 롤 유저는 없습니다");
+        }
         const userPuuid = await response.json();
         return userPuuid; //puuid, gameName, gameTag
     }
