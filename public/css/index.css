@@ -431,6 +431,20 @@ main {
     background-color: #ffaa00e4;
 }
 
+.match-group {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    width: 96px;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    background-color: rgba(66, 173, 39, 0.9);
+    margin-right: 10px;
+}
+
 .user-search {
     width: 60%;
     min-width: 1145px;

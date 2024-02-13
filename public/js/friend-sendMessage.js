@@ -13,3 +13,23 @@ function dblclickFriend() {
         });
     }
 }
+
+//귓속말 눌렀을때
+async function clickMessageChat() {
+    const friendId = +document.querySelector(
+        "#userClickContainer .user_click_modal",
+    ).dataset.id;
+    //친구확인
+    if (friendId == friendIds[friendId]) {
+        const friendName = await findNameById(friendId);
+        hideFriendList();
+        openSendMessage(friendName, friendId);
+        getSendAccept(friendId, userId, friendName);
+    }
+}
+
+//id로 이름 검색
+async function findNameById(friendId) {
+    const res = await fetch(`/user/${friendId}`);
+    return await res.text();
+}

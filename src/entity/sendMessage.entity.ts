@@ -24,7 +24,9 @@ export class SendMessage {
     @Column({ type: "timestamp" })
     sendDate: Date;
 
-    @ManyToOne(() => MessageRoom, (messageRoom) => messageRoom.sendMessage)
+    @ManyToOne(() => MessageRoom, (messageRoom) => messageRoom.sendMessage, {
+        onDelete: "CASCADE",
+    })
     @JoinColumn({ name: "messageRoomId", referencedColumnName: "id" })
     messageRoom: MessageRoom;
 

@@ -217,7 +217,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
 
-        const groupState = await this.groupService.joinGroup(groupId);
+        const groupState = await this.groupService.joinGroup(groupId, userId);
         const groupInfo = await this.groupService.findGroupInfoById(groupId);
 
         // 그룹 참가
