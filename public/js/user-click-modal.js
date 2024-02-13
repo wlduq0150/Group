@@ -16,9 +16,13 @@ function showUserClickModal(e) {
     userClickModal.style.left = (left + 15).toString() + "px";
 
     const attrList = ["profile"];
+    let hiddenList = [];
     const isMe = userId === targetUserId;
 
     if (isMe) {
+        hiddenList = [...userClickModal.children]
+            .filter(item => item.className !== "profile" && !item.className.includes("hidden") && !["friend_list", "blocked_list", "group_list"].includes(item.className))
+            .map(item => item.className);
         attrList.push("friend_list", "blocked_list");
     }
 
@@ -38,10 +42,13 @@ function showUserClickModal(e) {
         attrList.push("report", "recommend");
     }
 
-    for (let attr of attrList) {
+    for (const attr of attrList) {
         userClickModal.querySelector(`.${attr}`).classList.remove("hidden");
     }
 
+    for (const attr of hiddenList) {
+        userClickModal.querySelector(`.${attr}`).classList.add("hidden");
+    }
     document.querySelector("#userClickContainer").classList.remove("hidden");
 }
 
