@@ -31,6 +31,20 @@ export class LolService {
         return lolUser.id;
     }
 
+    //디코유저 id로 롤 유저 이름+태그 찾기
+    async findUserNameTag(userId: number){
+        const lolUser = await this.lolUserRepository.findOneBy({
+            userId: userId,
+        });
+        if (!lolUser) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
+        
+        const nameTag=lolUser.gameName+"#"+lolUser.gameTag
+        console.log(nameTag);
+        return nameTag;
+    }
+
     //이름+태그로 롤 유저 찾기
     private async findUserByNameTag(name: string, tag: string) {
         const userInfo = await this.lolUserRepository.findOneBy({

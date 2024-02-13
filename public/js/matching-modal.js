@@ -13,6 +13,9 @@ function clickMatchingMode(e) {
     const currentMode = target.querySelector("#mode").dataset.value;
 
     if (matchingMode && matchingMode !== currentMode) {
+        initMode();
+        matchingMode = currentMode;
+        target.style.color = "rgb(247, 176, 22)";
         return;
     }
 
@@ -32,6 +35,9 @@ function clickMatchingPeople(e) {
     const currentPeople = +target.querySelector("#people").dataset.value;
 
     if (matchingPeople && matchingPeople !== currentPeople) {
+        initPeople();
+        matchingPeople = currentPeople;
+        target.style.color = "rgb(247, 176, 22)";
         return;
     }
 
@@ -51,6 +57,9 @@ function clickMatchingTier(e) {
     const currentTier = +target.querySelector("#tier").dataset.value;
 
     if (matchingTier && matchingTier !== currentTier) {
+        initTier();
+        matchingTier = currentTier;
+        target.style.color = "rgb(247, 176, 22)";
         return;
     }
 
@@ -74,6 +83,14 @@ function clickMatchingPosition(e) {
     console.log(currentPosition);
 
     if (matchingPosition && matchingPosition !== currentPosition) {
+        initPosition();
+        matchingPosition = currentPosition;
+        const imgSrc = decodeURIComponent(img.src);
+        const imgSplit = imgSrc.split("/lane/");
+        const imgPos = imgSplit[1].replace(".png", "");
+        imgSplit[1] = imgPos.replace("흑", "") + ".png";
+        const updateImgSrc = imgSplit.join("/lane/");
+        img.src = updateImgSrc;
         return;
     }
 
@@ -194,17 +211,38 @@ function cancleMatching() {
     matchingSocket.emit("stopMatching");
 }
 
-function initMatching() {
+function initMode() {
     matchingMode = null;
-    matchingPeople = null;
-    matchingTier = null;
-    matchingPosition = null;
 
     document
-        .querySelectorAll(".matching-parent .matching-box .select-box")
+        .querySelectorAll(".matching-parent .matching-mode-box .select-box")
         .forEach((div) => {
             div.style.color = "rgb(0, 0, 0)";
         });
+}
+
+function initPeople() {
+    matchingPeople = null;
+
+    document
+        .querySelectorAll(".matching-parent .matching-people-box .select-box")
+        .forEach((div) => {
+            div.style.color = "rgb(0, 0, 0)";
+        });
+}
+
+function initTier() {
+    matchingTier = null;
+
+    document
+        .querySelectorAll(".matching-parent .matching-tier-box .select-box")
+        .forEach((div) => {
+            div.style.color = "rgb(0, 0, 0)";
+        });
+}
+
+function initPosition() {
+    matchingPeople = null;
 
     document
         .querySelectorAll(".matching-parent .matching-position-box img")
@@ -221,6 +259,13 @@ function initMatching() {
             img.src = updateImgSrc;
             return;
         });
+}
+
+function initMatching() {
+    initMode();
+    initPeople();
+    initTier();
+    initPosition();
 }
 
 function openIsMatchingModal() {
