@@ -8,7 +8,7 @@ function showUserClickModal(e) {
     const left = rect.left + window.scrollX;
 
     const userClickModal = document.querySelector(
-        "#userClickContainer .user_click_modal"
+        "#userClickContainer .user_click_modal",
     );
     userClickModal.dataset.id = targetUserId;
     userClickModal.style.position = "absolute";
@@ -26,8 +26,8 @@ function showUserClickModal(e) {
                     item.className !== "profile" &&
                     !item.className.includes("hidden") &&
                     !["friend_list", "blocked_list", "group_record"].includes(
-                        item.className
-                    )
+                        item.className,
+                    ),
             )
             .map((item) => item.className);
         attrList.push("friend_list", "blocked_list", "group_record");
@@ -64,22 +64,22 @@ function showUserClickModal(e) {
 
 function showProfile() {
     const discordUserId = document.querySelector(
-        "#userClickContainer .user_click_modal"
+        "#userClickContainer .user_click_modal",
     ).dataset.id;
     openProfile(discordUserId);
 }
 
 async function sendFriendRequest() {
     const userId = +document.querySelector(
-        "#userClickContainer .user_click_modal"
+        "#userClickContainer .user_click_modal",
     ).dataset.id;
 
     try {
         const response = await fetch(`/friend/${userId}/request`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         });
 
         const data = await response.json();
@@ -91,15 +91,15 @@ async function sendFriendRequest() {
 
 async function deleteFriend() {
     const userId = +document.querySelector(
-        "#userClickContainer .user_click_modal"
+        "#userClickContainer .user_click_modal",
     ).dataset.id;
 
     try {
         const response = await fetch(`/friend/${userId}/delete`, {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         });
         friendSocket.emit("deleteFriend", { friendId: userId });
         friendIds = friendIds.filter((friend) => friend !== userId);
@@ -111,15 +111,15 @@ async function deleteFriend() {
 
 async function blockUser() {
     const userId = +document.querySelector(
-        "#userClickContainer .user_click_modal"
+        "#userClickContainer .user_click_modal",
     ).dataset.id;
 
     try {
         const response = await fetch(`/friend/${userId}/block`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         });
 
         friendIds[userId] = null;
@@ -134,15 +134,15 @@ async function blockUser() {
 
 async function unblockUser() {
     const userId = +document.querySelector(
-        "#userClickContainer .user_click_modal"
+        "#userClickContainer .user_click_modal",
     ).dataset.id;
 
     try {
         const response = await fetch(`/friend/${userId}/unblock`, {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         });
         blockedUserIds[userId] = null;
         getBlockedUser(blockedUserIds);

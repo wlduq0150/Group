@@ -48,10 +48,10 @@ function createChatMessage(myId, userId, name, message) {
 
 function checkIsOwner() {
     const myName = document.querySelector(
-        "#profile .discord-user-name"
+        "#profile .discord-user-name",
     ).textContent;
     const ownerName = document.querySelector(
-        ".group_manage .owner_name"
+        ".group_manage .owner_name",
     ).textContent;
 
     if (myName === ownerName) return true;
@@ -70,8 +70,8 @@ async function moveDiscord() {
             method: "POST",
             credentials: "include",
             headers: {
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         });
 
         const data = await response.json();

@@ -7,21 +7,7 @@ async function insertGroupRecord(users) {
         //discord 유저 id로 디코 이름과 롤 이름 태그 가져오기
         const response = await fetch(`/user/${userId}`, { method: "GET" });
         const groupListName = await response.text();
-        const groupListUser = await fetch(`/lol/discordUser/${userId}`, {
-            method: "GET",
-        })
-            .then((res) => {
-                return res.json();
-            })
-            .catch(() => {
-                return undefined;
-            });
-
-        console.log(groupListName, groupListUser);
-
         const userDetail = await (await fetch(`/user/detail/${userId}`)).json();
-
-        console.log(userDetail);
 
         const avatarHash = userDetail.avatar;
         const discordId = userDetail.discordId;
@@ -30,14 +16,34 @@ async function insertGroupRecord(users) {
         const avatarUrl = avatarHash
             ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
             : defaultAvatarUrl;
+        let groupListUserResponse;
+        let groupListUser;
+        let lolUserResponse;
+        let lolUser;
 
-        const lolUser = groupListUser
-            ? await fetch(`/lol/user/${groupListUser}`, {
-                  method: "GET",
-              }).then((res) => {
-                  return res.json();
-              })
-            : undefined;
+        if (userDetail?.lolUser) {
+            groupListUserResponse = await fetch(`/lol/discordUser/${userId}`, {
+                method: "GET",
+            });
+
+            if (groupListUserResponse.status >= 400) {
+                groupListUser = undefined;
+            } else {
+                groupListUser = await groupListUserResponse.json();
+            }
+        }
+
+        if (groupListUser) {
+            lolUserResponse = await fetch(`/lol/user/${groupListUser}`, {
+                method: "GET",
+            });
+
+            if (lolUserResponse.status >= 400) {
+                groupListUser = undefined;
+            } else {
+                lolUser = lolUserResponse.json();
+            }
+        }
 
         groupListBox =
             groupListBox +
