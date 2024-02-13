@@ -3,17 +3,9 @@ document
     .querySelector(".sendMessage-parent .back-btn")
     .addEventListener("click", (e) => {
         document.getElementById("sendMessageContainer").classList.add("hidden");
+        refreshRoom();
         showFriendList();
     });
-
-//모달창 껏을때 메세지 저장
-// function saveMessage(userId, friendId) {
-//     fetch("/friend/saveMessage", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ userOne: +userId, userTwo: +friendId }),
-//     });
-// }
 
 //친구 메세지 열기
 async function openSendMessage(friendName, friendId) {
@@ -42,14 +34,13 @@ async function fillMessage(messages) {
     const messageList = document.querySelector(
         ".sendMessage-parent .sendMessage-list-box",
     );
-    console.log(messages);
     let roomId;
     if (!messages.length) {
         roomId = messages.id;
     } else {
         roomId = messages[0].messageRoomId;
     }
-    refreshRoom(messageList);
+
     document
         .querySelector("#sendMessageContainer .discordUser-name")
         .setAttribute("data-room_id", `${roomId}`);
@@ -62,8 +53,10 @@ async function fillMessage(messages) {
 }
 
 //기존 메세지 창 초기화
-async function refreshRoom(messageList) {
-    return (messageList.innerHTML = "");
+function refreshRoom() {
+    document.querySelector(
+        ".sendMessage-parent .sendMessage-list-box",
+    ).innerHTML = "";
 }
 
 //엔터 눌렀을 때

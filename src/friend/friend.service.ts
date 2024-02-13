@@ -84,7 +84,13 @@ export class FriendService {
         if (!accepterId) {
             throw new NotFoundException("사용자를 찾을 수 없습니다.");
         }
-
+        const userData = await this.userService.findOneById(requestId);
+        //차단된 유저면 수락불가
+        for (let blockedUser of userData.blockedUsers) {
+            if (blockedUser.id == accepterId) {
+                throw new NotFoundException("차단된 유저입니다.");
+            }
+        }
         const key = await this.checkFriendRequestExists(requestId, accepterId);
 
         const [accepter, requester] = await Promise.all([
@@ -171,6 +177,7 @@ export class FriendService {
             user.blockedUsers = [...user.blockedUsers, userToBlock];
 
             await this.userRepository.save(user);
+            await this.deleteFriend(requestId, myDiscordId);
         } else {
             throw new ConflictException("이미 차단된 사용자입니다.");
         }
