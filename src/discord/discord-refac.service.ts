@@ -1,5 +1,12 @@
 import { Inject, Injectable, OnModuleInit, forwardRef } from "@nestjs/common";
-import { Channel, Client, GuildChannel } from "discord.js";
+import {
+    Channel,
+    Client,
+    GuildChannel,
+    GuildMember,
+    Role,
+    VoiceChannel,
+} from "discord.js";
 import { ConfigService } from "@nestjs/config";
 import { GroupService } from "src/group/group.service";
 import { UserService } from "./../user/user.service";
@@ -9,100 +16,105 @@ export class DiscordServiceRefac implements OnModuleInit {
     private readonly client: Client<boolean> = new Client({
         intents: ["Guilds", "GuildVoiceStates", "GuildMembers"],
     });
-    private groupChannelMap = new Map<string, string>();
-    private creatingChannels = new Map<string, boolean>();
+
+    private readonly LOBBY_CHANNEL_ID: string;
+    private readonly GAME_ROOM_CATEGORY_ID: string;
 
     constructor(
         private readonly configService: ConfigService,
         @Inject(forwardRef(() => GroupService))
         private readonly groupService: GroupService,
         private readonly userService: UserService,
-    ) {}
-
-    async onModuleInit() {
-        await this.loginToDiscord();
-        this.setupVoiceStateUpdateListener();
-    }
-
-    private async loginToDiscord() {
-        const botToken = this.configService.get<string>("DISCORD_BOT_TOKEN");
-        await this.client.login(botToken);
-    }
-
-    private setupVoiceStateUpdateListener() {
-        const lobbyChannelId = this.configService.get<string>(
+    ) {
+        this.LOBBY_CHANNEL_ID = this.configService.get<string>(
             "DISCORD_LOBBY_CHANNEL_ID",
         );
+        this.GAME_ROOM_CATEGORY_ID =
+            this.configService.get<string>("DISCORD_PARENT_ID");
+    }
 
+    async onModuleInit(): Promise<void> {
         this.client.on("voiceStateUpdate", async (oldState, newState) => {
-            const channel = oldState.channel;
-            const discordId = newState.member.id;
+            const oldChannelId = oldState.channelId;
+            const newChannelId = newState.channelId;
 
-            if (
-                this.isNotLobbyChannel(oldState, lobbyChannelId, newState) &&
-                this.shouldDeleteChannel(channel)
-            ) {
-                await this.deleteVoiceChannelForGroup(channel.id, discordId);
+            if (oldChannelId !== newChannelId) {
+                const oldChannel = oldState.guild.channels.resolve(
+                    oldChannelId,
+                ) as VoiceChannel;
+
+                if (this.shouldDeleteChannel(oldChannel)) {
+                    const oldRole = oldState.guild.roles.cache.find(
+                        (role) => role.name === `${oldChannel.name}-access`,
+                    );
+                    if (oldRole) {
+                        await this.deleteRole(oldState.guild.id, oldRole.id);
+                    }
+                    await this.deleteChannel(oldChannel);
+                }
             }
         });
-    }
 
-    private isNotLobbyChannel(oldState, lobbyChannelId, newState) {
-        return (
-            oldState.channelId !== lobbyChannelId &&
-            (!newState.channelId || newState.channelId !== lobbyChannelId)
+        await this.client.login(
+            this.configService.get<string>("DISCORD_BOT_TOKEN"),
         );
     }
 
-    private shouldDeleteChannel(channel: Channel | undefined): boolean {
-        return (
-            this.isGuildChannel(channel) &&
-            channel.members &&
-            !channel.members.size
-        );
+    private shouldDeleteChannel(channel: VoiceChannel): boolean {
+        return channel && channel.members.size === 0;
     }
 
-    private isGuildChannel(channel: unknown): channel is GuildChannel {
-        return (channel as GuildChannel)?.type !== undefined;
+    async moveGroupMembersToNewChannel(guildId: string, discordId: string) {
+        // ...생략...
     }
 
-    async deleteVoiceChannelForGroup(
-        groupId: string,
+    async deleteOldChannelAndRole(guildId: string, discordId: string) {
+        // ...생략...
+    }
+
+    private async getGroupMembers(discordId: string) {
+        // ...생략...
+    }
+
+    private async getGuildMember(guildId: string, discordId: string) {
+        // ...생략...
+    }
+
+    private isMemberInLobby(member: GuildMember) {
+        // ...생략...
+    }
+
+    private async assignRoleAndMoveMember(
+        role: Role,
+        channel: VoiceChannel,
+        member: GuildMember,
+    ) {
+        // ...생략...
+    }
+
+    private async getVoiceChannelByDiscordId(
+        guildId: string,
         discordId: string,
-    ): Promise<void> {
-        const channelId = this.groupChannelMap.get(groupId);
-        if (!channelId) return;
-
-        try {
-            const channel = this.client.channels.cache.get(channelId);
-            if (channel && this.isGuildChannel(channel)) {
-                await this.deleteChannelAndRole(channel, discordId);
-                this.groupChannelMap.delete(groupId);
-            }
-        } catch (error) {
-            console.error(`채널 삭제 중 오류 발생: ${channelId}`, error);
-        }
+    ) {
+        // ...생략...
     }
 
-    private async deleteChannelAndRole(
-        channel: GuildChannel,
+    private async getRoleByDiscordId(guildId: string, discordId: string) {
+        // ...생략...
+    }
+
+    private async createVoiceChannelAndRole(
+        guildId: string,
         discordId: string,
-    ): Promise<void> {
-        try {
-            const guild = this.client.guilds.cache.get(channel.guild.id);
-            const user = await this.userService.findOneByDiscordId(discordId);
-            const role = guild.roles.cache.find(
-                (role) => role.name === `${user.username}-access`,
-            );
-            if (role) {
-                await role.delete();
-            }
-            await channel.delete();
-        } catch (error) {
-            console.error(
-                `채널 및 역할 삭제 중 오류 발생: ${channel.id}`,
-                error,
-            );
-        }
+    ) {
+        // ...생략...
+    }
+
+    private async deleteChannel(channel: GuildChannel): Promise<void> {
+        // ...생략...
+    }
+
+    private async deleteRole(guildId: string, roleId: string): Promise<void> {
+        // ...생략...
     }
 }

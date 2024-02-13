@@ -9,6 +9,7 @@ import {
     ChannelType,
     Client,
     GuildChannel,
+    GuildMember,
     Role,
     VoiceBasedChannel,
     VoiceChannel,
@@ -154,20 +155,20 @@ export class DiscordService implements OnModuleInit {
             throw new NotFoundException("해당 채널을 찾을 수 없습니다.");
         }
 
-        for (const discordId of discordIds) {
-            const member = await guild.members.fetch(discordId);
-
-            if (member) {
-                try {
-                    await member.roles.add(roleId);
-                    await member.voice.setChannel(channel);
-                } catch (err) {
-                    throw new NotFoundException(
-                        "유저가 대기실에 존재하지 않습니다.",
-                    );
+        await Promise.all(
+            discordIds.map(async (discordId) => {
+                const member: GuildMember =
+                    await guild.members.fetch(discordId);
+                if (member && member.voice.channel) {
+                    try {
+                        await member.roles.add(roleId);
+                        await member.voice.setChannel(channel);
+                    } catch (err) {
+                        console.error(`유저 이동 중 오류 발생: ${err}`);
+                    }
                 }
-            }
-        }
+            }),
+        );
     }
 
     // 음성 채널 이동시킬 유저 세팅
