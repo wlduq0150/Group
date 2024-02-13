@@ -658,9 +658,13 @@ document
     .addEventListener("click", (e) => {
         const message = document.querySelector(
             "#groupManageContainer .chat_input",
-        ).value;
+        );
 
-        socket.emit("chat", { message });
+        console.log(message);
+        if (message.value !== "") {
+            socket.emit("chat", { message: message.value });
+            message.value = "";
+        }
     });
 
 //엔터로 채팅 보내기
