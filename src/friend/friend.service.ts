@@ -315,10 +315,16 @@ export class FriendService {
     //메세지방 id만 반환
     async getMessageRoomId(userOne: number, userTwo: number) {
         const { smallId, bigId } = this.comparisonId(userOne, userTwo);
-        let room= await this.messageRoomRepository.findOneBy({ smallId, bigId });
-        if(!room){
+        let room = await this.messageRoomRepository.findOneBy({
+            smallId,
+            bigId,
+        });
+        if (!room) {
             await this.messageRoomRepository.save({ smallId, bigId });
-            room = await this.messageRoomRepository.findOneBy({ smallId, bigId });
+            room = await this.messageRoomRepository.findOneBy({
+                smallId,
+                bigId,
+            });
         }
         return room;
     }
@@ -347,17 +353,16 @@ export class FriendService {
             return checkRoom;
         } else {
             const messages = await this.getAllMessages(userOne, userTwo);
-            if(messages.sendMessage.length){
+            if (messages.sendMessage.length) {
                 await this.redisService.arrayRpush(
                     `messageRoom:${room.id}`,
                     messages.sendMessage,
                 );
-                
+
                 return messages.sendMessage;
-            }
-            else{
+            } else {
                 return messages;
-            }    
+            }
         }
     }
 

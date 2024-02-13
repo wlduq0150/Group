@@ -1,3 +1,4 @@
+//뒤로가기
 document
     .querySelector(".sendMessage-parent .back-btn")
     .addEventListener("click", (e) => {
@@ -6,13 +7,13 @@ document
     });
 
 //모달창 껏을때 메세지 저장
-function saveMessage(userId, friendId) {
-    fetch("/friend/saveMessage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userOne: +userId, userTwo: +friendId }),
-    });
-}
+// function saveMessage(userId, friendId) {
+//     fetch("/friend/saveMessage", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ userOne: +userId, userTwo: +friendId }),
+//     });
+// }
 
 //친구 메세지 열기
 async function openSendMessage(friendName, friendId) {
@@ -37,15 +38,18 @@ async function getSendAccept(friendId, myId) {
 }
 
 //배열화된 매세지 하나씩 생성
-function fillMessage(messages) {
+async function fillMessage(messages) {
     const messageList = document.querySelector(
         ".sendMessage-parent .sendMessage-list-box",
     );
-    let roomId=messages[0].messageRoomId;
-    if(!roomId){
-        roomId=messages.id;
+    console.log(messages);
+    let roomId;
+    if (!messages.length) {
+        roomId = messages.id;
+    } else {
+        roomId = messages[0].messageRoomId;
     }
-    messageList.innerHTML = "";
+    refreshRoom(messageList);
     document
         .querySelector("#sendMessageContainer .discordUser-name")
         .setAttribute("data-room_id", `${roomId}`);
@@ -55,6 +59,11 @@ function fillMessage(messages) {
         messageList.appendChild(createMessage(messages[i]));
     }
     downScroll();
+}
+
+//기존 메세지 창 초기화
+async function refreshRoom(messageList) {
+    return (messageList.innerHTML = "");
 }
 
 //엔터 눌렀을 때
@@ -98,6 +107,7 @@ function socketMessage(data) {
 
 //메세지 생성
 function createMessage(data, lastChild) {
+    console.log(data);
     if (data == null) {
         return;
     }
@@ -195,7 +205,7 @@ messageCount.addEventListener("scroll", (e) => {
                 const start = count - 30 <= 0 ? 0 : count - 30;
                 for (let i = start; i < count; i++) {
                     const oldMessage = createMessage(data[i], lastChild);
-                    
+
                     parent.insertBefore(oldMessage, first);
                     lastChild = oldMessage;
                 }

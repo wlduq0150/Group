@@ -32,16 +32,15 @@ export class LolService {
     }
 
     //디코유저 id로 롤 유저 이름+태그 찾기
-    async findUserNameTag(userId: number){
+    async findUserNameTag(userId: number) {
         const lolUser = await this.lolUserRepository.findOneBy({
             userId: userId,
         });
         if (!lolUser) {
             throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
         }
-        
-        const nameTag=lolUser.gameName+"#"+lolUser.gameTag
-        console.log(nameTag);
+
+        const nameTag = lolUser.gameName + "#" + lolUser.gameTag;
         return nameTag;
     }
 
@@ -234,8 +233,8 @@ export class LolService {
         const apiKey: string = this.configService.get("LOL_API_KEY");
 
         const start: number = 0;
-        if (count > 100) {
-            count = 90;
+        if (count > 10) {
+            count = 10;
         }
 
         const respose = await fetch(
