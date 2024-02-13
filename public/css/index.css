@@ -570,6 +570,7 @@ main {
     z-index: 10;
 }
 
+<<<<<<< HEAD
 #groupListContainer {
     width: 100%;
     height: 100vh;
@@ -580,6 +581,19 @@ main {
     z-index: 9;
 }
 
+=======
+#matchingContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    position: absolute;
+}
+
+#matchingContainer.hidden,
+>>>>>>> origin/dev
 #sendMessageContainer.hidden,
 #friendListContainer.hidden,
 #blockedUserContainer.hidden,

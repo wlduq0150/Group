@@ -51,6 +51,13 @@ export class MatchingGateway
             throw new WsException("그룹에 이미 참여하고 있습니다.");
         }
 
+        const isUserMatching = await this.matchingService.checkIsUserMatching(
+            client.id,
+        );
+        if (isUserMatching) {
+            throw new WsException("이미 그룹을 매칭중입니다.");
+        }
+
         const matchingResult = await this.matchingService.startMatching(
             client.id,
             startMatchingDto,

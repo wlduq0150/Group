@@ -1,0 +1,181 @@
+.is-matching-parent {
+    display: none;
+    position: absolute;
+    width: 800px;
+    height: 400px;
+    box-shadow: 0 10px 8px #000000;
+    border-radius: 20px;
+    background-color: #fff;
+}
+.is-matching-parent .is-matching-bar {
+    box-shadow: inset 0px 5px 6px white;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
+}
+.is-matching-parent .is-matching-box {
+    height: 190px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 52px;
+    font-weight: 900;
+    margin-left: 20px;
+}
+.is-matching-parent .complete-btn-box {
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    gap: 45px;
+    align-items: center;
+}
+.is-matching-parent .complete-btn {
+    font-weight: bold;
+    font-size: 25px;
+    padding-top: 5px;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    background-color: rgba(106, 106, 106);
+    width: 130px;
+    height: 40px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.matching-parent {
+    position: absolute;
+    width: 800px;
+    height: 400px;
+    box-shadow: 0 10px 8px #000000;
+    border-radius: 20px;
+    background-color: #fff;
+}
+.matching-parent .matching-bar {
+    box-shadow: inset 0px 5px 6px white;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
+}
+.matching-parent .group-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: center;
+}
+.matching-parent .matching-box {
+    height: 190px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+.matching-parent .select-box {
+    width: 20%;
+}
+.matching-parent .matching-box img {
+    width: 100%;
+    height: 110px;
+}
+.matching-parent #userName {
+    font-weight: bold;
+    margin-top: 10px;
+}
+.matching-parent #position {
+    margin-top: 40px;
+    height: 110px;
+    width: 110px;
+    cursor: pointer;
+}
+.matching-parent .complete-btn-box {
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    gap: 45px;
+    align-items: center;
+}
+.matching-parent .complete-btn {
+    font-weight: bold;
+    font-size: 25px;
+    padding-top: 5px;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    background-color: rgba(106, 106, 106);
+    width: 130px;
+    height: 40px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.matching-parent .forbidden {
+    pointer-events: none;
+}
+
+.matching-parent .matching-box #mode-box {
+    display: flex;
+    align-items: center;
+    font-size: 58px;
+    font-weight: 900;
+}
+
+.matching-parent .matching-box #people-box {
+    width: auto;
+    display: flex;
+    align-items: center;
+    font-size: 56px;
+    font-weight: 900;
+}
+
+.matching-parent .matching-tier-box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.matching-parent .matching-box #tier-box {
+    height: 95px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.matching-parent .matching-box #mode-box #userName {
+    display: none;
+}
+.matching-parent .matching-box #people-box #userName {
+    display: none;
+}
+
+.matching-parent .matching-mode-box {
+    display: flex;
+}
+
+.matching-parent .matching-people-box {
+    display: none;
+}
+
+.matching-parent .matching-tier-box {
+    display: none;
+}
+
+.matching-parent .matching-position-box {
+    display: none;
+}
+
+.matching-parent {
+    display: block;
+}
