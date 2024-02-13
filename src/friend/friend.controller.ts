@@ -12,7 +12,7 @@ import {
 import { FriendService } from "./friend.service";
 import { FriendGateway } from "./friend.gateway";
 import { MessageRoomDto } from "./dto/friend-send-accept.dto";
-import { SendMessageDto } from "./dto/firend-message.dto";
+import { SendMessageDto } from "./dto/friend-message.dto";
 import { RoomMessageDto } from "./dto/friend-message-room.dto";
 import { Socket } from "socket.io";
 
@@ -62,10 +62,10 @@ export class FriendController {
             requestId,
             discordId,
         );
-            
-        const socket: Socket = req.socket; 
-    
-        this.friendGateway.sendFriendComplete(socket,requestId, accepterId);
+
+        const socket: Socket = req.socket;
+
+        this.friendGateway.sendFriendComplete(socket, requestId, accepterId);
 
         return true;
     }

@@ -1,3 +1,5 @@
+import { Role } from "discord.js";
+
 export interface Group {
     name: string;
     mode: string;
@@ -5,4 +7,5 @@ export interface Group {
     mic: boolean;
     owner: number;
     open: boolean;
+    voiceChannelId: string;
 }

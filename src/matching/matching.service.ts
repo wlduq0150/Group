@@ -33,9 +33,9 @@ export class MatchingService {
     }
 
     private genMatchingLockKey(startMatchingDto: StartMatchingDto) {
-        const { mode, people, tier } = startMatchingDto;
+        const { mode, people } = startMatchingDto;
 
-        return `matching:lock:${mode}:${people}:${tier}`;
+        return `matching:lock:${mode}:${people}`;
     }
 
     // 조건을 통해 매칭하는 유저 찾기

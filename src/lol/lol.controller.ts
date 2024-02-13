@@ -24,19 +24,16 @@ export class LolController {
         );
     }
 
-    // @Post("userNameTag")
-    // async findUserByNameTag(@Body() lolDto: LolDto, @Session() session) {
-    //     return await this.lolService.findUserByNameTag(
-    //         lolDto.name,
-    //         lolDto.tag,
-    //         session.userId,
-    //     );
-    // }
-
     //디코아이디로 롤유저 검색
     @Get("discordUser/:userId")
     async findUserByUserId(@Param("userId") userId: number) {
         return await this.lolService.findUserByUserId(userId);
+    }
+
+    //유저id로 롤유저 이름 테그 검색
+    @Get("userNameTag/:userId")
+    async findUserNameTag(@Param("userId") userId:number){
+        return await this.lolService.findUserNameTag(userId);
     }
 
     //롤유저 아이디로 롤유저 검색
@@ -50,9 +47,4 @@ export class LolController {
         return await this.lolService.updateUserChampion(lolUserIdDto.userId);
     }
 
-    // @Post("getPuuid")
-    // async findUserPuuid(@Body() lolDto: LolDto) {
-    //     const a = await this.lolService.findUserPuuid(lolDto.name, lolDto.tag);
-    //     return a;
-    // }
 }

@@ -27,7 +27,7 @@ export class GroupService {
         private readonly discordService: DiscordService,
         @Inject(forwardRef(() => GroupGateway))
         private readonly groupGateway: GroupGateway,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
     ) {
         this.clear();
 
@@ -82,7 +82,25 @@ export class GroupService {
         const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
 
-        const group: Group = { name, mode, tier, mic, owner, open: true };
+        // 채널 생성 메서드 불러오기
+        const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
+        const discordId = await this.userService.findDiscordIdByUserId(+owner);
+
+        const { voiceChannelId } =
+            await this.discordService.createVoiceChannelAndRole(
+                guildId,
+                discordId,
+            );
+
+        const group: Group = {
+            name,
+            mode,
+            tier,
+            mic,
+            owner,
+            open: true,
+            voiceChannelId,
+        };
         const groupState = initGroupState(position, people);
 
         await this.redisService.set(groupInfoKey, JSON.stringify(group));
@@ -242,7 +260,7 @@ export class GroupService {
     }
 
     // userId 지우기
-    async joinGroup(groupId: string) {
+    async joinGroup(groupId: string, userId: number) {
         const groupStateKey = this.generateGroupStateKey(groupId);
         const groupStateLockkey = this.generateGroupLockKey(groupId);
 
@@ -262,7 +280,12 @@ export class GroupService {
                 );
             }
 
+            if (groupState.users.includes(userId)) {
+                throw new Error("이미 해당 그룹에 참여하고 있습니다.");
+            }
+
             groupState.currentUser += 1;
+            groupState.users.push(userId);
 
             await this.redisService.set(
                 groupStateKey,
@@ -288,6 +311,10 @@ export class GroupService {
         let groupState = await this.findGroupStateById(groupId);
 
         try {
+            if (!groupState.users.includes(userId)) {
+                throw new Error("해당 그룹에 참여하고 있지 않습니다.");
+            }
+
             // 현재 포지션을 선택한 상태라면 포지션 해제
             const pos = checkIsUserPositionSelect(groupState, userId);
             if (pos !== "none") {
@@ -296,6 +323,7 @@ export class GroupService {
 
             // 유저 나가기
             groupState.currentUser -= 1;
+            groupState.users = groupState.users.filter((id) => id !== userId);
 
             // 방장일 경우 새로운 방장으로 교체 (칼바람 나락이 아닐 경우)
             if (groupInfo.mode !== "aram" && groupInfo.owner === userId) {
@@ -309,6 +337,15 @@ export class GroupService {
                     }
                 }
             }
+            const discordId =
+                await this.userService.findDiscordIdByUserId(userId);
+            const lobbyChannelId = this.configService.get<string>(
+                "DISCORD_LOBBY_CHANNEL_ID",
+            );
+            this.discordService.moveUserToLobbyChannel(
+                discordId,
+                lobbyChannelId,
+            );
 
             // 방장일 경우 새로운 방장으로 교체 (칼바람 나락이 아닐 경우)
             if (groupInfo.mode === "aram" && groupInfo.owner === userId) {
@@ -318,14 +355,18 @@ export class GroupService {
             // 해당 그룹의 지속 여부
             const isGroupEmpty = groupState.currentUser > 0 ? false : true;
 
+            // 오류 로깅
+            if (groupState.currentUser !== groupState.users.length) {
+                console.log("인원수가 다름 에러");
+                console.log("유저 목록: ", groupState.users);
+                console.log("유저 수: ", groupState.currentUser);
+                return;
+            }
+
             if (isGroupEmpty) {
-                const discordId =
-                    await this.userService.findDiscordIdByUserId(userId);
                 this.removeGroup(groupId);
-                this.discordService.deleteVoiceChannelForGroup(
-                    groupId,
-                    discordId
-                );
+                // 살짝 수정 필요
+                this.discordService.deleteChannel(groupInfo.voiceChannelId);
                 return null;
             } else {
                 // 변화 저장

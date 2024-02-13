@@ -10,10 +10,11 @@ import { Server, Socket } from "socket.io";
 import { WsExceptionFilter } from "src/group/filter/ws-exception.filter";
 import { FriendRequestDto } from "./dto/friend-request.dto";
 import { RedisService } from "src/redis/redis.service";
-import { SendMessageDto } from "./dto/firend-message.dto";
+import { SendMessageDto } from "./dto/friend-message.dto";
 import { SendMessageType } from "./interface/sendMessage.interface";
 import { FriendService } from "./friend.service";
 import { DeleteFriendDto } from "./dto/friend-delete.dto";
+import { BlockedUserDto } from "./dto/friend-blocked.dto";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/friend" })
@@ -54,8 +55,11 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             .emit("friendRequest", { user: friendRequestDto.sender });
     }
 
-    async sendFriendComplete(client:Socket,senderId: number, accepterId: number) {
-       
+    async sendFriendComplete(
+        client: Socket,
+        senderId: number,
+        accepterId: number,
+    ) {
         const senderClientId = await this.redisService.get(
             `friend:${senderId}`,
         );
@@ -71,18 +75,15 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             .emit("friendComplete", { friendId: accepterId });
 
         client.emit("friendComplete", {
-            friendId:accepterId
+            friendId: accepterId,
         });
     }
 
     //친구에게 메세지 보내기
     @SubscribeMessage("sendMessage")
     async sendMessageFriend(client: Socket, sendMessageDto: SendMessageDto) {
-        const now = new Date();
-        const utc = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
-        const koreaTimeDiff = 9 * 60 * 60 * 1000;
-        const korNow = new Date(utc + koreaTimeDiff);
-
+        const offset = 1000 * 60 * 60 * 9;
+        const korNow = new Date(new Date().getTime() + offset);
         const accepterClientId = await this.redisService.get(
             `friend:${sendMessageDto.friendId}`,
         );
@@ -151,19 +152,33 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     //친구 삭제시 친구였던사람에게 알림
     @SubscribeMessage("deleteFriend")
-    async deleteFriend(client: Socket,deleteFriendDto:DeleteFriendDto){
+    async deleteFriend(client: Socket, deleteFriendDto: DeleteFriendDto) {
         const friendClientId = await this.redisService.get(
             `friend:${deleteFriendDto.friendId}`,
         );
-        console.log(friendClientId);
-        if(friendClientId){
+        if (friendClientId) {
             this.server.to(friendClientId).emit("deleteFriend", {
-               id:client["userId"],
+                id: client["userId"],
             });
         }
-        
+
         client.emit("deleteFriend", {
-            id:deleteFriendDto.friendId,
+            id: deleteFriendDto.friendId,
         });
+    }
+
+    //친구 차단시
+    @SubscribeMessage("blockedUser")
+    async blockUser(client: Socket, blockedUserDto: BlockedUserDto) {
+        const blockedClientId = await this.redisService.get(
+            `friend:${blockedUserDto}`,
+        );
+        if (blockedClientId) {
+            this.server
+                .to(blockedClientId)
+                .emit("blockedUser", { deleteId: client["userId"] });
+        }
+
+        client.emit("blockedUser");
     }
 }

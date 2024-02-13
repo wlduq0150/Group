@@ -18,7 +18,9 @@ export class MessageRoom {
     @Column()
     bigId: number;
 
-    @OneToMany(() => SendMessage, (sendMessage) => sendMessage.messageRoom)
+    @OneToMany(() => SendMessage, (sendMessage) => sendMessage.messageRoom, {
+        onDelete: "CASCADE",
+    })
     @JoinColumn()
     sendMessage: SendMessage[];
 }

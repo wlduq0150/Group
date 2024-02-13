@@ -2,10 +2,11 @@ let userId;
 let groupId;
 let blockedUsers = [];
 let friends = [];
-let groupRecordUsers = [];
-let friendIds=[];
+let friendIds = [];
+let blockedUserIds = [];
+let isGroupLoading = false;
+let isGroupJoining = false;
 // const socketURL = "";
-
 
 //const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
 
@@ -41,7 +42,7 @@ window.onload = function() {
         alert(`${formattedDate}까지 계정 정지 상태입니다.`);
     }
 
-    socket.on("getAllGroup", function(data) {
+    socket.on("getAllGroup", async function(data) {
         let allGroups = [];
 
         if (Array.isArray(data.groups)) {
@@ -53,7 +54,8 @@ window.onload = function() {
             });
         }
 
-        updateGroupTable(allGroups);
+        await updateGroupTable(allGroups);
+        isGroupLoading = false;
     });
 
     socket.emit("getAllGroup");
@@ -157,6 +159,13 @@ completeBtn.addEventListener("click", async function(e) {
 
 // 새로고침 이벤트 처리
 refreshBtn.addEventListener("click", () => {
+    if (isGroupLoading) {
+        console.log("로딩중");
+        return;
+    }
+
+    isGroupLoading = true;
+
     socket.emit("getAllGroup");
 });
 
@@ -175,22 +184,23 @@ async function updateLoginStatus() {
             });
             const user = await response.json();
 
+            user.blockedUsers.map((blockedUser) => {
+                blockedUserIds[blockedUser.id] = blockedUser.id;
+            });
+
             blockedUsers = user.blockedUsers.map((blockedUser) => {
                 return blockedUser.id;
             });
 
             console.log("차단유저: ", blockedUsers);
 
-            user.friends.map((friend)=>{
-                friendIds[friend.id]=friend.id;
-            })
-
+            user.friends.map((friend) => {
+                friendIds[friend.id] = friend.id;
+            });
 
             friends = user.friends.map((friend) => {
                 return friend.id;
             });
-
-
 
             console.log("친구: ", friends);
 
@@ -279,9 +289,6 @@ async function updateGroupTable(groups) {
 
         tableBody.appendChild(tr);
     }
-
-    groups.forEach((group) => {
-    });
 }
 
 // 그룹 참가 함수
@@ -332,6 +339,12 @@ async function createSystemMessage(userId, type) {
 document
     .querySelector(".group_manage #updateGroupSetting")
     .addEventListener("click", (e) => {
+        const isOwner = checkIsOwner();
+        if (!isOwner) {
+            alert("그룹장에게만 허가된 기능입니다.");
+            return;
+        }
+
         socket.emit("openGroupUpdate", { groupId });
     });
 
@@ -609,16 +622,6 @@ document.querySelector(".out-cancel-btn").addEventListener("click", (e) => {
 function resetGroupUpdateState() {
 }
 
-const updateGroupList = async (userId) => {
-    const groupRecordResponse = await fetch(`/group-record/${userId}/groupList`, {
-        method: "GET"
-    });
-    const groupRecord = await groupRecordResponse.json();
-
-    console.log(`${userId}'s GroupList`, groupRecord);
-    groupRecordUsers = groupRecord;
-};
-
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
@@ -658,15 +661,18 @@ document
     .addEventListener("click", (e) => {
         const message = document.querySelector(
             "#groupManageContainer .chat_input"
-        ).value;
+        );
 
-        socket.emit("chat", { message });
+        if (message.value !== "") {
+            socket.emit("chat", { message: message.value });
+            message.value = "";
+        }
     });
 
 //엔터로 채팅 보내기
 const pressEnter = document.querySelector("#groupManageContainer .chat_input");
 pressEnter.addEventListener("keypress", (e) => {
-    if (e.keyCode == 13) {
+    if (e.keyCode == 13 && pressEnter.value !== "") {
         socket.emit("chat", { message: pressEnter.value });
         pressEnter.value = "";
     }
@@ -771,15 +777,22 @@ friendSocket.on("friendRequest", (data) => {
 });
 
 friendSocket.on("friendComplete", (data) => {
-    friendIds[data.friendId]=data.friendId;
-    getFriendList(friendIds);
+    friendIds[data.friendId] = data.friendId;
+    getFriendList(friendIds).then(() => dblclickFriend());
 });
 
 friendSocket.on("sendMessage", (data) => {
     socketMessage(data);
 });
 
-friendSocket.on("deleteFriend",(data)=>{
-    friendIds[data.id]="";
-    getFriendList(friendIds);
-})
+friendSocket.on("deleteFriend", (data) => {
+    friendIds[data.id] = null;
+    getFriendList(friendIds).then(() => dblclickFriend());
+});
+
+friendSocket.on("blockedUser", (data) => {
+    if (data) {
+        friendIds[data.deleteId] = null;
+    }
+    getFriendList(friendIds).then(() => dblclickFriend());
+});
