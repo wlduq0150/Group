@@ -108,11 +108,14 @@ input {
 }
 
 .group_manage_chat_list {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 495px;
     padding: 25px;
     box-sizing: border-box;
     overflow-y: auto;
+    gap: 4px;
 }
 
 .group_manage_chat_list::-webkit-scrollbar {
@@ -121,8 +124,6 @@ input {
 
 .group_manage_chat_list .chat_line {
     width: 100%;
-    height: 40px;
-    margin-top: 4px;
     display: block;
 }
 
@@ -134,14 +135,18 @@ input {
 }
 
 .group_manage_chat_list .chat {
-    height: 100%;
     padding: 8px;
-    display: inline-block;
+    display: block;
     font-weight: 500;
     box-sizing: border-box;
     border-radius: 10px;
     border: 1px solid #000;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+}
+
+.mine, .other {
+    max-width: 360px;
+    overflow-wrap: break-word;
 }
 
 .group_manage_chat_list .mine {
@@ -156,6 +161,7 @@ input {
 
 .group_manage_chat_list .system {
     width: 100%;
+    height: 40px;
     text-align: center;
     background: none;
     border: none;

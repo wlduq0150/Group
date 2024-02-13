@@ -25,7 +25,7 @@ function createChatMessage(myId, userId, name, message) {
     chat.classList.add("chat_line");
     chat.innerHTML = `
         <div class="chat ${whoChat}">
-            ${message}
+            ${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
         </div>
     `;
 
@@ -42,15 +42,16 @@ function createChatMessage(myId, userId, name, message) {
     }
 
     chatList.appendChild(chat);
+    chatList.scrollTop = chatList.scrollHeight;
     lastWriter = userId;
 }
 
 function checkIsOwner() {
     const myName = document.querySelector(
-        "#profile .discord-user-name",
+        "#profile .discord-user-name"
     ).textContent;
     const ownerName = document.querySelector(
-        ".group_manage .owner_name",
+        ".group_manage .owner_name"
     ).textContent;
 
     if (myName === ownerName) return true;
@@ -70,8 +71,8 @@ async function moveDiscord() {
             method: "POST",
             credentials: "include",
             headers: {
-                "Content-Type": "application/json",
-            },
+                "Content-Type": "application/json"
+            }
         });
 
         const data = await response.json();
