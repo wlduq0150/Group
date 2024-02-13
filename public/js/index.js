@@ -6,6 +6,7 @@ let friendIds = [];
 let blockedUserIds = [];
 let isGroupLoading = false;
 let isGroupJoining = false;
+let groupRecordUsers = [];
 // const socketURL = "";
 
 //const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
@@ -213,6 +214,7 @@ async function updateLoginStatus() {
 
             loginBtn.value = "로그아웃";
 
+            updateGroupList(data.userId);
             socket.emit("connectWithUserId", data.userId);
             friendSocket.emit("connectWithUserId", data.userId);
         } else {
@@ -620,6 +622,19 @@ document.querySelector(".out-cancel-btn").addEventListener("click", (e) => {
 function resetGroupUpdateState() {
 }
 
+const updateGroupList = async (userId) => {
+    const groupRecordResponse = await fetch(
+        `/group-record/${userId}/groupList`,
+        {
+            method: "GET"
+        }
+    );
+    const groupRecord = await groupRecordResponse.json();
+
+    console.log(`${userId}'s GroupList`, groupRecord);
+    groupRecordUsers = groupRecord;
+};
+
 // 그룹 관리창 보이기/숨기기 이벤트
 chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
@@ -697,6 +712,7 @@ socket.on("groupJoin", (data) => {
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState, users ? [...users] : []);
     updateSelectPositionState(groupState, users ? [...users] : []);
+    updateGroupList(userId);
 });
 
 socket.on("openGroupUpdate", (data) => {

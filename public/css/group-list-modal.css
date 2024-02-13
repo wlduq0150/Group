@@ -1,0 +1,55 @@
+#groupListContainer {
+    position: absolute;
+}
+
+.group-list-modal {
+    background-color: white;
+    width: 300px;
+    height: 510px;
+    border-radius: 20px;
+    box-shadow: 0 5px 6px #000000;
+    position: absolute;
+}
+
+.group-list-modal .group-list-modal-bar {
+    box-shadow: inset 0 5px 6px white;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    height: 40px;
+    line-height: 50px;
+    text-align: center;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(75, 118, 127);
+}
+
+.group-list-modal .group-list-info {
+    display: flex;
+    padding-left: 10px;
+    margin-left: 15px;
+    padding-right: 25px;
+    padding-top: 10px;
+    width: 270px;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    border-color: rgb(232, 232, 232);
+}
+
+.group-list-modal .group-list-icon img {
+    width: 50px;
+    height: 50px;
+}
+
+.group-list-modal .group-list-info-box {
+    margin-left: 10px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.group-list-modal .hr-line {
+    width: 270px;
+}
