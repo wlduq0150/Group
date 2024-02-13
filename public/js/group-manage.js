@@ -25,7 +25,7 @@ function createChatMessage(myId, userId, name, message) {
     chat.classList.add("chat_line");
     chat.innerHTML = `
         <div class="chat ${whoChat}">
-            ${message}
+            ${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
         </div>
     `;
 
@@ -42,15 +42,16 @@ function createChatMessage(myId, userId, name, message) {
     }
 
     chatList.appendChild(chat);
+    chatList.scrollTop = chatList.scrollHeight;
     lastWriter = userId;
 }
 
 function checkIsOwner() {
     const myName = document.querySelector(
-        "#profile .discord-user-name",
+        "#profile .discord-user-name"
     ).textContent;
     const ownerName = document.querySelector(
-        ".group_manage .owner_name",
+        ".group_manage .owner_name"
     ).textContent;
 
     if (myName === ownerName) return true;
@@ -60,18 +61,17 @@ function checkIsOwner() {
 
 async function moveDiscord() {
     try {
-        const isOwner = checkIsOwner();
-        if (!isOwner) {
-            alert("그룹장만에게만 허가된 기능입니다.");
+        if (!groupId) {
+            alert("그룹이 존재하지 않습니다.");
             return;
         }
 
-        const response = await fetch("/discord/join-voice", {
+        const response = await fetch(`/discord/join-voice/${groupId}`, {
             method: "POST",
             credentials: "include",
             headers: {
-                "Content-Type": "application/json",
-            },
+                "Content-Type": "application/json"
+            }
         });
 
         const data = await response.json();
