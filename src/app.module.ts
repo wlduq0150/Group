@@ -16,7 +16,6 @@ import { ReportModule } from "./report/report.module";
 import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "./entity/filter-word.entity";
 import { Repository } from "typeorm";
-import { MatchingModule } from "./matching/matching.module";
 import { GroupRecordModule } from "./grouprecord/group-record.module";
 
 @Module({
@@ -32,7 +31,6 @@ import { GroupRecordModule } from "./grouprecord/group-record.module";
         FriendModule,
         DiscordModule,
         ReportModule,
-        MatchingModule,
         GroupRecordModule
     ],
     controllers: [AppController],

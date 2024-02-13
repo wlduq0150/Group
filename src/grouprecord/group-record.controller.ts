@@ -11,8 +11,6 @@ export class GroupRecordController {
     @Get("/:id/groupList")
     async getGroupList(@Param("id") userId: number) {
         const users = await this.groupRecordService.getGroupList(userId);
-        console.log("z", users);
-
         return users;
     }
 }

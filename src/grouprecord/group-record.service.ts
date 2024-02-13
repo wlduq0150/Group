@@ -51,7 +51,5 @@ export class GroupRecordService {
             array.slice(array.length - groupMaxRecord - 1);
         }
         await this.redisService.set(`record_${userId}`, JSON.stringify(array));
-        console.log(userId, await this.redisService.get(`record_${userId}`));
-
     }
 }
