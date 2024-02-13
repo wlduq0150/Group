@@ -7,8 +7,9 @@ import { User } from "discord.js";
 export class GroupRecordService {
     constructor(
         private readonly redisService: RedisService,
-        private readonly configService: ConfigService,
-    ) {}
+        private readonly configService: ConfigService
+    ) {
+    }
 
     async getGroupList(userId: number): Promise<User[]> {
         const result = await this.redisService.get(`record_${userId}`); // record_13
@@ -49,5 +50,6 @@ export class GroupRecordService {
             array.slice(array.length - groupMaxRecord - 1);
         }
         await this.redisService.set(`record_${userId}`, JSON.stringify(array));
+        await this.redisService.get(`record_${userId}`);
     }
 }
