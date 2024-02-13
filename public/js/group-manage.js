@@ -45,8 +45,27 @@ function createChatMessage(myId, userId, name, message) {
     lastWriter = userId;
 }
 
+function checkIsOwner() {
+    const myName = document.querySelector(
+        "#profile .discord-user-name",
+    ).textContent;
+    const ownerName = document.querySelector(
+        ".group_manage .owner_name",
+    ).textContent;
+
+    if (myName === ownerName) return true;
+
+    return false;
+}
+
 async function moveDiscord() {
     try {
+        const isOwner = checkIsOwner();
+        if (!isOwner) {
+            alert("그룹장만에게만 허가된 기능입니다.");
+            return;
+        }
+
         const response = await fetch("/discord/join-voice", {
             method: "POST",
             credentials: "include",
