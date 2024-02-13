@@ -1,4 +1,4 @@
-import { Module, OnApplicationBootstrap, OnModuleInit } from "@nestjs/common";
+import { Module, OnModuleInit } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigProjectModule } from "./config/config.module";
@@ -12,12 +12,12 @@ import { FriendModule } from "./friend/friend.module";
 import { LolModule } from "./lol/lol.module";
 import { CachingModule } from "./caching/caching.module";
 import { RedisService } from "./redis/redis.service";
-import { ReportService } from "./report/report.service";
 import { ReportModule } from "./report/report.module";
 import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
 import { FilterWords } from "./entity/filter-word.entity";
 import { Repository } from "typeorm";
-import { MatchingModule } from './matching/matching.module';
+import { MatchingModule } from "./matching/matching.module";
+import { GroupRecordModule } from "./group-record/group-record.module";
 
 @Module({
     imports: [
@@ -33,6 +33,7 @@ import { MatchingModule } from './matching/matching.module';
         DiscordModule,
         ReportModule,
         MatchingModule,
+        GroupRecordModule,
     ],
     controllers: [AppController],
     providers: [AppService],

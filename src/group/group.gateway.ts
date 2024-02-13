@@ -1,4 +1,4 @@
-import { Inject, Injectable, UseFilters, forwardRef } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, UseFilters } from "@nestjs/common";
 import {
     OnGatewayConnection,
     OnGatewayDisconnect,
@@ -24,6 +24,7 @@ import {
     DecorateAcknowledgementsWithMultipleResponses,
     DefaultEventsMap,
 } from "socket.io/dist/typed-events";
+import { GroupRecordService } from "../group-record/group-record.service";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -34,6 +35,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     constructor(
         @Inject(forwardRef(() => GroupService))
         private readonly groupService: GroupService,
+        private readonly groupRecordService: GroupRecordService,
     ) {}
 
     async findGroupSocketById(groupClientId: string) {
@@ -103,7 +105,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     async findGroupUsers(groupId: string) {
         const clientSockets = await this.server.in(groupId).fetchSockets();
         const users: number[] = [];
-        for (let client of clientSockets) {
+        for (const client of clientSockets) {
             const userId = +(await this.groupService.getDataInSocket(
                 client.id,
                 "userId",
@@ -238,6 +240,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server
             .to(client.id)
             .emit("positionSelect", { groupId, groupInfo, groupState });
+
+        users.filter((user) => {
+            const players = users.filter((e) => {
+                return e !== user;
+            });
+            this.groupRecordService.setRecentGroupList(players, user);
+        });
+        console.log(`${userId} join ${groupInfo.owner}'s room`);
     }
 
     // 클라이언트에서 포지션 선택시 발생하는 이벤트
