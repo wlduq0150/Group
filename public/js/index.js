@@ -3,6 +3,7 @@ let groupId;
 let blockedUsers = [];
 let friends = [];
 let friendIds=[];
+let blockedUserIds=[];
 // const socketURL = "";
 
 
@@ -174,6 +175,10 @@ async function updateLoginStatus() {
             });
             const user = await response.json();
 
+            user.blockedUsers.map((blockedUser) => {
+                blockedUserIds[blockedUser.id]=blockedUser.id;
+            });
+
             blockedUsers = user.blockedUsers.map((blockedUser) => {
                 return blockedUser.id;
             });
@@ -184,7 +189,6 @@ async function updateLoginStatus() {
                 friendIds[friend.id]=friend.id;
             })
             
-
             friends = user.friends.map((friend) => {
                 return friend.id;
             });
@@ -755,7 +759,7 @@ friendSocket.on("friendRequest", (data) => {
 
 friendSocket.on("friendComplete", (data) => {
     friendIds[data.friendId]=data.friendId;
-    getFriendList(friendIds);
+    getFriendList(friendIds).then(()=>dblclickFriend())
 });
 
 friendSocket.on("sendMessage", (data) => {
@@ -764,5 +768,5 @@ friendSocket.on("sendMessage", (data) => {
 
 friendSocket.on("deleteFriend",(data)=>{
     friendIds[data.id]="";
-    getFriendList(friendIds);
+    getFriendList(friendIds).then(()=>dblclickFriend())
 })
