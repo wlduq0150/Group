@@ -3,11 +3,6 @@ document
     .addEventListener("click", (e) => {
         document.getElementById("sendMessageContainer").classList.add("hidden");
         showFriendList();
-        // saveMessage(
-        //     userId,
-        //     document.querySelector(".sendMessage-parent .discordUser-name")
-        //         .dataset.id,
-        // );
     });
 
 //모달창 껏을때 메세지 저장
