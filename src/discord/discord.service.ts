@@ -23,7 +23,6 @@ export class DiscordService implements OnModuleInit {
     private readonly client: Client<boolean> = new Client({
         intents: ["Guilds", "GuildVoiceStates", "GuildMembers"],
     });
-    private groupChannelMap = new Map<string, string>();
 
     constructor(
         private readonly configService: ConfigService,
@@ -33,86 +32,28 @@ export class DiscordService implements OnModuleInit {
     ) {}
 
     async onModuleInit(): Promise<void> {
-        console.log(this.configService.get<string>("DISCORD_BOT_TOKEN"));
         const botToken = this.configService.get<string>("DISCORD_BOT_TOKEN");
         await this.client.login(botToken);
-
-        const lobbyChannelId = this.configService.get<string>(
-            "DISCORD_LOBBY_CHANNEL_ID",
-        );
-
-        this.client.on("voiceStateUpdate", async (oldState, newState) => {
-            if (
-                oldState.channelId &&
-                (newState.channelId === lobbyChannelId || !newState.channelId)
-            ) {
-                const channel = oldState.channel;
-                const discordId = newState.member.id;
-
-                const shouldDelete = this.shouldDeleteChannel(
-                    channel,
-                    lobbyChannelId,
-                );
-                if (shouldDelete) {
-                    await this.deleteChannel(channel, discordId);
-                }
-            }
-        });
-    }
-
-    // 그룹 취소 시 음성 채널 삭제
-    async deleteVoiceChannelForGroup(
-        groupId: string,
-        discordId: string,
-    ): Promise<void> {
-        const channelId = this.groupChannelMap.get(groupId);
-        const user = await this.userService.findOneByDiscordId(discordId);
-
-        try {
-            if (channelId) {
-                const channel = this.client.channels.cache.get(
-                    channelId,
-                ) as GuildChannel;
-                if (channel) {
-                    const guild = this.client.guilds.cache.get(
-                        channel.guild.id,
-                    );
-                    const role = guild.roles.cache.find(
-                        (role) => role.name === `${user.username}-access`,
-                    );
-
-                    if (role) {
-                        await this.deleteRole(guild.id, role.id);
-                    }
-
-                    await this.deleteChannel(
-                        channel as VoiceBasedChannel,
-                        discordId,
-                    );
-                }
-                this.groupChannelMap.delete(groupId);
-            }
-        } catch (error) {
-            console.error(`채널 삭제 중 오류 발생: ${channelId}`, error);
-        }
     }
 
     // 디스코드 음성 채널 생성 및 역할 연결
     async createVoiceChannelAndRole(
         guildId: string,
         discordId: string,
-    ): Promise<{ voiceChannel: VoiceChannel; role: Role }> {
+    ): Promise<{
+        voiceChannel: VoiceChannel;
+        voiceChannelRole: string;
+        voiceChannelId: string;
+    }> {
+        console.log(guildId);
         const guild = this.client.guilds.cache.get(guildId);
+        console.log(guild);
 
         if (!guild) {
             throw new NotFoundException("해당 서버를 찾을 수 없습니다.");
         }
 
         const user = await this.userService.findOneByDiscordId(discordId);
-
-        const groupId: string = await this.groupService.findGroupIdByOwner(
-            user.id,
-        );
 
         // 역할 생성
         const role = await guild.roles.create({
@@ -136,9 +77,12 @@ export class DiscordService implements OnModuleInit {
                 },
             ],
         });
-        this.groupChannelMap.set(groupId, voiceChannel.id);
 
-        return { voiceChannel, role };
+        return {
+            voiceChannel: voiceChannel,
+            voiceChannelRole: role.id,
+            voiceChannelId: voiceChannel.id,
+        };
     }
 
     // 채널 및 역할 추가
@@ -176,11 +120,6 @@ export class DiscordService implements OnModuleInit {
         guildId: string,
         discordId: string,
     ): Promise<void> {
-        const { voiceChannel, role } = await this.createVoiceChannelAndRole(
-            guildId,
-            discordId,
-        );
-
         const user = await this.userService.findOneByDiscordId(discordId);
 
         if (!user) {
@@ -220,8 +159,8 @@ export class DiscordService implements OnModuleInit {
             ),
         );
 
-        const voiceChannelId: string = voiceChannel.id;
-        const roleId: string = role.id;
+        const voiceChannelId: string = groupInfo.voiceChannelId;
+        const roleId: string = groupInfo.voiceChannelRole;
 
         await this.assignRoleAndMoveToChannel(
             discordIds,
@@ -231,27 +170,16 @@ export class DiscordService implements OnModuleInit {
         );
     }
 
-    // 채널 삭제 조건 검증
-    private shouldDeleteChannel(
-        channel: VoiceBasedChannel,
-        lobbyChannelId: string,
-    ): boolean {
-        return channel.id !== lobbyChannelId && this.isChannelEmpty(channel);
-    }
-
-    // 채널 유저 검증
-    private isChannelEmpty(channel: VoiceBasedChannel): boolean {
-        return !channel.guild.members.cache.some(
-            (member) => member.voice.channelId === channel.id,
-        );
-    }
-
     // 채널 삭제
-    private async deleteChannel(
-        channel: VoiceBasedChannel,
-        discordId: string,
-    ): Promise<void> {
+    async deleteChannel(channelId: string, discordId: string): Promise<void> {
         try {
+            const channel = this.client.channels.cache.get(
+                channelId,
+            ) as GuildChannel;
+            if (!channel) {
+                throw new NotFoundException("해당 채널을 찾을 수 없습니다.");
+            }
+
             const guild = this.client.guilds.cache.get(channel.guild.id);
             const user = await this.userService.findOneByDiscordId(discordId);
             const role = guild.roles.cache.find(
@@ -269,7 +197,7 @@ export class DiscordService implements OnModuleInit {
                 return;
             }
 
-            console.error(`채널 삭제 중 오류 발생: ${channel.id}`, error);
+            console.error(`채널 삭제 중 오류 발생: ${channelId}`, error);
         }
     }
 

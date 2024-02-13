@@ -19,6 +19,7 @@ import { UpdateGroupDto } from "./dto/update-group.dto";
 import { updateGroupState } from "./function/update-group-state.function";
 import { POSITION_LIST } from "./constants/position.constants";
 import { GroupGateway } from "./group.gateway";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class GroupService {
@@ -31,6 +32,7 @@ export class GroupService {
         private readonly discordService: DiscordService,
         @Inject(forwardRef(() => GroupGateway))
         private readonly groupGateway: GroupGateway,
+        private readonly configService: ConfigService,
     ) {
         this.clear();
 
@@ -97,7 +99,26 @@ export class GroupService {
         const groupInfoKey = this.generateGroupInfoKey(groupId);
         const groupStateKey = this.generateGroupStateKey(groupId);
 
-        const group: Group = { name, mode, tier, mic, owner, open: true };
+        // 채널 생성 메서드 불러오기
+        const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
+        const discordId = await this.userService.findDiscordIdByUserId(+owner);
+
+        const { voiceChannelId, voiceChannelRole } =
+            await this.discordService.createVoiceChannelAndRole(
+                guildId,
+                discordId,
+            );
+
+        const group: Group = {
+            name,
+            mode,
+            tier,
+            mic,
+            owner,
+            open: true,
+            voiceChannelId,
+            voiceChannelRole,
+        };
         const groupState = initGroupState(position, people);
 
         await this.redisService.set(groupInfoKey, JSON.stringify(group));
@@ -337,8 +358,9 @@ export class GroupService {
                 const discordId =
                     await this.userService.findDiscordIdByUserId(userId);
                 this.removeGroup(groupId);
-                this.discordService.deleteVoiceChannelForGroup(
-                    groupId,
+                // 살짝 수정 필요
+                this.discordService.deleteChannel(
+                    groupInfo.voiceChannelId,
                     discordId,
                 );
                 return null;
