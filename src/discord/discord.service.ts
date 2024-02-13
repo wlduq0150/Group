@@ -42,7 +42,6 @@ export class DiscordService implements OnModuleInit {
         discordId: string,
     ): Promise<{
         voiceChannel: VoiceChannel;
-        voiceChannelRole: string;
         voiceChannelId: string;
     }> {
         console.log(guildId);
@@ -55,12 +54,6 @@ export class DiscordService implements OnModuleInit {
 
         const user = await this.userService.findOneByDiscordId(discordId);
 
-        // 역할 생성
-        const role = await guild.roles.create({
-            name: `${user.username}-access`,
-            permissions: [],
-        });
-
         // 음성 채널 생성
         const voiceChannel = await guild.channels.create({
             name: user.username,
@@ -71,25 +64,19 @@ export class DiscordService implements OnModuleInit {
                     id: guild.roles.everyone.id,
                     deny: ["ViewChannel"],
                 },
-                {
-                    id: role.id,
-                    allow: ["ViewChannel", "Connect", "Speak"],
-                },
             ],
         });
 
         return {
             voiceChannel: voiceChannel,
-            voiceChannelRole: role.id,
             voiceChannelId: voiceChannel.id,
         };
     }
 
     // 채널 및 역할 추가
     async assignRoleAndMoveToChannel(
-        discordIds: string[],
+        discordId: string,
         guildId: string,
-        roleId: string,
         channelId: string,
     ): Promise<void> {
         const guild = this.client.guilds.cache.get(guildId);
@@ -99,20 +86,14 @@ export class DiscordService implements OnModuleInit {
             throw new NotFoundException("해당 채널을 찾을 수 없습니다.");
         }
 
-        await Promise.all(
-            discordIds.map(async (discordId) => {
-                const member: GuildMember =
-                    await guild.members.fetch(discordId);
-                if (member && member.voice.channel) {
-                    try {
-                        await member.roles.add(roleId);
-                        await member.voice.setChannel(channel);
-                    } catch (err) {
-                        console.error(`유저 이동 중 오류 발생: ${err}`);
-                    }
-                }
-            }),
-        );
+        try {
+            const member: GuildMember = await guild.members.fetch(discordId);
+            if (member && member.voice.channel) {
+                await member.voice.setChannel(channel);
+            }
+        } catch (err) {
+            console.error(`유저 이동 중 오류 발생: ${err}`);
+        }
     }
 
     // 음성 채널 이동시킬 유저 세팅
@@ -153,41 +134,23 @@ export class DiscordService implements OnModuleInit {
                 .map((position) => groupState[position].userId);
         }
 
-        const discordIds: string[] = await Promise.all(
-            userIds.map((userId) =>
-                this.userService.findDiscordIdByUserId(userId),
-            ),
-        );
-
         const voiceChannelId: string = groupInfo.voiceChannelId;
-        const roleId: string = groupInfo.voiceChannelRole;
 
         await this.assignRoleAndMoveToChannel(
-            discordIds,
+            discordId,
             guildId,
-            roleId,
             voiceChannelId,
         );
     }
 
     // 채널 삭제
-    async deleteChannel(channelId: string, discordId: string): Promise<void> {
+    async deleteChannel(channelId: string): Promise<void> {
         try {
             const channel = this.client.channels.cache.get(
                 channelId,
             ) as GuildChannel;
             if (!channel) {
                 throw new NotFoundException("해당 채널을 찾을 수 없습니다.");
-            }
-
-            const guild = this.client.guilds.cache.get(channel.guild.id);
-            const user = await this.userService.findOneByDiscordId(discordId);
-            const role = guild.roles.cache.find(
-                (role) => role.name === `${user.username}-access`,
-            );
-
-            if (role) {
-                await this.deleteRole(guild.id, role.id);
             }
 
             await channel.delete();
@@ -201,19 +164,33 @@ export class DiscordService implements OnModuleInit {
         }
     }
 
-    // 역할 삭제
-    private async deleteRole(guildId: string, roleId: string): Promise<void> {
-        const guild = this.client.guilds.cache.get(guildId);
-        const role = guild.roles.cache.get(roleId);
-
-        if (!role) {
-            throw new NotFoundException("해당 역할을 찾을 수 없습니다.");
-        }
-
+    // 대기실로 이동
+    async moveUserToLobbyChannel(
+        userId: string,
+        channelId: string,
+    ): Promise<void> {
         try {
-            await role.delete();
+            const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
+            const guild = this.client.guilds.cache.get(guildId);
+
+            const guildMember = guild.members.cache.get(userId);
+
+            if (!guildMember) {
+                throw new Error("해당 사용자를 찾을 수 없습니다.");
+            }
+
+            const channel = guild.channels.cache.get(channelId) as VoiceChannel;
+
+            if (!channel || !("join" in channel)) {
+                throw new Error("해당 채널을 찾을 수 없습니다.");
+            }
+
+            await guildMember.voice.setChannel(channel);
         } catch (error) {
-            console.error(`역할 삭제 실패: ${error}`);
+            console.error(
+                `채널 이동 중 오류 발생: ${userId} -> ${channelId}`,
+                error,
+            );
         }
     }
 }

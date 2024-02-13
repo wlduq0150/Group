@@ -103,7 +103,7 @@ export class GroupService {
         const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
         const discordId = await this.userService.findDiscordIdByUserId(+owner);
 
-        const { voiceChannelId, voiceChannelRole } =
+        const { voiceChannelId } =
             await this.discordService.createVoiceChannelAndRole(
                 guildId,
                 discordId,
@@ -117,7 +117,6 @@ export class GroupService {
             owner,
             open: true,
             voiceChannelId,
-            voiceChannelRole,
         };
         const groupState = initGroupState(position, people);
 
@@ -345,6 +344,15 @@ export class GroupService {
                     }
                 }
             }
+            const discordId =
+                await this.userService.findDiscordIdByUserId(userId);
+            const lobbyChannelId = this.configService.get<string>(
+                "DISCORD_LOBBY_CHANNEL_ID",
+            );
+            this.discordService.moveUserToLobbyChannel(
+                discordId,
+                lobbyChannelId,
+            );
 
             // 방장일 경우 새로운 방장으로 교체 (칼바람 나락이 아닐 경우)
             if (groupInfo.mode === "aram" && groupInfo.owner === userId) {
@@ -355,14 +363,9 @@ export class GroupService {
             const isGroupEmpty = groupState.currentUser > 0 ? false : true;
 
             if (isGroupEmpty) {
-                const discordId =
-                    await this.userService.findDiscordIdByUserId(userId);
                 this.removeGroup(groupId);
                 // 살짝 수정 필요
-                this.discordService.deleteChannel(
-                    groupInfo.voiceChannelId,
-                    discordId,
-                );
+                this.discordService.deleteChannel(groupInfo.voiceChannelId);
                 return null;
             } else {
                 // 변화 저장

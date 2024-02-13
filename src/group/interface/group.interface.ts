@@ -8,5 +8,4 @@ export interface Group {
     owner: number;
     open: boolean;
     voiceChannelId: string;
-    voiceChannelRole: string;
 }
