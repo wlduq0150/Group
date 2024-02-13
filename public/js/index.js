@@ -782,6 +782,13 @@ friendSocket.on("sendMessage", (data) => {
 });
 
 friendSocket.on("deleteFriend", (data) => {
-    friendIds[data.id] = "";
+    friendIds[data.id] = null;
+    getFriendList(friendIds).then(() => dblclickFriend());
+});
+
+friendSocket.on("blockedUser", (data) => {
+    if (data) {
+        friendIds[data.deleteId] = null;
+    }
     getFriendList(friendIds).then(() => dblclickFriend());
 });

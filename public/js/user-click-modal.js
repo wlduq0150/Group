@@ -29,11 +29,14 @@ function showUserClickModal(e) {
     if (!isMe) {
         if (friendIds.includes(targetUserId)) {
             attrList.push("delete_friend");
+            attrList.push("personal_chat");
         } else {
-            attrList.push("send_friend_request");
+            if (blockedUserIds[targetUserId] != targetUserId) {
+                attrList.push("send_friend_request");
+            }
         }
 
-        if (blockedUsers.includes(targetUserId)) {
+        if (blockedUserIds[targetUserId] == targetUserId) {
             attrList.push("unblock");
         } else {
             attrList.push("block");
@@ -91,7 +94,7 @@ async function deleteFriend() {
                 "Content-Type": "application/json",
             },
         });
-        friendSocket.emit("deleteFriend",({friendId:userId}));
+        friendSocket.emit("deleteFriend", { friendId: userId });
         friendIds = friendIds.filter((friend) => friend !== userId);
     } catch (err) {
         console.log(err);
@@ -111,8 +114,11 @@ async function blockUser() {
                 "Content-Type": "application/json",
             },
         });
-        
-        blockedUserIds[userId]=userId;
+
+        friendIds[userId] = null;
+        blockedUserIds[userId] = userId;
+        getBlockedUser(blockedUserIds);
+        friendSocket.emit("blockedUser", userId);
     } catch (err) {
         console.log(err);
         alert(err.message);
@@ -131,9 +137,8 @@ async function unblockUser() {
                 "Content-Type": "application/json",
             },
         });
-        blockedUsers = blockedUsers.filter(
-            (blockedUser) => blockedUser !== userId,
-        );
+        blockedUserIds[userId] = null;
+        getBlockedUser(blockedUserIds);
     } catch (err) {
         console.log(err);
         alert(err.message);

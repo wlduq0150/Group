@@ -1,45 +1,44 @@
+let isFriendLoading = false;
 const friendRequestButton = document.querySelector("#friend_request");
 friendRequestButton.addEventListener("change", function () {
+    toggleFriend();
     getFriendRequestList();
 });
 
 const friendButton = document.querySelector("#friends");
 friendButton.addEventListener("change", function () {
-    getFriendList(friendIds);
+    toggleFriend();
+    getFriendList(friendIds).then(() => dblclickFriend());
 });
 
 async function getFriendList(userIds) {
+    if (isFriendLoading) {
+        console.log("로딩중");
+        return;
+    }
+    isFriendLoading = true;
     const friendListContainer = document.querySelector(
         ".friend_content_wrapper .friend_list",
     );
-    friendListContainer.classList.remove("hidden");
-    document
-        .querySelector(".friend_content_wrapper .friend_request_list")
-        .classList.add("hidden");
 
     while (friendListContainer.firstChild) {
         friendListContainer.removeChild(friendListContainer.firstChild);
     }
 
-    friendListContainer.classList.remove("hidden");
-    document
-        .querySelector(".friend_content_wrapper .friend_request_list")
-        .classList.add("hidden");
-    
     for (const userId of userIds) {
-        if(userId){
+        if (userId) {
             const userNameResponse = await fetch(`/user/${userId}`);
             const userDetailResponse = await fetch(`/user/detail/${userId}`);
-    
+
             const userName = await userNameResponse.text();
             const userDetail = await userDetailResponse.json();
-    
+
             console.log(userDetail);
-    
+
             const userDiv = document.createElement("div");
             const innerDiv1 = document.createElement("div");
             const imgDiv = document.createElement("img");
-    
+
             const nameDiv = document.createElement("div");
             nameDiv.classList.add("friend_name");
             const spanWrapDiv = document.createElement("div");
@@ -49,19 +48,19 @@ async function getFriendList(userIds) {
             span.dataset.id = userId;
             spanWrapDiv.appendChild(span);
             nameDiv.appendChild(spanWrapDiv);
-    
+
             const detailDiv = document.createElement("div");
             detailDiv.textContent = userDetail.lolUser
                 ? userDetail.lolUser.nameTag
                 : "롤 유저 정보 없음";
             nameDiv.appendChild(detailDiv);
-    
+
             const onlineDiv = document.createElement("div");
             const circleDiv = document.createElement("div");
             onlineDiv.classList.add("friend_online");
             circleDiv.classList.add("circle");
             onlineDiv.appendChild(circleDiv);
-    
+
             const avatarHash = userDetail.avatar;
             const discordId = userDetail.discordId;
             const defaultAvatarUrl =
@@ -69,22 +68,22 @@ async function getFriendList(userIds) {
             const avatarUrl = avatarHash
                 ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
                 : defaultAvatarUrl;
-    
+
             imgDiv.setAttribute("src", avatarUrl);
             imgDiv.setAttribute("alt", userName);
-    
+
             innerDiv1.appendChild(imgDiv);
             innerDiv1.appendChild(nameDiv);
             innerDiv1.appendChild(onlineDiv);
             userDiv.appendChild(innerDiv1);
-    
+
             innerDiv1.setAttribute("class", "one-friend");
             innerDiv1.dataset.id = userId;
-    
+
             friendListContainer.appendChild(userDiv);
         }
-        
     }
+    isFriendLoading = false;
 }
 
 async function getFriendRequestList() {
@@ -92,10 +91,10 @@ async function getFriendRequestList() {
         ".friend_content_wrapper .friend_request_list",
     );
 
-    friendRequestListContainer.classList.remove("hidden");
-    document
-        .querySelector(".friend_content_wrapper .friend_list")
-        .classList.add("hidden");
+    // friendRequestListContainer.classList.remove("hidden");
+    // document
+    //     .querySelector(".friend_content_wrapper .friend_list")
+    //     .classList.add("hidden");
 
     while (friendRequestListContainer.firstChild) {
         friendRequestListContainer.removeChild(
@@ -222,3 +221,11 @@ async function rejectFriendRequestInList(senderId, friendRequestDiv) {
     }
 }
 
+function toggleFriend() {
+    document
+        .querySelector(".friend_content_wrapper .friend_list")
+        .classList.toggle("hidden");
+    document
+        .querySelector(".friend_content_wrapper .friend_request_list")
+        .classList.toggle("hidden");
+}
