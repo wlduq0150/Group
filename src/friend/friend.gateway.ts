@@ -14,7 +14,6 @@ import { SendMessageDto } from "./dto/friend-message.dto";
 import { SendMessageType } from "./interface/sendMessage.interface";
 import { FriendService } from "./friend.service";
 import { DeleteFriendDto } from "./dto/friend-delete.dto";
-import * as timezone from "timezone";
 import { BlockedUserDto } from "./dto/friend-blocked.dto";
 
 @UseFilters(WsExceptionFilter)
