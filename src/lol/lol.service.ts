@@ -41,6 +41,7 @@ export class LolService {
         }
 
         const nameTag = lolUser.gameName + "#" + lolUser.gameTag;
+      
         return nameTag;
     }
 

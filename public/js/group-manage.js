@@ -61,13 +61,12 @@ function checkIsOwner() {
 
 async function moveDiscord() {
     try {
-        const isOwner = checkIsOwner();
-        if (!isOwner) {
-            alert("그룹장만에게만 허가된 기능입니다.");
+        if (!groupId) {
+            alert("그룹이 존재하지 않습니다.");
             return;
         }
 
-        const response = await fetch("/discord/join-voice", {
+        const response = await fetch(`/discord/join-voice/${groupId}`, {
             method: "POST",
             credentials: "include",
             headers: {
