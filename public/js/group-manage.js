@@ -47,7 +47,12 @@ function createChatMessage(myId, userId, name, message) {
 
 async function moveDiscord() {
     try {
-        const response = await fetch("/discord/join-voice", {
+        if (!groupId) {
+            alert("그룹이 존재하지 않습니다.");
+            return;
+        }
+
+        const response = await fetch(`/discord/join-voice/${groupId}`, {
             method: "POST",
             credentials: "include",
             headers: {

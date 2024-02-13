@@ -74,7 +74,7 @@ export class DiscordService implements OnModuleInit {
     }
 
     // 채널 및 역할 추가
-    async assignRoleAndMoveToChannel(
+    async assignMoveToChannel(
         discordId: string,
         guildId: string,
         channelId: string,
@@ -98,6 +98,7 @@ export class DiscordService implements OnModuleInit {
 
     // 음성 채널 이동시킬 유저 세팅
     async setupUserVoiceChannel(
+        groupId: string,
         guildId: string,
         discordId: string,
     ): Promise<void> {
@@ -107,40 +108,15 @@ export class DiscordService implements OnModuleInit {
             throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
         }
 
-        const groupId: string = await this.groupService.findGroupIdByOwner(
-            user.id,
-        );
-
         if (!groupId) {
             throw new NotFoundException("해당 그룹을 찾을 수 없습니다.");
         }
 
-        let userIds: number[];
-
         const groupInfo = await this.groupService.findGroupInfoById(groupId);
-        const groupState = await this.groupService.findGroupStateById(groupId);
-
-        if (groupInfo.mode === "aram") {
-            userIds = await this.groupService.findGroupUsers(groupId);
-        } else {
-            const positions: string[] = ["mid", "adc", "sup", "top", "jg"];
-
-            userIds = positions
-                .filter(
-                    (position) =>
-                        groupState[position].isActive &&
-                        groupState[position].userId,
-                )
-                .map((position) => groupState[position].userId);
-        }
 
         const voiceChannelId: string = groupInfo.voiceChannelId;
 
-        await this.assignRoleAndMoveToChannel(
-            discordId,
-            guildId,
-            voiceChannelId,
-        );
+        await this.assignMoveToChannel(discordId, guildId, voiceChannelId);
     }
 
     // 채널 삭제
@@ -172,6 +148,9 @@ export class DiscordService implements OnModuleInit {
         try {
             const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
             const guild = this.client.guilds.cache.get(guildId);
+            const lobbyChannelId = this.configService.get<string>(
+                "DISCORD_LOBBY_CHANNEL_ID",
+            );
 
             const guildMember = guild.members.cache.get(userId);
 
@@ -179,13 +158,7 @@ export class DiscordService implements OnModuleInit {
                 throw new Error("해당 사용자를 찾을 수 없습니다.");
             }
 
-            const channel = guild.channels.cache.get(channelId) as VoiceChannel;
-
-            if (!channel || !("join" in channel)) {
-                throw new Error("해당 채널을 찾을 수 없습니다.");
-            }
-
-            await guildMember.voice.setChannel(channel);
+            await guildMember.voice.setChannel(lobbyChannelId);
         } catch (error) {
             console.error(
                 `채널 이동 중 오류 발생: ${userId} -> ${channelId}`,
