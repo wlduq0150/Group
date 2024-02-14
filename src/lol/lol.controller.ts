@@ -40,7 +40,7 @@ export class LolController {
 
     //유저id로 롤유저 이름 테그 검색
     @Get("userNameTag/:userId")
-    async findUserNameTag(@Param("userId") userId:number){
+    async findUserNameTag(@Param("userId") userId: number) {
         return await this.lolService.findUserNameTag(userId);
     }
 
@@ -50,9 +50,9 @@ export class LolController {
         return await this.lolService.findUserProfile(userId);
     }
 
+    //유저정보 업데이트
     @Put("")
     async updateUserChampion(@Body() lolUserIdDto: LolUserIdDto) {
         return await this.lolService.updateUserChampion(lolUserIdDto.userId);
     }
-
 }
