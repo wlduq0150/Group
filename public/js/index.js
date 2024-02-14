@@ -253,9 +253,18 @@ async function updateGroupTable(groups) {
         tr.classList.add("user-group");
         tr.dataset.id = group.groupId;
         tr.onclick = joinGroup;
+        let title = group.info.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        if (title.length > 22) {
+            title = `${title.substring(0, 22)}...`;
+        }
+
+        let owner = userName
+        if (owner.length > 7 ) {
+            owner = `${owner.substring(0, 7)}...`;
+        }
 
         tr.innerHTML = `
-        <td class="group_name"><span>${group.info.name}</span></td>
+        <td class="group_name"><span>${title}</span></td>
         <td class="group_people">${group.state.currentUser}/${
             group.state.totalUser
         }</td>
@@ -264,7 +273,7 @@ async function updateGroupTable(groups) {
         </td>
         <td class="group_user"><span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${
             group.info.owner
-        }">${userName}</span></td>
+        }">${owner}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
         <div>
