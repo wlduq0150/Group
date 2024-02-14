@@ -127,7 +127,7 @@ function createMessage(data, lastChild) {
         <div class="one-message">
             <div class="message-time">${day[1].substr(0, 5)}</div>
                 <div class="message-text-box">
-                    <div class="message-text">${data.message}</div>
+                    <div class="message-text">${data.message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
                     </div>
                 </div>
             </div>
@@ -145,7 +145,9 @@ function createMessage(data, lastChild) {
             <div class="one-message">
                 
                     <div class="message-text-box">
-                        <div class="message-text">${data.message}</div>
+                        <div class="message-text">${data.message
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")}</div>
                     </div>
                     <div class="message-time">${day[1].substr(0, 5)}</div>
                 </div>
