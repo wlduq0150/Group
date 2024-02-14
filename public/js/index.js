@@ -632,6 +632,7 @@ chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
     if (checkManage.classList.contains("hidden")) {
         showGroupManage();
+        toggleChatImg();
     } else {
         hideGroupManage();
     }
@@ -693,7 +694,11 @@ socket.on("disconnect", () => {
 
 socket.on("chat", (data) => {
     const { chat } = data;
+    if (chat.userId == blockedUserIds[chat.userId]) {
+        return;
+    }
     createChatMessage(userId, chat.userId, chat.name, chat.message);
+    alarmGroupMessage();
 });
 
 socket.on("groupJoin", (data) => {
