@@ -818,3 +818,7 @@ friendSocket.on("blockedUser", (data) => {
     }
     getFriendList(friendIds).then(() => dblclickFriend());
 });
+
+setInterval(() => {
+    socket.emit("getAllGroup");
+}, 10000);
