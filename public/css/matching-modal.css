@@ -188,3 +188,11 @@
 .matching-parent {
     display: block;
 }
+
+.select-box > div {
+    pointer-events: none;
+}
+
+#people-box.hidden {
+    display: none;
+}
