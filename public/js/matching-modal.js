@@ -6,9 +6,11 @@ let matchingPosition = null;
 let matchingPage = 1;
 
 let isMatching = false;
+let isStartMatching = false;
 
 function clickMatchingMode(e) {
     const target = e.currentTarget;
+    console.log(target);
 
     const currentMode = target.querySelector("#mode").dataset.value;
 
@@ -16,16 +18,19 @@ function clickMatchingMode(e) {
         initMode();
         matchingMode = currentMode;
         target.style.color = "rgb(247, 176, 22)";
+        initPeople();
         return;
     }
 
     if (matchingMode && matchingMode === currentMode) {
         matchingMode = null;
         target.style.color = "rgb(0, 0, 0)";
+        initPeople();
         return;
     }
 
     matchingMode = currentMode;
+    initPeople();
     target.style.color = "rgb(247, 176, 22)";
 }
 
@@ -56,14 +61,16 @@ function clickMatchingTier(e) {
 
     const currentTier = +target.querySelector("#tier").dataset.value;
 
-    if (matchingTier && matchingTier !== currentTier) {
+    const isMatchingTierNumber = matchingTier === 0 || matchingTier;
+
+    if (isMatchingTierNumber && matchingTier !== currentTier) {
         initTier();
         matchingTier = currentTier;
         target.style.color = "rgb(247, 176, 22)";
         return;
     }
 
-    if (matchingTier && matchingTier === currentTier) {
+    if (isMatchingTierNumber && matchingTier === currentTier) {
         matchingTier = null;
         target.style.color = "rgb(0, 0, 0)";
         return;
@@ -78,9 +85,6 @@ function clickMatchingPosition(e) {
 
     const img = target.querySelector("#position");
     const currentPosition = img.dataset.value;
-
-    console.log(matchingPosition);
-    console.log(currentPosition);
 
     if (matchingPosition && matchingPosition !== currentPosition) {
         initPosition();
@@ -169,7 +173,8 @@ function startMatching() {
         return false;
     }
 
-    if (!matchingTier) {
+    const isMatchingTierNumber = matchingTier === 0 || matchingTier;
+    if (!isMatchingTierNumber) {
         alert("매칭 티어가 선택되지 않았습니다.");
         return false;
     }
@@ -178,6 +183,8 @@ function startMatching() {
         alert("매칭 역할이 선택되지 않았습니다.");
         return false;
     }
+
+    isStartMatching = true;
 
     matchingSocket.emit("startMatching", {
         groupClientId: socket.id,
@@ -223,12 +230,36 @@ function initMode() {
 
 function initPeople() {
     matchingPeople = null;
+    console.log(matchingMode);
+
+    document.querySelector(".matching-parent .two-people").style.display =
+        "flex";
+    document.querySelector(".matching-parent .three-people").style.display =
+        "flex";
+    document.querySelector(".matching-parent .four-people").style.display =
+        "flex";
+    document.querySelector(".matching-parent .five-people").style.display =
+        "flex";
 
     document
         .querySelectorAll(".matching-parent .matching-people-box .select-box")
         .forEach((div) => {
             div.style.color = "rgb(0, 0, 0)";
         });
+
+    if (matchingMode === "rank-game") {
+        document.querySelector(".matching-parent .three-people").style.display =
+            "none";
+        document.querySelector(".matching-parent .four-people").style.display =
+            "none";
+        document.querySelector(".matching-parent .five-people").style.display =
+            "none";
+    }
+
+    if (matchingMode === "team-rank") {
+        document.querySelector(".matching-parent .four-people").style.display =
+            "none";
+    }
 }
 
 function initTier() {
@@ -242,7 +273,7 @@ function initTier() {
 }
 
 function initPosition() {
-    matchingPeople = null;
+    matchingPosition = null;
 
     document
         .querySelectorAll(".matching-parent .matching-position-box img")
@@ -270,13 +301,21 @@ function initMatching() {
 
 function openIsMatchingModal() {
     document.querySelector(".is-matching-parent").style.display = "block";
+
+    const isOpenIsMatching = document
+        .querySelector("#matchingContainer")
+        .classList.contains("hidden");
+    if (isOpenIsMatching) {
+        document.querySelector("#matchingContainer").classList.add("hidden");
+    }
 }
 
 function closeIsMatchingModal() {
     document.querySelector(".is-matching-parent").style.display = "none";
+    document.querySelector("#matchingContainer").classList.add("hidden");
 }
 
-const matchingSocket = io(socketURL + "/matching", {
+const matchingSocket = io("/matching", {
     transports: ["websocket"],
 });
 
@@ -289,6 +328,7 @@ matchingSocket.on("disconnect", () => {
 });
 
 matchingSocket.on("startMatching", () => {
+    isStartMatching = false;
     isMatching = true;
     openIsMatchingModal();
 });
@@ -296,13 +336,11 @@ matchingSocket.on("startMatching", () => {
 matchingSocket.on("stopMatching", () => {
     isMatching = false;
     closeIsMatchingModal();
-    document.querySelector("#matchingContainer").classList.add("hidden");
 });
 
 matchingSocket.on("completeMatching", () => {
     isMatching = false;
     closeIsMatchingModal();
-    document.querySelector("#matchingContainer").classList.add("hidden");
     alert("매칭 성공!");
 });
 

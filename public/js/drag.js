@@ -6,6 +6,7 @@ dragElement(document.getElementById("profile_modal_login_drag_me"), true);
 dragElement(document.getElementById("friend_list_modal_drag_me"), true);
 dragElement(document.getElementById("friend_request_modal_drag_me"), true);
 dragElement(document.getElementById("blocked_user_modal_drag_me"), true);
+dragElement(document.getElementById("direct_message_drag_me"), true);
 dragElement(document.getElementById("group_list_modal_drag_me"), true);
 
 function dragElement(elmnt, leftDraggable) {
@@ -41,10 +42,7 @@ function dragElement(elmnt, leftDraggable) {
         }
         pos2 = pos4 - e.clientY;
         pos4 = e.clientY;
-        console.log(
-            elmnt.parentElement.style.top,
-            elmnt.parentElement.style.left,
-        );
+        
         // set the element's new position:
         elmnt.parentElement.style.top =
             elmnt.parentElement.offsetTop - pos2 + "px";

@@ -36,7 +36,7 @@ header {
 *:active {
   cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/ccursor.cur")
       5 5,
-    pointer;
+    default;
 }
 
 * {
@@ -393,6 +393,12 @@ main {
   border-radius: 8px;
 }
 
+.refresh img {
+  cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+      5 5,
+    pointer;
+}
+
 .search {
   height: 35px;
   display: flex;
@@ -459,6 +465,7 @@ main {
   color: white;
 }
 
+#groupMatchingButton,
 #groupOpenButton,
 #groupCloseButton,
 #profileOpenButton,
@@ -502,6 +509,23 @@ main {
       list-style: none;
     }
   }
+}
+
+#profile .message-alarm {
+  position: relative;
+  margin-top: 10px;
+}
+
+#profile .message-alarm img {
+  margin: 5px;
+  width: 34px;
+  height: 34px;
+}
+
+#pofile .message-alarm .on-alarm :hover {
+  cursor: url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+      5 5,
+    pointer;
 }
 
 @keyframes fade-in {
@@ -610,6 +634,7 @@ main {
 }
 
 #groupListContainer.hidden,
+#profie .message-alarm.hidden,
 #matchingContainer.hidden,
 #sendMessageContainer.hidden,
 #friendListContainer.hidden,

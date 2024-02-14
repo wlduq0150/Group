@@ -75,7 +75,10 @@
     position: relative;
     height: 110px;
     width: 110px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .update-group-modal .update-select-position-box .user-name {
@@ -93,7 +96,10 @@
     width: 130px;
     height: 40px;
     border-radius: 15px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .update-group-modal .out-btn {
@@ -132,7 +138,10 @@
     height: 30px;
     width: 90px;
     border: 1px solid black;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 /* .out-box .out-cancel-btn:hover {
     color: white;
@@ -146,7 +155,10 @@
     color: white;
     background-color: rgb(75, 118, 127);
     border: 1px solid black;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pswordcursor.cur")
+            5 5,
+        pointer;
 }
 /* .out-box .out-agree-btn:hover {
     color: white;

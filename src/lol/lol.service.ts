@@ -41,7 +41,7 @@ export class LolService {
         }
 
         const nameTag = lolUser.gameName + "#" + lolUser.gameTag;
-      
+
         return nameTag;
     }
 
@@ -166,13 +166,18 @@ export class LolService {
 
     //유저 id로 유저 repositoty에서 유저정보 가져오는 함수
     private async findUserInfo(userId: number) {
-        const lolUserInfor = await this.lolUserRepository.findOne({
-            where: {
-                id: userId,
-            },
-            relations: { lolChampions: true },
-        });
-        return lolUserInfor;
+        const lolUserInfo = await this.lolUserRepository
+            .createQueryBuilder("lolUser")
+            .where("lolUser.userId = :userId", { userId })
+            .leftJoinAndSelect("lolUser.lolChampions", "lolChampions")
+            .orderBy("lolChampions.total", "DESC")
+            .getOne();
+        if (!lolUserInfo) {
+            throw new NotFoundException(
+                "유저 id가 잘못됬거나 해당하는 롤유저가 없습니다",
+            );
+        }
+        return lolUserInfo;
     }
 
     //이름 +태그로 puuid 가져오기
@@ -183,6 +188,9 @@ export class LolService {
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
         );
+        if (response.status >= 400) {
+            throw new NotFoundException("해당하는 롤 유저는 없습니다");
+        }
         const userPuuid = await response.json();
         return userPuuid; //puuid, gameName, gameTag
     }
@@ -342,6 +350,8 @@ export class LolService {
             await this.lolUserRepository.update(
                 { id: userId },
                 {
+                    summonerLevel: summonerLevel,
+                    profileIconId: profileIconId,
                     tier: user[0].tier,
                     rank: user[0].rank,
                     leaguePoints: user[0].leaguePoints,

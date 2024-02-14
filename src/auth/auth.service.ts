@@ -218,6 +218,9 @@ export class AuthService {
                 discordUser.avatar !== undefined
                     ? discordUser.avatar
                     : user.avatar;
+            if (user.username !== fullUsername) {
+                user.username = fullUsername;
+            }
         }
 
         return this.userRepository.save(user);

@@ -1,7 +1,12 @@
 const mostChampionCount = 3;
-
-async function getUserProfile(lolUserId, discordUserName) {
-    fetch(`/lol/user/${lolUserId}`, {
+let isProfileLoading = false;
+async function getUserProfile(userId, discordUserName) {
+    if (isProfileLoading) {
+        console.log("로딩중");
+        return;
+    }
+    isProfileLoading = true;
+    fetch(`/lol/user/${userId}`, {
         method: "GET",
     })
         .then((res) => {
@@ -118,6 +123,8 @@ async function getUserProfile(lolUserId, discordUserName) {
             const loading = document.querySelector(".parent .loading");
             loading.style.visibility = "hidden";
             loading.classList.add("paused");
+
+            isProfileLoading = false;
         })
         .catch((err) => {
             console.log(err);
@@ -126,8 +133,6 @@ async function getUserProfile(lolUserId, discordUserName) {
 
 //discordUserId 로 discord이름과 lolUser정보 가져오기
 async function getLolUserId(discordUserId) {
-    const resp = await fetch(`/user/${discordUserId}`, { method: "GET" });
-    const discordUserName = await resp.text();
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
         method: "GET",
     });
@@ -136,9 +141,10 @@ async function getLolUserId(discordUserId) {
         noDataLolUser(discordUserId, discordUserName, me);
         return;
     }
-    const lolUser = await res.text();
+    const nameRes = await fetch(`/user/${discordUserId}`);
+    const discordUserName = await nameRes.text();
 
-    getUserProfile(lolUser, discordUserName);
+    getUserProfile(discordUserId, discordUserName);
 }
 
 //프로필을 켰을때 작동하는 함수
@@ -174,6 +180,7 @@ function showProfileModal() {
     }
 }
 
+//닫기버튼 눌렀을때
 document.querySelector(".parent .close-btn").addEventListener("click", (e) => {
     document.querySelector("#profileContainer").classList.add("hidden");
 });
@@ -194,13 +201,18 @@ function noDataLolUser(discordUserId, discordUserName, me) {
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "visible";
+        document.querySelector(".not-connect-modal .discord-name").innerHTML =
+            `${discordUserName}`;
+        document
+            .querySelector(".not-connect-modal .discord-name")
+            .setAttribute("data-id", `${discordUserId}`);
     } else {
+        console.log(discordUserId, discordUserName);
         document.querySelector(".parent").style.display = "none";
         document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "hidden";
-        console.log(discordUserName + discordUserId);
         const discordName = document.querySelector(
             ".not-connect-modal .discord-name",
         );
@@ -231,12 +243,11 @@ async function linkingLolUser(lolName, lolTag, userId) {
         body: JSON.stringify({ name: lolName, tag: lolTag, userId: +userId }),
     })
         .then((res) => {
-            console.log(res);
             if (res.status >= 400) {
                 document.querySelector(".parent .loading").style.visibility =
                     "hidden";
             } else {
-                console.log("계정이 정보를 저장했어요");
+                console.log("계정 정보를 저장했어요");
             }
         })
         .catch((e) => {

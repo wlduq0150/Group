@@ -44,9 +44,7 @@ export class DiscordService implements OnModuleInit {
         voiceChannel: VoiceChannel;
         voiceChannelId: string;
     }> {
-        console.log(guildId);
         const guild = this.client.guilds.cache.get(guildId);
-        console.log(guild);
 
         if (!guild) {
             throw new NotFoundException("해당 서버를 찾을 수 없습니다.");
@@ -115,6 +113,16 @@ export class DiscordService implements OnModuleInit {
         const groupInfo = await this.groupService.findGroupInfoById(groupId);
 
         const voiceChannelId: string = groupInfo.voiceChannelId;
+
+        const guild = this.client.guilds.cache.get(guildId);
+        const member: GuildMember = await guild.members.fetch(discordId);
+        const lobbyChannelId = this.configService.get<string>(
+            "DISCORD_LOBBY_CHANNEL_ID",
+        );
+
+        if (member.voice.channel?.id !== lobbyChannelId) {
+            throw new NotFoundException("대기실에 입장해주세요.");
+        }
 
         await this.assignMoveToChannel(discordId, guildId, voiceChannelId);
     }

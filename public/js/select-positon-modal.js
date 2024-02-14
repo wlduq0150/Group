@@ -23,7 +23,7 @@ function checkIsSelected(target) {
     return false;
 }
 
-function setSPActive(target, name) {
+function setSPActive(target, name, userId) {
     let src = decodeURIComponent(target.querySelector("#position").src);
     const srcSplit = src.split("/lane/");
     let pos = srcSplit[srcSplit.length - 1].replace(".png", "");
@@ -37,7 +37,7 @@ function setSPActive(target, name) {
         target.querySelector("#userName").innerHTML = name;
         return;
     }
-
+    target.querySelector("#userName").setAttribute("data-id", `${userId}`);
     srcSplit[srcSplit.length - 1] = `${pos.replaceAll("흑", "")}.png`;
     src = srcSplit.join("/lane/");
     target.querySelector("img").src = src;

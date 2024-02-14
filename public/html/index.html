@@ -31,6 +31,13 @@
             />
             <nav>
                 <div id="profile">
+                    <div class="message-alarm hidden">
+                        <img
+                            class="no-alarm"
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/noMessage.png"
+                            alt=""
+                        />
+                    </div>
                     <div
                         id="profile-list"
                         oncontextmenu="showUserClickModal(event)"
@@ -103,22 +110,22 @@
                 <div class="user-search">
                     <div class="refresh">
                         <img
-                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png"
                             style="width: 29px; height: 29px"
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png"
                         />
                     </div>
                     <div class="search">
                         <input placeholder="Search" type="text" />
                         <img
-                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
                             style="width: 23px; height: 23px"
+                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
                         />
                     </div>
                     <div
                         class="match-group"
                         id="groupMatchingButton"
-                        onclick="openMatching()"
                         type="button"
+                        onclick="openMatching()"
                     >
                         랜덤 매칭
                     </div>
@@ -154,6 +161,7 @@
                 alt=""
                 class="chatting-notice-img-btn hidden"
                 src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png"
+                onclick="showGroupManage()"
             />
             <img
                 alt=""
@@ -169,6 +177,7 @@
         <script src="../js/user-click-modal.js"></script>
         <script src="../js/matching-modal.js"></script>
         <script src="../js/drag.js"></script>
+        <script src="../js/check-message.js"></script>
         <!-- <script src="../js/login-modal.js"></script> -->
     </body>
 </html>

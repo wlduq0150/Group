@@ -1,6 +1,7 @@
 let lastWriter = null;
 
 function showGroupManage() {
+    hidenChatImg();
     document.getElementById("groupManageContainer").classList.remove("hidden");
 }
 
@@ -79,6 +80,9 @@ async function moveDiscord() {
         if (!response.ok) {
             if (response.status === 403) {
                 alert(data.message);
+            }
+            if (response.status === 404) {
+                alert("대기실에 입장해주세요.");
             }
 
             return;
