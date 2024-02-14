@@ -8,7 +8,7 @@ export function genMatchingKeyOption(
     const matchingUserKeyOption = `matching:user:${
         matchingClientId ? matchingClientId : "*"
     }:${mode ? mode : "*"}:${people ? people : "*"}:${
-        tier >= 0 && tier < 10 ? tier : "---"
+        tier >= 0 && tier < 10 ? tier : "*"
     }:${position ? position : "*"}`;
 
     return matchingUserKeyOption;
