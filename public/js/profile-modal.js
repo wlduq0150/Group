@@ -138,7 +138,7 @@ async function getLolUserId(discordUserId) {
         return;
     }
 
-    getUserProfile(userId, discordUserName);
+    getUserProfile(discordUserId, discordUserName);
 }
 
 //프로필을 켰을때 작동하는 함수
