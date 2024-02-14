@@ -133,9 +133,6 @@ async function getUserProfile(userId, discordUserName) {
 
 //discordUserId 로 discord이름과 lolUser정보 가져오기
 async function getLolUserId(discordUserId) {
-    const discordUserName = document.querySelector(
-        "#profile .discord-user-name",
-    ).innerText;
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
         method: "GET",
     });
@@ -144,6 +141,8 @@ async function getLolUserId(discordUserId) {
         noDataLolUser(discordUserId, discordUserName, me);
         return;
     }
+    const nameRes = await fetch(`/user/${discordUserId}`);
+    const discordUserName = await nameRes.text();
 
     getUserProfile(discordUserId, discordUserName);
 }

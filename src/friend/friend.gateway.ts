@@ -99,6 +99,7 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 senderId: client["userId"],
                 message: sendMessageDto.message,
                 sendDate: korNow,
+                messageRoomId: messageRoom.id,
             });
         }
 
@@ -107,6 +108,7 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             senderId: client["userId"],
             message: sendMessageDto.message,
             sendDate: korNow,
+            messageRoomId: messageRoom.id,
         });
         const messageData = {
             senderId: client["userId"],
