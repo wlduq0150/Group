@@ -37,7 +37,7 @@ header {
     cursor:
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/ccursor.cur")
             5 5,
-        pointer;
+        default;
 }
 
 * {
@@ -397,6 +397,13 @@ main {
     border-radius: 8px;
 }
 
+.refresh img {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
+}
+
 .search {
     height: 35px;
     display: flex;
@@ -463,6 +470,7 @@ main {
     color: white;
 }
 
+#groupMatchingButton,
 #groupOpenButton,
 #groupCloseButton,
 #profileOpenButton,

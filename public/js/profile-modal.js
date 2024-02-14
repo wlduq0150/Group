@@ -1,7 +1,7 @@
 const mostChampionCount = 3;
 
-async function getUserProfile(lolUserId, discordUserName) {
-    fetch(`/lol/user/${lolUserId}`, {
+async function getUserProfile(userId, discordUserName) {
+    fetch(`/lol/user/${userId}`, {
         method: "GET",
     })
         .then((res) => {
@@ -126,8 +126,9 @@ async function getUserProfile(lolUserId, discordUserName) {
 
 //discordUserId 로 discord이름과 lolUser정보 가져오기
 async function getLolUserId(discordUserId) {
-    const resp = await fetch(`/user/${discordUserId}`, { method: "GET" });
-    const discordUserName = await resp.text();
+    const discordUserName = document.querySelector(
+        "#profile .discord-user-name",
+    ).innerText;
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
         method: "GET",
     });
@@ -136,9 +137,8 @@ async function getLolUserId(discordUserId) {
         noDataLolUser(discordUserId, discordUserName, me);
         return;
     }
-    const lolUser = await res.text();
 
-    getUserProfile(lolUser, discordUserName);
+    getUserProfile(userId, discordUserName);
 }
 
 //프로필을 켰을때 작동하는 함수
@@ -231,12 +231,11 @@ async function linkingLolUser(lolName, lolTag, userId) {
         body: JSON.stringify({ name: lolName, tag: lolTag, userId: +userId }),
     })
         .then((res) => {
-            console.log(res);
             if (res.status >= 400) {
                 document.querySelector(".parent .loading").style.visibility =
                     "hidden";
             } else {
-                console.log("계정이 정보를 저장했어요");
+                console.log("계정 정보를 저장했어요");
             }
         })
         .catch((e) => {

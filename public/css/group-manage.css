@@ -85,7 +85,6 @@ input {
     font-size: 13px;
     background-color: #ebeef1;
     border-radius: 16px;
-    cursor: pointer;
 }
 
 .group_manage_header .blank {
@@ -100,7 +99,10 @@ input {
 
 .group_manage_header .group_btn img {
     width: 100%;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .group_manage_header .group_btn img:hover {
@@ -144,7 +146,8 @@ input {
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
 }
 
-.mine, .other {
+.mine,
+.other {
     max-width: 360px;
     overflow-wrap: break-word;
 }
@@ -197,7 +200,10 @@ input {
     border: none;
     border-radius: 8px;
     background-color: #6a6a6a;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 #updateGroupContainer {
