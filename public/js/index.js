@@ -785,7 +785,12 @@ friendSocket.on("friendComplete", (data) => {
 });
 
 friendSocket.on("sendMessage", (data) => {
-    socketMessage(data);
+    const roomId = document.querySelector(
+        ".sendMessage-parent .discordUser-name",
+    ).dataset.room_id;
+    if (data.messageRoomId == roomId) {
+        socketMessage(data);
+    }
 });
 
 friendSocket.on("deleteFriend", (data) => {
