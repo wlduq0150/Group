@@ -1,6 +1,7 @@
 let lastWriter = null;
 
 function showGroupManage() {
+    hidenChatImg();
     document.getElementById("groupManageContainer").classList.remove("hidden");
 }
 
