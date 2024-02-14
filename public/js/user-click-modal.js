@@ -21,8 +21,15 @@ function showUserClickModal(e) {
 
     if (isMe) {
         hiddenList = [...userClickModal.children]
-            .filter(item => item.className !== "profile" && !item.className.includes("hidden") && !["friend_list", "blocked_list", "group_list"].includes(item.className))
-            .map(item => item.className);
+            .filter(
+                (item) =>
+                    item.className !== "profile" &&
+                    !item.className.includes("hidden") &&
+                    !["friend_list", "blocked_list", "group_list"].includes(
+                        item.className,
+                    ),
+            )
+            .map((item) => item.className);
         attrList.push("friend_list", "blocked_list");
     }
 
@@ -42,7 +49,7 @@ function showUserClickModal(e) {
             attrList.push("block");
         }
 
-        attrList.push("report", "recommend");
+        attrList.push("report" /*, "recommend"*/);
     }
 
     for (const attr of attrList) {
