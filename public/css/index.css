@@ -517,6 +517,24 @@ main {
     }
 }
 
+#profile .message-alarm {
+    position: relative;
+    margin-top: 10px;
+}
+
+#profile .message-alarm img {
+    margin: 5px;
+    width: 34px;
+    height: 34px;
+}
+
+#pofile .message-alarm .on-alarm :hover {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
+}
+
 @keyframes fade-in {
     from {
         opacity: 0;
@@ -612,6 +630,7 @@ main {
     position: absolute;
 }
 
+#profie .message-alarm.hidden,
 #matchingContainer.hidden,
 #sendMessageContainer.hidden,
 #friendListContainer.hidden,
