@@ -220,3 +220,15 @@ messageCount.addEventListener("scroll", (e) => {
             });
     }
 });
+
+function hideSendMessage() {
+    document.querySelector("#sendMessageContainer").classList.add("hidden");
+}
+
+document
+    .querySelector("#sendMessageContainer")
+    .addEventListener("click", (e) => {
+        if (e.target.classList.contains("container")) {
+            hideSendMessage();
+        }
+    });
