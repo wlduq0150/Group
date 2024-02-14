@@ -57,14 +57,16 @@ function clickMatchingTier(e) {
 
     const currentTier = +target.querySelector("#tier").dataset.value;
 
-    if (matchingTier && matchingTier !== currentTier) {
+    const isMatchingTierNumber = matchingTier === 0 || matchingTier;
+
+    if (isMatchingTierNumber && matchingTier !== currentTier) {
         initTier();
         matchingTier = currentTier;
         target.style.color = "rgb(247, 176, 22)";
         return;
     }
 
-    if (matchingTier && matchingTier === currentTier) {
+    if (isMatchingTierNumber && matchingTier === currentTier) {
         matchingTier = null;
         target.style.color = "rgb(0, 0, 0)";
         return;
@@ -170,7 +172,8 @@ function startMatching() {
         return false;
     }
 
-    if (!matchingTier) {
+    const isMatchingTierNumber = matchingTier === 0 || matchingTier;
+    if (!isMatchingTierNumber) {
         alert("매칭 티어가 선택되지 않았습니다.");
         return false;
     }
@@ -273,13 +276,21 @@ function initMatching() {
 
 function openIsMatchingModal() {
     document.querySelector(".is-matching-parent").style.display = "block";
+
+    const isOpenIsMatching = !document
+        .querySelector("#matchingContainer")
+        .classList.includes("hidden");
+    if (isOpenIsMatching) {
+        document.querySelector("#matchingContainer").classList.add("hidden");
+    }
 }
 
 function closeIsMatchingModal() {
     document.querySelector(".is-matching-parent").style.display = "none";
+    document.querySelector("#matchingContainer").classList.add("hidden");
 }
 
-const matchingSocket = io(socketURL + "/matching", {
+const matchingSocket = io("/matching", {
     transports: ["websocket"],
 });
 
@@ -300,13 +311,11 @@ matchingSocket.on("startMatching", () => {
 matchingSocket.on("stopMatching", () => {
     isMatching = false;
     closeIsMatchingModal();
-    document.querySelector("#matchingContainer").classList.add("hidden");
 });
 
 matchingSocket.on("completeMatching", () => {
     isMatching = false;
     closeIsMatchingModal();
-    document.querySelector("#matchingContainer").classList.add("hidden");
     alert("매칭 성공!");
 });
 
