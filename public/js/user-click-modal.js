@@ -25,7 +25,7 @@ function showUserClickModal(e) {
                 (item) =>
                     item.className !== "profile" &&
                     !item.className.includes("hidden") &&
-                    !["friend_list", "blocked_list", "group_list"].includes(
+                    !["friend_list", "blocked_list", "group_record"].includes(
                         item.className,
                     ),
             )

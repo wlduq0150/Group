@@ -13,7 +13,7 @@ export class GroupRecordService {
 
     async getGroupList(userId: number): Promise<User[]> {
         const result = await this.redisService.get(`record_${userId}`); // record_13
-        const userIds = JSON.parse(result); // [ 14, 17 ]
+        const userIds = JSON.parse(result) || []; // [ 14, 17 ]
 
         return userIds;
     }

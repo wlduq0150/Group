@@ -5,8 +5,6 @@ async function insertGroupRecord(users) {
     let groupListBox = "";
     for (let userId of users) {
         //discord 유저 id로 디코 이름과 롤 이름 태그 가져오기
-        const response = await fetch(`/user/${userId}`, { method: "GET" });
-        const groupListName = await response.text();
         const userDetail = await (await fetch(`/user/detail/${userId}`)).json();
 
         const avatarHash = userDetail.avatar;
@@ -16,35 +14,7 @@ async function insertGroupRecord(users) {
         const avatarUrl = avatarHash
             ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
             : defaultAvatarUrl;
-        let groupListUserResponse;
-        let groupListUser;
-        let lolUserResponse;
-        let lolUser;
-
-        if (userDetail?.lolUser) {
-            groupListUserResponse = await fetch(`/lol/discordUser/${userId}`, {
-                method: "GET",
-            });
-
-            if (groupListUserResponse.status >= 400) {
-                groupListUser = undefined;
-            } else {
-                groupListUser = await groupListUserResponse.json();
-            }
-        }
-
-        if (groupListUser) {
-            lolUserResponse = await fetch(`/lol/user/${groupListUser}`, {
-                method: "GET",
-            });
-
-            if (lolUserResponse.status >= 400) {
-                groupListUser = undefined;
-            } else {
-                lolUser = lolUserResponse.json();
-            }
-        }
-
+        
         groupListBox =
             groupListBox +
             `<div class="group-list-info">
@@ -54,16 +24,16 @@ async function insertGroupRecord(users) {
                         alt=""
                     />
                 </div>
-                <div class="group-list-info-box">
+                <div class="group-list-info-box"
+                data-id="${userId}"
+                oncontextmenu="showUserClickModal(event)">
                     <div class="group-list-discord-name">
-                    <span class="user_click user"
-                       oncontextmenu="showUserClickModal(event)"
-                       data-id="${groupListName}">${userDetail.username}
+                    <span class="user_click user">${userDetail.username}
                    </span>
                    </div>
                     <div>${
-                        lolUser?.user
-                            ? `${lolUser.user.gameName}#${lolUser.user.gameTag}`
+                        userDetail?.lolUser?.nameTag
+                            ? `${userDetail.lolUser.nameTag}`
                             : "롤 유저 정보 없음"
                     }</div>
                 </div>
