@@ -332,6 +332,7 @@ async function createSystemMessage(userId, type) {
     `;
 
     chatList.appendChild(chatLine);
+    chatList.scrollTop = chatList.scrollHeight;
 }
 
 document
