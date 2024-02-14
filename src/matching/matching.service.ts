@@ -85,15 +85,23 @@ export class MatchingService {
     }
 
     async checkIsUserMatching(matchingClientId: string) {
-        const keys = await this.findUserMatchingKeysByOption({
+        const matchingUserKeyOption = genMatchingKeyOption(
             matchingClientId,
-        });
+            "*",
+            null,
+            -1,
+            "*",
+        );
 
-        if (keys) {
-            return keys[0];
+        const matchingUserKey = await this.redisClient.keys(
+            matchingUserKeyOption,
+        );
+
+        if (matchingUserKey.length) {
+            return matchingUserKey[0];
         }
 
-        return null;
+        return false;
     }
 
     // 매칭 시작하기
@@ -106,6 +114,11 @@ export class MatchingService {
             matchingClientId,
             startMatchingDto,
         );
+
+        const isUserMatching = await this.checkIsUserMatching(matchingClientId);
+        if (isUserMatching) {
+            throw new WsException("이미 매칭중입니다.");
+        }
 
         // 매칭 대기열에 추가
         await this.redisService.set(matchingUserKey, groupClientId);

@@ -6,6 +6,7 @@ let matchingPosition = null;
 let matchingPage = 1;
 
 let isMatching = false;
+let isStartMatching = false;
 
 function clickMatchingMode(e) {
     const target = e.currentTarget;
@@ -179,6 +180,8 @@ function startMatching() {
         return false;
     }
 
+    isStartMatching = true;
+
     matchingSocket.emit("startMatching", {
         groupClientId: socket.id,
         mode: matchingMode,
@@ -289,6 +292,7 @@ matchingSocket.on("disconnect", () => {
 });
 
 matchingSocket.on("startMatching", () => {
+    isStartMatching = false;
     isMatching = true;
     openIsMatchingModal();
 });
