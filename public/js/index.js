@@ -641,6 +641,7 @@ chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
     if (checkManage.classList.contains("hidden")) {
         showGroupManage();
+        toggleChatImg();
     } else {
         hideGroupManage();
     }
@@ -702,7 +703,11 @@ socket.on("disconnect", () => {
 
 socket.on("chat", (data) => {
     const { chat } = data;
+    if (chat.userId == blockedUserIds[chat.userId]) {
+        return;
+    }
     createChatMessage(userId, chat.userId, chat.name, chat.message);
+    alarmGroupMessage();
 });
 
 socket.on("groupJoin", (data) => {
@@ -794,7 +799,12 @@ friendSocket.on("friendComplete", (data) => {
 });
 
 friendSocket.on("sendMessage", (data) => {
-    socketMessage(data);
+    const roomId = document.querySelector(
+        ".sendMessage-parent .discordUser-name",
+    ).dataset.room_id;
+    if (data.messageRoomId == roomId) {
+        socketMessage(data);
+    }
 });
 
 friendSocket.on("deleteFriend", (data) => {

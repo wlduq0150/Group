@@ -208,7 +208,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             "userId",
         ));
         if (!userId) {
-            console.log("로그인이 필요합니다.");
+            throw new WsException("이미 그룹에 참여중입니다.");
         }
 
         // 이미 그룹에 참여중인 경우 예외처리
