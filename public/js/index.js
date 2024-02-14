@@ -258,8 +258,8 @@ async function updateGroupTable(groups) {
             title = `${title.substring(0, 22)}...`;
         }
 
-        let owner = userName
-        if (owner.length > 7 ) {
+        let owner = userName;
+        if (owner.length > 7) {
             owner = `${owner.substring(0, 7)}...`;
         }
 
@@ -641,7 +641,7 @@ chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
     if (checkManage.classList.contains("hidden")) {
         showGroupManage();
-        toggleChatImg();
+        hidenChatImg();
     } else {
         hideGroupManage();
     }

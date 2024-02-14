@@ -279,7 +279,7 @@ function openIsMatchingModal() {
 
     const isOpenIsMatching = !document
         .querySelector("#matchingContainer")
-        .classList.includes("hidden");
+        .classList.contains("hidden");
     if (isOpenIsMatching) {
         document.querySelector("#matchingContainer").classList.add("hidden");
     }
