@@ -215,8 +215,10 @@ async function updateLoginStatus() {
 
             socket.emit("connectWithUserId", data.userId);
             friendSocket.emit("connectWithUserId", data.userId);
+            hideMessageAlarm();
         } else {
             loginBtn.value = "로그인";
+            viewMessagAlarm();
         }
     } catch (err) {
         console.error(err);
@@ -804,6 +806,8 @@ friendSocket.on("sendMessage", (data) => {
     ).dataset.room_id;
     if (data.messageRoomId == roomId) {
         socketMessage(data);
+    } else {
+        alarmFriendMessage(data.senderId);
     }
 });
 
