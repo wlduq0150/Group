@@ -44,9 +44,7 @@ export class DiscordService implements OnModuleInit {
         voiceChannel: VoiceChannel;
         voiceChannelId: string;
     }> {
-        console.log(guildId);
         const guild = this.client.guilds.cache.get(guildId);
-        console.log(guild);
 
         if (!guild) {
             throw new NotFoundException("해당 서버를 찾을 수 없습니다.");
