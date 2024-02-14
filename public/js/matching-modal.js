@@ -279,7 +279,7 @@ function closeIsMatchingModal() {
     document.querySelector(".is-matching-parent").style.display = "none";
 }
 
-const matchingSocket = io(socketURL + "/matching", {
+const matchingSocket = io("/matching", {
     transports: ["websocket"],
 });
 
