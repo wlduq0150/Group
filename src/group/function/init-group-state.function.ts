@@ -8,6 +8,7 @@ export function initGroupState(
     const groupState: GroupState = {
         totalUser: position.length ? position.length : people,
         currentUser: 0,
+        users: [],
         mid: { isActive: false, userId: null },
         adc: { isActive: false, userId: null },
         sup: { isActive: false, userId: null },

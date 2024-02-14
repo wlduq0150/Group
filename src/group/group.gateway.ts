@@ -6,7 +6,7 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from "@nestjs/websockets";
-import { Server, Socket } from "socket.io";
+import { RemoteSocket, Server, Socket } from "socket.io";
 import { GroupService } from "src/group/group.service";
 import { CreateGroupDto } from "./dto/create-group.dto";
 import { JoinGroupDto } from "./dto/join-group.dto";
@@ -20,6 +20,10 @@ import { UpdateGroupDto } from "./dto/update-group.dto";
 import { GroupChatDto } from "./dto/chat-group.dto";
 import { KickDto } from "./dto/kick-group.dto";
 import { checkPositionCorrectForMode } from "./function/check-mode-position-correct.function";
+import {
+    DecorateAcknowledgementsWithMultipleResponses,
+    DefaultEventsMap,
+} from "socket.io/dist/typed-events";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -31,6 +35,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         @Inject(forwardRef(() => GroupService))
         private readonly groupService: GroupService,
     ) {}
+
+    async findGroupSocketById(groupClientId: string) {
+        const client = await this.server.to(groupClientId).fetchSockets();
+        return client[0];
+    }
 
     handleConnection(client: Socket) {
         console.log(`[Group]client connected: ${client.id}`);
@@ -108,9 +117,14 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 클라이언트에서 그룹 생성시 발생하는 이벤트
     @SubscribeMessage("groupCreate")
     async groupCreate(
-        client: Socket,
+        client:
+            | Socket
+            | RemoteSocket<
+                  DecorateAcknowledgementsWithMultipleResponses<DefaultEventsMap>,
+                  any
+              >,
         createGroupDto: CreateGroupDto,
-    ): Promise<void> {
+    ): Promise<string> {
         console.log(createGroupDto);
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
@@ -132,7 +146,9 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             createGroupDto,
         );
 
-        this.groupJoin(client, { groupId });
+        await this.groupJoin(client, { groupId });
+
+        return groupId;
     }
 
     @SubscribeMessage("groupUpdate")
@@ -177,7 +193,15 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // 클라이언트에서 그룹 참여시 발생하는 이벤트
     @SubscribeMessage("groupJoin")
-    async groupJoin(client: Socket, joinGroupDto: JoinGroupDto): Promise<void> {
+    async groupJoin(
+        client:
+            | Socket
+            | RemoteSocket<
+                  DecorateAcknowledgementsWithMultipleResponses<DefaultEventsMap>,
+                  any
+              >,
+        joinGroupDto: JoinGroupDto,
+    ): Promise<void> {
         const { groupId } = joinGroupDto;
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
@@ -193,7 +217,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
 
-        const groupState = await this.groupService.joinGroup(groupId);
+        const groupState = await this.groupService.joinGroup(groupId, userId);
         const groupInfo = await this.groupService.findGroupInfoById(groupId);
 
         // 그룹 참가

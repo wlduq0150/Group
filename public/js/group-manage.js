@@ -25,7 +25,7 @@ function createChatMessage(myId, userId, name, message) {
     chat.classList.add("chat_line");
     chat.innerHTML = `
         <div class="chat ${whoChat}">
-            ${message}
+            ${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
         </div>
     `;
 
@@ -42,12 +42,31 @@ function createChatMessage(myId, userId, name, message) {
     }
 
     chatList.appendChild(chat);
+    chatList.scrollTop = chatList.scrollHeight;
     lastWriter = userId;
+}
+
+function checkIsOwner() {
+    const myName = document.querySelector(
+        "#profile .discord-user-name",
+    ).textContent;
+    const ownerName = document.querySelector(
+        ".group_manage .owner_name",
+    ).textContent;
+
+    if (myName === ownerName) return true;
+
+    return false;
 }
 
 async function moveDiscord() {
     try {
-        const response = await fetch("/discord/join-voice", {
+        if (!groupId) {
+            alert("그룹이 존재하지 않습니다.");
+            return;
+        }
+
+        const response = await fetch(`/discord/join-voice/${groupId}`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -60,6 +79,9 @@ async function moveDiscord() {
         if (!response.ok) {
             if (response.status === 403) {
                 alert(data.message);
+            }
+            if (response.status === 404) {
+                alert("대기실에 입장해주세요.");
             }
 
             return;

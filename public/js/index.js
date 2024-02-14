@@ -2,8 +2,16 @@ let userId;
 let groupId;
 let blockedUsers = [];
 let friends = [];
-const socketURL = "group-finding-lb-605044581.ap-northeast-2.elb.amazonaws.com";
+let friendIds = [];
+let blockedUserIds = [];
+let isGroupLoading = false;
+let isGroupJoining = false;
 // const socketURL = "";
+
+//const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
+
+const socketURL = "";
+
 const friendSocket = io(socketURL + "/friend", {
     transports: ["websocket"],
 });
@@ -22,8 +30,19 @@ window.onload = function () {
     if (params.get("logout") === "success") {
         alert("로그아웃에 성공했습니다.");
     }
+    if (params.get("banUntil")) {
+        const banUntil = new Date(params.get("banUntil"));
+        const formattedDate = banUntil.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        alert(`${formattedDate}까지 계정 정지 상태입니다.`);
+    }
 
-    socket.on("getAllGroup", function (data) {
+    socket.on("getAllGroup", async function (data) {
         let allGroups = [];
 
         if (Array.isArray(data.groups)) {
@@ -35,7 +54,8 @@ window.onload = function () {
             });
         }
 
-        updateGroupTable(allGroups);
+        await updateGroupTable(allGroups);
+        isGroupLoading = false;
     });
 
     socket.emit("getAllGroup");
@@ -139,6 +159,13 @@ completeBtn.addEventListener("click", async function (e) {
 
 // 새로고침 이벤트 처리
 refreshBtn.addEventListener("click", () => {
+    if (isGroupLoading) {
+        console.log("로딩중");
+        return;
+    }
+
+    isGroupLoading = true;
+
     socket.emit("getAllGroup");
 });
 
@@ -157,11 +184,19 @@ async function updateLoginStatus() {
             });
             const user = await response.json();
 
+            user.blockedUsers.map((blockedUser) => {
+                blockedUserIds[blockedUser.id] = blockedUser.id;
+            });
+
             blockedUsers = user.blockedUsers.map((blockedUser) => {
                 return blockedUser.id;
             });
 
             console.log("차단유저: ", blockedUsers);
+
+            user.friends.map((friend) => {
+                friendIds[friend.id] = friend.id;
+            });
 
             friends = user.friends.map((friend) => {
                 return friend.id;
@@ -252,8 +287,6 @@ async function updateGroupTable(groups) {
 
         tableBody.appendChild(tr);
     }
-
-    groups.forEach((group) => {});
 }
 
 // 그룹 참가 함수
@@ -284,10 +317,10 @@ async function createSystemMessage(userId, type) {
     let message;
     switch (type) {
         case "join":
-            message = `${userName} 님이 입장하셨습니다.`;
+            message = `<span class="enter-user" data-id="${userId}" oncontextmenu="showUserClickModal(event)">${userName}</span> 님이 입장하셨습니다.`;
             break;
         case "leave":
-            message = `${userName} 님이 퇴장하셨습니다.`;
+            message = `<span class="exit-user" data-id="${userId}" oncontextmenu="showUserClickModal(event)">${userName}</span>님이 퇴장하셨습니다.`;
     }
 
     const chatLine = document.createElement("div");
@@ -299,11 +332,18 @@ async function createSystemMessage(userId, type) {
     `;
 
     chatList.appendChild(chatLine);
+    chatList.scrollTop = chatList.scrollHeight;
 }
 
 document
     .querySelector(".group_manage #updateGroupSetting")
     .addEventListener("click", (e) => {
+        const isOwner = checkIsOwner();
+        if (!isOwner) {
+            alert("그룹장에게만 허가된 기능입니다.");
+            return;
+        }
+
         socket.emit("openGroupUpdate", { groupId });
     });
 
@@ -391,7 +431,7 @@ async function updateSelectPositionState(groupState, users) {
             console.log(e);
         }
 
-        setSPActive(target, userName);
+        setSPActive(target, userName, userId);
     }
 }
 
@@ -485,8 +525,15 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
             positionTarget.dataset.userId = "";
             positionTarget.classList.remove("positionSelected");
         }
-
         positionTarget.querySelector(".user-name").textContent = userName;
+        positionTarget
+            .querySelector(".user-name")
+            .setAttribute("data-id", `${positionTarget.dataset.userId}`);
+        positionTarget
+            .querySelector(".user-name")
+            .addEventListener("contextmenu", (e) => {
+                showUserClickModal(e);
+            });
     }
 
     if (groupInfo && aramUsers && groupInfo.mode === "aram") {
@@ -619,15 +666,18 @@ document
     .addEventListener("click", (e) => {
         const message = document.querySelector(
             "#groupManageContainer .chat_input",
-        ).value;
+        );
 
-        socket.emit("chat", { message });
+        if (message.value !== "") {
+            socket.emit("chat", { message: message.value });
+            message.value = "";
+        }
     });
 
 //엔터로 채팅 보내기
 const pressEnter = document.querySelector("#groupManageContainer .chat_input");
 pressEnter.addEventListener("keypress", (e) => {
-    if (e.keyCode == 13) {
+    if (e.keyCode == 13 && pressEnter.value !== "") {
         socket.emit("chat", { message: pressEnter.value });
         pressEnter.value = "";
     }
@@ -730,5 +780,22 @@ friendSocket.on("friendRequest", (data) => {
 });
 
 friendSocket.on("friendComplete", (data) => {
-    friends.push(data.friendId);
+    friendIds[data.friendId] = data.friendId;
+    getFriendList(friendIds).then(() => dblclickFriend());
+});
+
+friendSocket.on("sendMessage", (data) => {
+    socketMessage(data);
+});
+
+friendSocket.on("deleteFriend", (data) => {
+    friendIds[data.id] = null;
+    getFriendList(friendIds).then(() => dblclickFriend());
+});
+
+friendSocket.on("blockedUser", (data) => {
+    if (data) {
+        friendIds[data.deleteId] = null;
+    }
+    getFriendList(friendIds).then(() => dblclickFriend());
 });

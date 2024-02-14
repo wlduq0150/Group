@@ -86,7 +86,10 @@
 .create-group-modal .select-position-box img {
     height: 110px;
     width: 110px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .create-group-modal .select-position-box .forbidden {
@@ -104,5 +107,8 @@
     width: 130px;
     height: 40px;
     border-radius: 15px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }

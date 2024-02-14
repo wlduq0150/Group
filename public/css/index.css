@@ -37,14 +37,14 @@ header {
     cursor:
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/ccursor.cur")
             5 5,
-        pointer;
+        default;
 }
 
 * {
     cursor:
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/cursor+(2).cur")
             5 5,
-        auto;
+        default;
 }
 
 @media (max-width: 768px) {
@@ -397,6 +397,13 @@ main {
     border-radius: 8px;
 }
 
+.refresh img {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
+}
+
 .search {
     height: 35px;
     display: flex;
@@ -431,6 +438,20 @@ main {
     background-color: #ffaa00e4;
 }
 
+.match-group {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    width: 96px;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    background-color: rgba(66, 173, 39, 0.9);
+    margin-right: 10px;
+}
+
 .user-search {
     width: 60%;
     min-width: 1145px;
@@ -449,6 +470,7 @@ main {
     color: white;
 }
 
+#groupMatchingButton,
 #groupOpenButton,
 #groupCloseButton,
 #profileOpenButton,
@@ -545,6 +567,7 @@ main {
 }
 
 #userClickContainer {
+    z-index: 15;
     width: 100%;
     height: 100vh;
     position: absolute;
@@ -569,6 +592,28 @@ main {
     z-index: 10;
 }
 
+#sendMessageContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    position: absolute;
+    z-index: 10;
+}
+
+#matchingContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    position: absolute;
+}
+
+#matchingContainer.hidden,
+#sendMessageContainer.hidden,
 #friendListContainer.hidden,
 #blockedUserContainer.hidden,
 #userClickContainer.hidden,
@@ -649,4 +694,14 @@ main {
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
             5 5,
         pointer;
+}
+
+.match_box {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    border: 1px solid black;
+    background-color: #fff;
+    color: #000;
+    padding: 6px;
 }

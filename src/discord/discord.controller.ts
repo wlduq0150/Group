@@ -2,6 +2,7 @@ import {
     Controller,
     HttpStatus,
     NotFoundException,
+    Param,
     Post,
     Req,
     Session,
@@ -16,12 +17,16 @@ export class DiscordController {
         private readonly configService: ConfigService,
     ) {}
 
-    @Post("/join-voice")
-    async joinVoice(@Session() session) {
+    @Post("/join-voice/:groupId")
+    async joinVoice(@Session() session, @Param("groupId") groupId: string) {
         const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
         const discordId = session.discordUserId;
 
-        await this.discordService.setupUserVoiceChannel(guildId, discordId);
+        await this.discordService.setupUserVoiceChannel(
+            groupId,
+            guildId,
+            discordId,
+        );
 
         return {
             statusCode: HttpStatus.OK,

@@ -3,6 +3,7 @@
 } */
 
 .user_click_modal {
+    margin-top: 30px;
     width: 90px;
     display: flex;
     flex-direction: column;
@@ -18,7 +19,10 @@
     font-weight: bold;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .user_click_modal div:hover {
@@ -27,4 +31,25 @@
 
 .user_click_modal div.hidden {
     display: none;
+}
+
+.user_click_modal .block {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pswordcursor.cur")
+            5 5,
+        pointer;
+}
+
+.user_click_modal .delete_friend {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pswordcursor.cur")
+            5 5,
+        pointer;
+}
+
+.user_click_modal .report {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pswordcursor.cur")
+            5 5,
+        pointer;
 }

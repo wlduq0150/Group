@@ -31,20 +31,33 @@ export class LolService {
         return lolUser.id;
     }
 
-    //이름+태그로 롤 유저 찾아서 없으면 새로 만들기
-    async findUserByNameTag(name: string, tag: string, userId: number) {
+    //디코유저 id로 롤 유저 이름+태그 찾기
+    async findUserNameTag(userId: number) {
+        const lolUser = await this.lolUserRepository.findOneBy({
+            userId: userId,
+        });
+        if (!lolUser) {
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
+
+        const nameTag = lolUser.gameName + "#" + lolUser.gameTag;
+
+        return nameTag;
+    }
+
+    //이름+태그로 롤 유저 찾기
+    private async findUserByNameTag(name: string, tag: string) {
         const userInfo = await this.lolUserRepository.findOneBy({
             nameTag: name + "#" + tag,
         });
-        if (!userInfo) {
-            await this.saveUserAllInfo(name, tag, userId);
-        }
-        return { message: "이미 존재하는 사용자 입니다" };
+        return userInfo;
     }
 
+    //롤 유저id로 롤유저 찾기
     async findUserProfile(lolUserId: number) {
         const userCacheKey: string = `userCache:id${lolUserId}`;
         const userCache: string = await this.cacheManager.get(userCacheKey);
+
         if (userCache) {
             const userInfo = JSON.parse(userCache) as
                 | LolUser
@@ -56,22 +69,23 @@ export class LolService {
         }
 
         const user = await this.findUserInfo(lolUserId);
-        const champion = await this.lolChampionRepository.find({
-            where: { lolUserId: lolUserId },
-            order: { total: "DESC" },
-        });
+
         await this.cacheManager.set(
             userCacheKey,
-            JSON.stringify({ user, champion }),
+            JSON.stringify({ user }),
             50000,
         );
-        return { user, champion };
+        return { user };
     }
 
     //유저생성
     async saveUserAllInfo(name: string, tag: string, discordUserId: number) {
-        const userInfo = await this.saveLolUser(name, tag, discordUserId);
+        const checkUser = await this.findUserByNameTag(name, tag);
+        if (checkUser) {
+            throw new Error("이미 연동된 롤유저 입니다");
+        }
 
+        const userInfo = await this.saveLolUser(name, tag, discordUserId);
         await this.saveChampionData(userInfo.id);
     }
 
@@ -115,21 +129,26 @@ export class LolService {
         const count = Number(userInfo.wins) + Number(userInfo.losses);
 
         const userMatchIds = await this.findMatchIds(userInfo.puuid, count);
-
+        if (!userMatchIds.length) {
+            return;
+        }
         const userChampions = await this.allMatches(
             userMatchIds,
             userInfo.puuid,
             userId,
         );
+
         const clearChampions = userChampions
             .filter((e) => {
                 return e != null;
             })
             .sort((a, b) => b.wins - a.wins);
+
         await this.lolUserRepository.update(
             { id: userId },
             { lastMatchId: clearChampions.shift() },
         );
+
         for (let champ of clearChampions) {
             await this.lolChampionRepository.save({
                 championId: champ.id,
@@ -147,10 +166,18 @@ export class LolService {
 
     //유저 id로 유저 repositoty에서 유저정보 가져오는 함수
     private async findUserInfo(userId: number) {
-        const lolUserInfor = await this.lolUserRepository.findOneBy({
-            id: userId,
-        });
-        return lolUserInfor;
+        const lolUserInfo = await this.lolUserRepository
+            .createQueryBuilder("lolUser")
+            .where("lolUser.userId = :userId", { userId })
+            .leftJoinAndSelect("lolUser.lolChampions", "lolChampions")
+            .orderBy("lolChampions.total", "DESC")
+            .getOne();
+        if (!lolUserInfo) {
+            throw new NotFoundException(
+                "유저 id가 잘못됬거나 해당하는 롤유저가 없습니다",
+            );
+        }
+        return lolUserInfo;
     }
 
     //이름 +태그로 puuid 가져오기
@@ -161,6 +188,9 @@ export class LolService {
             `${asiaServer}riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${apiKey}`,
             { method: "GET" },
         );
+        if (response.status >= 400) {
+            throw new NotFoundException("해당하는 롤 유저는 없습니다");
+        }
         const userPuuid = await response.json();
         return userPuuid; //puuid, gameName, gameTag
     }
@@ -188,9 +218,17 @@ export class LolService {
             `${krServer}lol/league/v4/entries/by-summoner/${summmonerInfo.id}?api_key=${apiKey}`,
             { method: "GET" },
         );
+        let user = await response.json();
 
-        const user = await response.json();
-
+        if (!user.length) {
+            user[0] = {
+                tier: "unRanked",
+                rank: 0,
+                leaguePoints: 0,
+                wins: 0,
+                losses: 0,
+            };
+        }
         return {
             user,
             profileIconId: summmonerInfo.profileIconId,
@@ -204,8 +242,8 @@ export class LolService {
         const apiKey: string = this.configService.get("LOL_API_KEY");
 
         const start: number = 0;
-        if (count > 100) {
-            count = 100;
+        if (count > 10) {
+            count = 10;
         }
 
         const respose = await fetch(
@@ -225,10 +263,12 @@ export class LolService {
             `${asiaServer}lol/match/v5/matches/${matchId}?api_key=${apiKey}`,
             { method: "GET" },
         );
+
         const userMatch = await response.json();
-        if (!userMatch) {
+        if (!userMatch.info) {
             throw new NotFoundException("매치정보를 찾을수 없습니다");
         }
+
         //다시하기는 제외하기
         if (userMatch.info.gameDuration > 250) {
             const thisUser = userMatch.info.participants.filter(
@@ -236,8 +276,9 @@ export class LolService {
             );
 
             return { thisUser, matchId: matchId };
+        } else {
+            return false; //다시하기의 경우
         }
-        return false; //다시하기의 경우
     }
 
     //matchId[]로 puuid에 해당하는 유저의 match정보를 배열로 받음
@@ -303,11 +344,14 @@ export class LolService {
             userInfo.puuid,
         );
         const newTotal: number = user[0].wins + user[0].losses;
+
         //새롭게 플레이 한 게임만 갱신
         if (newTotal > preTotal) {
             await this.lolUserRepository.update(
                 { id: userId },
                 {
+                    summonerLevel: summonerLevel,
+                    profileIconId: profileIconId,
                     tier: user[0].tier,
                     rank: user[0].rank,
                     leaguePoints: user[0].leaguePoints,
@@ -316,9 +360,10 @@ export class LolService {
                 },
             );
 
-            const count = 3;
+            const count = newTotal - preTotal;
 
             const newMatchIds = await this.findMatchIds(userInfo.puuid, count);
+
             const newChampions = await this.allMatches(
                 newMatchIds,
                 userInfo.puuid,
