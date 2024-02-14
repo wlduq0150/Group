@@ -242,7 +242,7 @@ function initTier() {
 }
 
 function initPosition() {
-    matchingPeople = null;
+    matchingPosition = null;
 
     document
         .querySelectorAll(".matching-parent .matching-position-box img")
