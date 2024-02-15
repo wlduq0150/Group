@@ -6,6 +6,7 @@ let friendIds = [];
 let blockedUserIds = [];
 let isGroupLoading = false;
 let isGroupJoining = false;
+let allGroups = [];
 // const socketURL = "";
 
 //const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
@@ -43,8 +44,7 @@ window.onload = function () {
     }
 
     socket.on("getAllGroup", async function (data) {
-        let allGroups = [];
-
+        allGroups = [];
         if (Array.isArray(data.groups)) {
             allGroups = data.groups.map((groupObj) => {
                 const keys = Object.keys(groupObj);
@@ -142,19 +142,24 @@ completeBtn.addEventListener("click", async function (e) {
         position.className.split(" ")[0].replace("position-", ""),
     );
 
-    socket.emit("groupCreate", {
-        name: title,
-        mode: mode,
-        tier: tier,
-        people: mode === "aram" ? people : null,
-        owner: userId,
-        private: privateCheckbox.checked,
-        password: privateCheckbox.checked ? password : undefined,
-        position: mode === "aram" ? [] : selectedPositions,
-    });
+    // 입력 받은 문자 전체 공백 여부 확인
+    if (title.replaceAll(" ", "") !== "") {
+        socket.emit("groupCreate", {
+            name: title.trim(),
+            mode: mode,
+            tier: tier,
+            people: mode === "aram" ? people : null,
+            owner: userId,
+            private: privateCheckbox.checked,
+            password: privateCheckbox.checked ? password : undefined,
+            position: mode === "aram" ? [] : selectedPositions,
+        });
 
-    groupContainer.classList.add("hidden");
-    resetCreateGroupModal();
+        groupContainer.classList.add("hidden");
+        resetCreateGroupModal();
+    } else {
+        alert("제목이 비어있습니다!");
+    }
 });
 
 // 새로고침 이벤트 처리
@@ -298,6 +303,34 @@ async function updateGroupTable(groups) {
 
         tableBody.appendChild(tr);
     }
+}
+
+// 그룹 검색 이벤트 리스너
+document
+    .querySelector(".user-search .search input")
+    .addEventListener("keyup", function (e) {
+        if (e.key === "Enter") {
+            const keyword = this.value;
+            filterGroupTable(keyword, allGroups);
+            this.value = "";
+        }
+    });
+
+document
+    .querySelector(".user-search .search img")
+    .addEventListener("click", function () {
+        const inputField = document.querySelector(".search input").value;
+        const keyword = inputField;
+        filterGroupTable(keyword, allGroups);
+        inputField.value = "";
+    });
+
+// 검색 필터링
+async function filterGroupTable(keyword, groups) {
+    const filterdGroups = groups.filter((group) =>
+        group.info.name.includes(keyword),
+    );
+    updateGroupTable(filterdGroups);
 }
 
 // 그룹 참가 함수

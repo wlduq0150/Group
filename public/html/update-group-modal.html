@@ -9,6 +9,7 @@
 
     <body>
         <div class="update-group-modal">
+            <span class="close">&times;</span>
             <div class="update-group-modal-bar">그룹 수정</div>
             <div class="select-group-box">
                 <div class="title-box group-box-item">
@@ -160,6 +161,18 @@
                 <div class="out-cancel-btn">취소</div>
             </div>
         </div>
+        <script>
+            // x 버튼
+            document
+                .querySelectorAll(".update-group-modal .close")
+                .forEach((button) => {
+                    button.addEventListener("click", function () {
+                        document
+                            .querySelector("#updateGroupContainer")
+                            .classList.add("hidden");
+                    });
+                });
+        </script>
         <script src="../js/update-group-modal.js"></script>
     </body>
 </html>

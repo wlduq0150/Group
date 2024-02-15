@@ -9,6 +9,7 @@
 
 <body>
     <div class="friend_request_wrapper">
+        <span class="close">&times;</span>
         <div id="friend_request_modal_drag_me" class="friend_request_modal" data-senderId="0">
             <div class="sender_box">
                 <div class="sender_img_box">
@@ -27,6 +28,14 @@
         </div>
     </div>
 </body>
+<script>
+    // x 버튼
+    document.querySelectorAll(".friend_request_wrapper .close").forEach((button) => {
+        button.addEventListener("click", function () {
+            document.querySelector("#friendRequestContainer").classList.add("hidden");
+        });
+    });
+</script>
 <script src="../js/friend-request.js"></script>
 
 </html>

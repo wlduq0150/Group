@@ -20,6 +20,12 @@ import { updateGroupState } from "./function/update-group-state.function";
 import { POSITION_LIST } from "./constants/position.constants";
 import { GroupGateway } from "./group.gateway";
 import { ConfigService } from "@nestjs/config";
+import { USER_SOCKET_DATA_TTL } from "./constants/group-redis-ttl.constants";
+import {
+    generateGroupInfoKey,
+    generateGroupLockKey,
+    generateGroupStateKey,
+} from "./function/gen-redis-key.function";
 
 @Injectable()
 export class GroupService {
@@ -46,22 +52,15 @@ export class GroupService {
         await this.redisService.clear();
     }
 
-    private generateGroupInfoKey(groupId: string) {
-        return `group:info:${groupId}`;
-    }
-
-    private generateGroupStateKey(groupId: string) {
-        return `group:state:${groupId}`;
-    }
-
-    private generateGroupLockKey(groupId: string) {
-        return `group:lock:${groupId}`;
-    }
-
     async saveDataInSocket(clientId: string, attr: string, data: any) {
+        // 해쉬 값 설정
         await this.redisService
             .getRedisClient()
             .hset(clientId, attr, data.toString());
+        // 만료 기간 설정
+        await this.redisService
+            .getRedisClient()
+            .expire(clientId, USER_SOCKET_DATA_TTL);
     }
 
     async getDataInSocket(clientId: string, attr: string) {
@@ -96,8 +95,8 @@ export class GroupService {
             throw new WsException("그룹원이 두명이상 필요합니다.");
         }
 
-        const groupInfoKey = this.generateGroupInfoKey(groupId);
-        const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupInfoKey = generateGroupInfoKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
 
         // 채널 생성 메서드 불러오기
         const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
@@ -133,9 +132,9 @@ export class GroupService {
     ) {
         const { mode } = updateGroupDto;
 
-        const groupInfoKey = this.generateGroupInfoKey(groupId);
-        const groupStateKey = this.generateGroupStateKey(groupId);
-        const groupStateLockkey = this.generateGroupLockKey(groupId);
+        const groupInfoKey = generateGroupInfoKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
+        const groupStateLockkey = generateGroupLockKey(groupId);
 
         const lock = await this.redlock.acquire([groupStateLockkey], 1000);
 
@@ -242,7 +241,7 @@ export class GroupService {
     }
 
     async findGroupInfoById(groupId: string) {
-        const groupInfoKey = this.generateGroupInfoKey(groupId);
+        const groupInfoKey = generateGroupInfoKey(groupId);
         const data = await this.redisService.get(groupInfoKey);
         const group: Group = JSON.parse(data);
 
@@ -254,7 +253,7 @@ export class GroupService {
     }
 
     async findGroupStateById(groupId: string) {
-        const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
 
         const data = await this.redisService.get(groupStateKey);
         const groupState: GroupState = JSON.parse(data);
@@ -267,8 +266,8 @@ export class GroupService {
     }
 
     async removeGroup(groupId: string) {
-        const groupInfoKey = this.generateGroupInfoKey(groupId);
-        const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupInfoKey = generateGroupInfoKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
 
         await this.redisService.del(groupInfoKey);
         await this.redisService.del(groupStateKey);
@@ -278,8 +277,8 @@ export class GroupService {
 
     // userId 지우기
     async joinGroup(groupId: string, userId: number) {
-        const groupStateKey = this.generateGroupStateKey(groupId);
-        const groupStateLockkey = this.generateGroupLockKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
+        const groupStateLockkey = generateGroupLockKey(groupId);
 
         const lock = await this.redlock.acquire([groupStateLockkey], 1000);
 
@@ -301,6 +300,14 @@ export class GroupService {
                 throw new Error("이미 해당 그룹에 참여하고 있습니다.");
             }
 
+            const owner = await this.userService.findOneById(groupInfo.owner);
+            const ownerBlockedList = owner.blockedUsers.map((user) => user.id);
+            if (ownerBlockedList.includes(userId)) {
+                throw new Error(
+                    "차단 당한 유저의 그룹에는 참여할 수 없습니다.",
+                );
+            }
+
             groupState.currentUser += 1;
             groupState.users.push(userId);
 
@@ -318,9 +325,9 @@ export class GroupService {
     }
 
     async leaveGroup(groupId: string, userId: number, users: number[]) {
-        const groupInfoKey = this.generateGroupInfoKey(groupId);
-        const groupStateKey = this.generateGroupStateKey(groupId);
-        const groupStateLockkey = this.generateGroupLockKey(groupId);
+        const groupInfoKey = generateGroupInfoKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
+        const groupStateLockkey = generateGroupLockKey(groupId);
 
         const lock = await this.redlock.acquire([groupStateLockkey], 1000);
 
@@ -405,8 +412,8 @@ export class GroupService {
     }
 
     async selectPosition(groupId: string, userId: number, position: Position) {
-        const groupStateKey = this.generateGroupStateKey(groupId);
-        const groupStateLockkey = this.generateGroupLockKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
+        const groupStateLockkey = generateGroupLockKey(groupId);
 
         const redisClient = this.redisService.getRedisClient();
 
@@ -448,7 +455,7 @@ export class GroupService {
         userId: number,
         position: Position,
     ) {
-        const groupStateKey = this.generateGroupStateKey(groupId);
+        const groupStateKey = generateGroupStateKey(groupId);
 
         const groupState = await this.findGroupStateById(groupId);
 
