@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Modal</title>
+    <link rel="stylesheet" href="../css/notice-modal.css">
+</head>
+
+<body>
+
+    <div id="noticeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <iframe src="path/to/your/pdf/file.pdf" style="width:100%;height:500px;"></iframe>
+            <button id="closeModalBtn">닫기</button>
+            <label for="ignoreForever" id="ignoreForeverLabel">
+                <input type="checkbox" id="ignoreForever"> 앞으로 보지 않기
+            </label>
+        </div>
+    </div>
+
+
+    <script src="../js/notice-modal.js"></script>
+
+</body>
+
+</html>
