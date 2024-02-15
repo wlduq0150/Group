@@ -184,7 +184,7 @@ input {
 .group_manage_chat .chat_input {
     width: 85%;
     height: 100%;
-    padding: 8px;
+    padding: 8px 56px 8px 8px;
     box-sizing: border-box;
     font-size: 18px;
     border-radius: 12px;
@@ -204,6 +204,12 @@ input {
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
             5 5,
         pointer;
+}
+
+.chat_input_count {
+    position: absolute;
+    right: 136px;
+    bottom: 36px;
 }
 
 #updateGroupContainer {
