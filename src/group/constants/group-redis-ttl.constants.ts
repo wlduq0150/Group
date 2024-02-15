@@ -1,0 +1,1 @@
+export const USER_SOCKET_DATA_TTL = 3600000;

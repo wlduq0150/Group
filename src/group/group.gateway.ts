@@ -24,6 +24,7 @@ import {
     DecorateAcknowledgementsWithMultipleResponses,
     DefaultEventsMap,
 } from "socket.io/dist/typed-events";
+import { generateUserDataKey } from "./function/gen-redis-key.function";
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
@@ -47,18 +48,28 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async handleDisconnect(client: Socket) {
         //그룹 자동 나가기 및 유저 id 해제
+        const userId = +(await this.groupService.getDataInSocket(
+            client.id,
+            "userId",
+        ));
+        const userDataKey = generateUserDataKey(userId);
+
+        // redis에서 유저가 다른 그룹에 참여중인지 확인
+        const isUserGroupJoin = await this.groupService.getDataInSocket(
+            userDataKey,
+            "groupId",
+        );
+
         try {
-            if (client["groupId"] !== null) {
+            if (isUserGroupJoin) {
                 await this.groupLeave(client, true);
             }
+            await this.groupService.delDataInSocket(client.id, "userId");
         } catch (e) {
-            console.log("예상치 못한 에러 발생");
+            console.log(e);
+            console.log("예기치 않은 에러입니다.");
         }
 
-        Promise.all([
-            this.groupService.delDataInSocket(client.id, "userId"),
-            this.groupService.delDataInSocket(client.id, "groupId"),
-        ]);
         console.log(`[Group]client disconnected: ${client.id}`);
     }
 
@@ -130,11 +141,23 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             client.id,
             "userId",
         ));
-
         if (!userId) {
             throw new WsException("로그인이 필요합니다.");
         }
 
+        // 유저의 그룹정보 키
+        const userDataKey = generateUserDataKey(userId);
+
+        // redis에서 유저가 다른 그룹에 참여중인지 확인
+        const isUserGroupJoin = await this.groupService.getDataInSocket(
+            userDataKey,
+            "groupId",
+        );
+        if (isUserGroupJoin) {
+            throw new WsException("이미 그룹에 참여중입니다.");
+        }
+
+        // 소켓이 그룹 룸에 참여중인지 확인
         if (checkIsUserAlreadyJoin(client)) {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
@@ -208,12 +231,26 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             "userId",
         ));
         if (!userId) {
+            console.log("로그인 에러");
+            throw new WsException("로그인이 필요합니다.");
+        }
+
+        // 유저의 그룹정보 키
+        const userDataKey = generateUserDataKey(userId);
+
+        // redis에서 유저가 다른 그룹에 참여중인지 확인
+        const isUserGroupJoin = await this.groupService.getDataInSocket(
+            userDataKey,
+            "groupId",
+        );
+        if (isUserGroupJoin) {
             throw new WsException("이미 그룹에 참여중입니다.");
         }
 
-        // 이미 그룹에 참여중인 경우 예외처리
+        // 소켓이 그룹 룸에 참여중인지 확인
         const result = checkIsUserAlreadyJoin(client);
         if (result) {
+            console.log("그룹 에러");
             throw new WsException("이미 그룹에 참여중입니다.");
         }
 
@@ -223,6 +260,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // 그룹 참가
         await client.join(groupId);
         await this.groupService.saveDataInSocket(client.id, "groupId", groupId);
+        await this.groupService.saveDataInSocket(
+            userDataKey,
+            "groupId",
+            groupId,
+        );
 
         // 소켓으로 접속한 유저들 목록 불러오기
         const users = await this.findGroupUsers(groupId);
@@ -310,6 +352,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ));
 
         if (!userId) {
+            console.log("여기까지?");
             throw new WsException("로그인이 필요합니다.");
         }
 
@@ -317,9 +360,13 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             throw new WsException("해당 그룹에 참여하고 있지 않습니다.");
         }
 
+        // 유저의 그룹정보 키
+        const userDataKey = generateUserDataKey(userId);
+
         // 그룹 나가기
         client.leave(groupId);
         await this.groupService.delDataInSocket(client.id, "groupId");
+        await this.groupService.delDataInSocket(userDataKey, "groupId");
 
         // 칼바람 나락시 방장 교체를 위한 유저 목록
         const users = await this.findGroupUsers(groupId);
