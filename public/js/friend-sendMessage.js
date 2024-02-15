@@ -2,20 +2,22 @@
 function dblclickFriend() {
     const allFriends = document.querySelectorAll(".friend_list .one-friend");
     for (let myFriend of allFriends) {
-        const friendName = myFriend.querySelector(".user").innerText;
-        myFriend.addEventListener("dblclick", (e) => {
-            hideFriendList();
-            openSendMessage(friendName, myFriend.dataset.id);
-            getSendAccept(myFriend.dataset.id, userId, friendName);
-        });
-        myFriend.addEventListener("contextmenu", (e) => {
-            showUserClickModal(e);
-        });
+        let friendName = myFriend.querySelector(".user").innerText;
+        if (myFriend.dataset.id == friendIds[myFriend.dataset.id]) {
+            myFriend.addEventListener("dblclick", (e) => {
+                hideFriendList();
+                openSendMessage(friendName, myFriend.dataset.id);
+                getSendAccept(myFriend.dataset.id, userId);
+            });
+            myFriend.addEventListener("contextmenu", (e) => {
+                showUserClickModal(e);
+            });
+        }
     }
 }
 
-//귓속말 눌렀을때
-async function clickMessageChat() {
+//대화하기 눌렀을때
+async function clickMessageChat(e) {
     const friendId = +document.querySelector(
         "#userClickContainer .user_click_modal",
     ).dataset.id;
@@ -24,7 +26,7 @@ async function clickMessageChat() {
         const friendName = await findNameById(friendId);
         hideFriendList();
         openSendMessage(friendName, friendId);
-        getSendAccept(friendId, userId, friendName);
+        getSendAccept(friendId, userId);
     }
 }
 
@@ -32,4 +34,13 @@ async function clickMessageChat() {
 async function findNameById(friendId) {
     const res = await fetch(`/user/${friendId}`);
     return await res.text();
+}
+
+//프론트 엔드에서 유저가 작업관리자로 조작한경우
+function verifyUserId() {
+    const dataUserId = document.querySelector("#profile #profile-list");
+    if (userId != dataUserId.dataset.id) {
+        alert("로그인한 유저 id와 유저 태그의 id가 다릅니다");
+        dataUserId.setAttribute("data-id", `${userId}`);
+    }
 }

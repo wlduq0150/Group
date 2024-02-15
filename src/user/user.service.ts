@@ -68,4 +68,13 @@ export class UserService {
     async save(user: User): Promise<User> {
         return this.userRepository.save(user);
     }
+
+    async findUserNLol(userId: number): Promise<User> {
+        return await this.userRepository.findOne({
+            where: { id: userId },
+            relations: {
+                lolUser: true,
+            },
+        });
+    }
 }

@@ -29,4 +29,9 @@ export class UserController {
         }
         return user.id;
     }
+
+    @Get("/UserNLol/:id")
+    async findUserNLol(@Param("id") userId: number) {
+        return await this.userService.findUserNLol(+userId);
+    }
 }

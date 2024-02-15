@@ -137,12 +137,12 @@ async function getLolUserId(discordUserId) {
         method: "GET",
     });
     const me = discordUserId == userId;
+    const nameRes = await fetch(`/user/${discordUserId}`);
+    const discordUserName = await nameRes.text();
     if (res.status >= 400) {
         noDataLolUser(discordUserId, discordUserName, me);
         return;
     }
-    const nameRes = await fetch(`/user/${discordUserId}`);
-    const discordUserName = await nameRes.text();
 
     getUserProfile(discordUserId, discordUserName);
 }

@@ -27,13 +27,13 @@ async function getFriendList(userIds) {
 
     for (const userId of userIds) {
         if (userId) {
-            const userNameResponse = await fetch(`/user/${userId}`);
-            const userDetailResponse = await fetch(`/user/detail/${userId}`);
+            //const userNameResponse = await fetch(`/user/${userId}`);
+            const userDetailResponse = await fetch(`/user/UserNLol/${userId}`);
 
-            const userName = await userNameResponse.text();
+            //const userName = await userNameResponse.text();
             const userDetail = await userDetailResponse.json();
 
-            console.log(userDetail);
+            //console.log(userDetail);
 
             const userDiv = document.createElement("div");
             const innerDiv1 = document.createElement("div");
@@ -43,7 +43,7 @@ async function getFriendList(userIds) {
             nameDiv.classList.add("friend_name");
             const spanWrapDiv = document.createElement("div");
             const span = document.createElement("span");
-            span.textContent = userName;
+            span.textContent = userDetail.username;
             span.classList.add("user");
             span.dataset.id = userId;
             spanWrapDiv.appendChild(span);
@@ -70,7 +70,7 @@ async function getFriendList(userIds) {
                 : defaultAvatarUrl;
 
             imgDiv.setAttribute("src", avatarUrl);
-            imgDiv.setAttribute("alt", userName);
+            imgDiv.setAttribute("alt", userDetail.username);
 
             innerDiv1.appendChild(imgDiv);
             innerDiv1.appendChild(nameDiv);

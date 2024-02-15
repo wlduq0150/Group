@@ -198,6 +198,6 @@
     }
 }
 
-.hidden {
+.friend_list.hidden {
     display: none;
 }
