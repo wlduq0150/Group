@@ -52,6 +52,7 @@
         "joi": "^17.11.0",
         "lodash": "^4.17.21",
         "mysql2": "^3.6.5",
+        "nest-winston": "^1.9.4",
         "node-fetch": "^3.3.2",
         "papaparse": "^5.4.1",
         "passport": "^0.7.0",
@@ -65,7 +66,8 @@
         "timezone": "^1.0.23",
         "typeorm": "^0.3.20",
         "typeorm-naming-strategies": "^4.1.0",
-        "uuid": "^9.0.1"
+        "uuid": "^9.0.1",
+        "winston-mongodb": "^5.1.1"
     },
     "devDependencies": {
         "@nestjs/cli": "^10.0.0",
