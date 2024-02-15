@@ -142,19 +142,24 @@ completeBtn.addEventListener("click", async function (e) {
         position.className.split(" ")[0].replace("position-", ""),
     );
 
-    socket.emit("groupCreate", {
-        name: title,
-        mode: mode,
-        tier: tier,
-        people: mode === "aram" ? people : null,
-        owner: userId,
-        private: privateCheckbox.checked,
-        password: privateCheckbox.checked ? password : undefined,
-        position: mode === "aram" ? [] : selectedPositions,
-    });
+    // 입력 받은 문자 전체 공백 여부 확인
+    if (title.replaceAll(" ", "") !== "") {
+        socket.emit("groupCreate", {
+            name: title.trim(),
+            mode: mode,
+            tier: tier,
+            people: mode === "aram" ? people : null,
+            owner: userId,
+            private: privateCheckbox.checked,
+            password: privateCheckbox.checked ? password : undefined,
+            position: mode === "aram" ? [] : selectedPositions,
+        });
 
-    groupContainer.classList.add("hidden");
-    resetCreateGroupModal();
+        groupContainer.classList.add("hidden");
+        resetCreateGroupModal();
+    } else {
+        alert("제목이 비어있습니다!");
+    }
 });
 
 // 새로고침 이벤트 처리

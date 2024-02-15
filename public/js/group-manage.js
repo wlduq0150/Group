@@ -116,3 +116,11 @@ clickModalOutSide.addEventListener("click", (e) => {
         hideUpdateGroup();
     }
 });
+
+// 입력 받을 때마다 글자수 체크
+function checkInputTextLength(e) {
+    const length = 50 - e.target.value.length;
+    const span = document.querySelector(".chat_input_count");
+
+    span.innerHTML = `${length < 0 ? 0 : length}/50`;
+}
