@@ -12,6 +12,7 @@
     right: 0;
     bottom: 0;
 }
+
 .create-group-modal {
     /* display: grid;
     place-items: center; */
@@ -87,8 +88,7 @@
     height: 110px;
     width: 110px;
     cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
-            5 5,
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur") 5 5,
         pointer;
 }
 
@@ -108,7 +108,15 @@
     height: 40px;
     border-radius: 15px;
     cursor:
-        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
-            5 5,
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur") 5 5,
         pointer;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
 }

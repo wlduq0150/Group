@@ -10,13 +10,13 @@
 
 <body>
   <div class="create-group-modal">
+    <span class="close">&times;</span>
     <div id="create_group_modal_drag_me" class="create-group-modal-bar">그룹 생성</div>
     <div class="select-group-box">
       <div class="title-box group-box-item">
         <div class="group-title">제목</div>
         <input class="group-title-input group-box-item-input" type="text" />
       </div>
-
       <div class="mode-box group-box-item">
         <div>모드</div>
         <select class="create-group-mode group-box-item-input" name="create-group-game-mode" id="lang">
@@ -211,6 +211,14 @@
           />
         `;
     }
+
+    // x 버튼
+    document.querySelectorAll(".create-group-modal .close").forEach((button) => {
+      button.addEventListener("click", function () {
+        document.querySelector("#groupContainer").classList.add("hidden");
+        resetCreateGroupModal();
+      });
+    });
   </script>
 </body>
 <script src="../js/drag.js"></script>

@@ -6,6 +6,7 @@ let friendIds = [];
 let blockedUserIds = [];
 let isGroupLoading = false;
 let isGroupJoining = false;
+let allGroups = [];
 // const socketURL = "";
 
 //const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
@@ -43,8 +44,7 @@ window.onload = function () {
     }
 
     socket.on("getAllGroup", async function (data) {
-        let allGroups = [];
-
+        allGroups = [];
         if (Array.isArray(data.groups)) {
             allGroups = data.groups.map((groupObj) => {
                 const keys = Object.keys(groupObj);
@@ -298,6 +298,34 @@ async function updateGroupTable(groups) {
 
         tableBody.appendChild(tr);
     }
+}
+
+// 검색 이벤트 리스너
+document
+    .querySelector(".user-search .search input")
+    .addEventListener("keyup", function (e) {
+        if (e.key === "Enter") {
+            const keyword = this.value;
+            filterGroupTable(keyword, allGroups);
+            this.value = "";
+        }
+    });
+
+document
+    .querySelector(".user-search .search img")
+    .addEventListener("click", function () {
+        const inputField = document.querySelector(".search input");
+        const keyword = inputField;
+        filterGroupTable(keyword, allGroups);
+        inputField.value = "";
+    });
+
+// 검색 필터링
+async function filterGroupTable(keyword, groups) {
+    const filterdGroups = groups.filter((group) =>
+        group.info.name.includes(keyword),
+    );
+    updateGroupTable(filterdGroups);
 }
 
 // 그룹 참가 함수
