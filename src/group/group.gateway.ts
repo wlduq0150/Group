@@ -59,12 +59,17 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             userDataKey,
             "groupId",
         );
-        if (isUserGroupJoin) {
-            await Promise.all([
-                this.groupService.delDataInSocket(client.id, "userId"),
-                this.groupLeave(client),
-            ]);
+
+        try {
+            if (isUserGroupJoin) {
+                await this.groupLeave(client, true);
+            }
+            await this.groupService.delDataInSocket(client.id, "userId");
+        } catch (e) {
+            console.log(e);
+            console.log("예기치 않은 에러입니다.");
         }
+
         console.log(`[Group]client disconnected: ${client.id}`);
     }
 
