@@ -520,6 +520,10 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
 
         // 유저 이름
         const userId = +groupState[position].userId;
+        const fOut = document.querySelector(
+            `.update-select-position-box .position-${position} .out-btn`,
+        );
+        fOut.classList.add("hidden");
         let userName = "";
         if (userId) {
             try {
@@ -529,6 +533,8 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
                 userName = await response.text();
                 positionTarget.dataset.userId = userId;
                 positionTarget.classList.add("positionSelected");
+
+                fOut.classList.remove("hidden");
             } catch (e) {
                 console.log(e);
             }
@@ -620,6 +626,10 @@ document.querySelectorAll(".update-group-modal .out-btn").forEach((outBtn) => {
         const userName =
             outBtn.parentElement.querySelector(".user-name").textContent;
         console.log(userId);
+        if (userName == "") {
+            console.log("강퇴할 유저가 없습니다");
+            return;
+        }
         noneBlockOutModal(userId, userName);
     });
 });
@@ -720,6 +730,7 @@ socket.on("groupJoin", (data) => {
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState, users ? [...users] : []);
     updateSelectPositionState(groupState, users ? [...users] : []);
+    viewGroupImg();
 });
 
 socket.on("openGroupUpdate", (data) => {
@@ -750,6 +761,7 @@ socket.on("groupLeave", () => {
     resetSelectPositionState();
     resetGroupUpdateState();
     hideGroupManage();
+    hideGroupImg();
     console.log("유저 그룹 나가기 완료");
 });
 

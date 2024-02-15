@@ -3,6 +3,7 @@ let lastWriter = null;
 function showGroupManage() {
     hidenChatImg();
     document.getElementById("groupManageContainer").classList.remove("hidden");
+    hidePeoleBox();
 }
 
 function hideGroupManage() {
@@ -116,3 +117,21 @@ clickModalOutSide.addEventListener("click", (e) => {
         hideUpdateGroup();
     }
 });
+
+//그룹 이미지 켜지기
+function viewGroupImg() {
+    const groupImg = document.querySelector(".chatting_box .chatting-img-btn");
+    groupImg.classList.remove("hidden");
+}
+
+//그룹 이미지 꺼지기
+function hideGroupImg() {
+    const groupImg = document.querySelector(".chatting_box .chatting-img-btn");
+    groupImg.classList.add("hidden");
+}
+
+//인원수 가리기
+function hidePeoleBox() {
+    document.querySelector(".create-group-modal .people-box").style.display =
+        "none";
+}

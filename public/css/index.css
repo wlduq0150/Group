@@ -703,6 +703,7 @@ main {
     height: 70px;
 }
 
+.chatting-img-btn.hidden,
 .chatting-notice-img-btn.hidden {
     display: none;
 }
