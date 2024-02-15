@@ -6,7 +6,7 @@ function dblclickFriend() {
         myFriend.addEventListener("dblclick", (e) => {
             hideFriendList();
             openSendMessage(friendName, myFriend.dataset.id);
-            getSendAccept(myFriend.dataset.id, userId, friendName);
+            getSendAccept(myFriend.dataset.id, userId);
         });
         myFriend.addEventListener("contextmenu", (e) => {
             showUserClickModal(e);
@@ -24,7 +24,7 @@ async function clickMessageChat() {
         const friendName = await findNameById(friendId);
         hideFriendList();
         openSendMessage(friendName, friendId);
-        getSendAccept(friendId, userId, friendName);
+        getSendAccept(friendId, userId);
     }
 }
 

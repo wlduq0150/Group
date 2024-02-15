@@ -813,10 +813,14 @@ friendSocket.on("friendComplete", (data) => {
 });
 
 friendSocket.on("sendMessage", (data) => {
+    const messageContainer = document.querySelector("#sendMessageContainer");
     const roomId = document.querySelector(
         ".sendMessage-parent .discordUser-name",
     ).dataset.room_id;
-    if (data.messageRoomId == roomId) {
+    if (
+        data.messageRoomId == roomId &&
+        !messageContainer.classList.contains("hidden")
+    ) {
         socketMessage(data);
     } else {
         alarmFriendMessage(data.senderId);

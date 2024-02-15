@@ -37,11 +37,7 @@ function alarmFriendMessage(senderId) {
 
 //온 메세지 눌렀을때
 async function clickAlarmMessage(e) {
-    document.querySelector("#profile .message-alarm").innerHTML = `<img
-    class="no-alarm"
-    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/noMessage.png"
-    alt=""
-/>`;
+    noAlarmMessage();
     const friendId = e.target.dataset.id;
     const friendName = await findNameById(friendId);
     openSendMessage(friendName, friendId);
@@ -57,4 +53,12 @@ function hideMessageAlarm() {
 //알림 메세지 숨기기
 function viewMessagAlarm() {
     document.querySelector("#profile .message-alarm").classList.add("hidden");
+}
+
+function noAlarmMessage() {
+    document.querySelector("#profile .message-alarm").innerHTML = `<img
+    class="no-alarm"
+    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/noMessage.png"
+    alt=""
+/>`;
 }
