@@ -300,7 +300,7 @@ async function updateGroupTable(groups) {
     }
 }
 
-// 검색 이벤트 리스너
+// 그룹 검색 이벤트 리스너
 document
     .querySelector(".user-search .search input")
     .addEventListener("keyup", function (e) {
@@ -314,7 +314,7 @@ document
 document
     .querySelector(".user-search .search img")
     .addEventListener("click", function () {
-        const inputField = document.querySelector(".search input");
+        const inputField = document.querySelector(".search input").value;
         const keyword = inputField;
         filterGroupTable(keyword, allGroups);
         inputField.value = "";
