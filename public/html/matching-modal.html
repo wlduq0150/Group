@@ -10,6 +10,7 @@
 
 <body>
     <div class="matching-parent">
+        <span class="close">&times;</span>
         <div class="matching-bar">매칭</div>
         <!-- <div class="group-name">님의 그룹</div> -->
         <div class="matching-box matching-mode-box matching-page-1" data-page=1>
@@ -136,6 +137,14 @@
         </div>
     </div>
     <!-- <script src="../js/matching-modal.js"></script> -->
+    <script>
+        // x 버튼
+        document.querySelectorAll(".matching-parent .close").forEach((button) => {
+            button.addEventListener("click", function () {
+                document.querySelector("#matchingContainer").classList.add("hidden");
+            });
+        });
+    </script>
 </body>
 
 </html>
