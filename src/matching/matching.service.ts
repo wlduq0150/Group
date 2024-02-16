@@ -45,41 +45,35 @@ export class MatchingService {
         const { matchingClientId, mode, people, tier, position } =
             findMatchingUserDto;
 
-        // 매칭 키 조회 옵션
-        const matchingUserKeyOption1 = genMatchingKeyOption(
-            matchingClientId,
-            mode,
-            people,
-            tier - 1,
-            position,
-        );
-        const matchingUserKeyOption2 = genMatchingKeyOption(
-            matchingClientId,
-            mode,
-            people,
-            tier,
-            position,
-        );
-        const matchingUserKeyOption3 = genMatchingKeyOption(
-            matchingClientId,
-            mode,
-            people,
-            tier + 1,
-            position,
-        );
+        const matchingUserKeyOptions: string[] = [];
+
+        // 티어 범위는 한 단계 위아래 까지 매칭
+        const tierRange = [tier - 1, tier, tier + 1];
+
+        // 매칭 옵션을 통해 키 생성
+        tierRange.forEach((tier) => {
+            const matchingUserKeyOption = genMatchingKeyOption(
+                matchingClientId,
+                mode,
+                people,
+                tier,
+                position,
+            );
+
+            matchingUserKeyOptions.push(matchingUserKeyOption);
+        });
 
         // 매칭 키 옵션을 통해 매칭중인 유저 목록 불러오기
-        const matchingUserKeyLists = await Promise.all([
-            this.redisClient.keys(matchingUserKeyOption1),
-            this.redisClient.keys(matchingUserKeyOption2),
-            this.redisClient.keys(matchingUserKeyOption3),
-        ]);
+        const matchingPromises = matchingUserKeyOptions.map((keyOption) => {
+            return this.redisClient.keys(keyOption);
+        });
+        const matchingUserKeyLists = await Promise.all([...matchingPromises]);
 
-        const matchingUserKeys = [
-            ...matchingUserKeyLists[0],
-            ...matchingUserKeyLists[1],
-            ...matchingUserKeyLists[2],
-        ];
+        // 매칭된 키 목록
+        const matchingUserKeys = [];
+        matchingUserKeyLists.forEach((keys) => {
+            matchingUserKeys.push(...keys);
+        });
 
         return matchingUserKeys;
     }
