@@ -45,6 +45,11 @@
     justify-content: space-around;
 }
 
+.group-comment {
+    margin-top: 25px;
+    text-align: center;
+}
+
 .create-group-modal .group-box-item {
     display: flex;
     flex-direction: column;
@@ -74,7 +79,7 @@
 }
 
 .create-group-modal .select-position-box {
-    height: 210px;
+    height: 190px;
     display: flex;
     justify-content: space-around;
     align-items: center;
