@@ -1,0 +1,72 @@
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    max-width: 90%;
+    width: 700px; /* 또는 원하는 너비 */
+    max-height: 90%;
+    height: 700px; /* 또는 원하는 높이 */
+    overflow: auto;
+    border: 1px solid #888;
+    border-radius: 8px;
+}
+
+.modal-iframe {
+    width: 100%;
+    height: 100%;
+    transform: scale(2);
+    transform-origin: 0 0;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    color: #aaa;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+#ignoreForeverLabel {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+#closeModalBtn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+#closeModalBtn:hover {
+    background-color: #d32f2f;
+}
