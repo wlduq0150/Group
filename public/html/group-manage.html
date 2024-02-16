@@ -77,8 +77,8 @@
             <div class="group_manage_chat_list"></div>
 
             <div class="group_manage_chat">
-                <input class="chat_input" onKeyDown="checkInputTextLength(event)" placeholder="최대 50글자까지 입력가능합니다." maxlength="50" type="text" />
-                <span class="chat_input_count"></span>
+                <input class="chat_input" onkeyup="checkInputTextLength(event)" placeholder="최대 50글자까지 입력가능합니다." maxlength="50" type="text" />
+                <span class="chat_input_count">50/50</span>
                 <button class="chat_send" type="button">보내기</button>
             </div>
         </div>
