@@ -21,11 +21,16 @@
                 rawFile.send(null);
             }
         </script>
+        <script>
+            function openPDF() {
+                window.open("./notice.pdf", "_blank");
+            }
+        </script>
     </head>
-
     <body>
         <div class="user-context" id="user-context"></div>
         <header>
+            <div class="notice" onclick="openPDF()">PDF 열기</div>
             <img
                 src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png"
             />
@@ -121,6 +126,7 @@
                             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
                         />
                     </div>
+
                     <div
                         class="match-group"
                         id="groupMatchingButton"
@@ -133,7 +139,6 @@
                         그룹 생성
                     </div>
                 </div>
-
                 <div class="table_wrapper scrollBar">
                     <table id="groupTable">
                         <thead>
@@ -170,7 +175,6 @@
             />
         </div>
         <!-- <script src="../js/pop-up.js"></script> -->
-
         <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
         <script src="../js/constants.js"></script>
         <script src="../js/index.js"></script>

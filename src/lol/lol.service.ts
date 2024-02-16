@@ -50,6 +50,7 @@ export class LolService {
         const userInfo = await this.lolUserRepository.findOneBy({
             nameTag: name + "#" + tag,
         });
+        console.log(userInfo);
         return userInfo;
     }
 
@@ -86,7 +87,7 @@ export class LolService {
         }
 
         const userInfo = await this.saveLolUser(name, tag, discordUserId);
-        await this.saveChampionData(userInfo.id);
+        await this.saveChampionData(userInfo);
     }
 
     //유저 롤 정보 저장
@@ -116,26 +117,28 @@ export class LolService {
             userId: discordUserId,
             lastMatchId: "no",
         });
-        const thisUser = await this.lolUserRepository.findOne({
-            where: { nameTag: name + "#" + tag },
-        });
+        const thisUser = {
+            id: discordUserId,
+            wins: user[0].wins,
+            losses: user[0].losses,
+            puuid: userPuuid.puuid,
+        };
         return thisUser;
     }
 
     //챔피언 정보 저장
-    private async saveChampionData(userId: number) {
-        const userInfo = await this.findUserInfo(userId);
-
+    private async saveChampionData(userInfo: any) {
         const count = Number(userInfo.wins) + Number(userInfo.losses);
 
         const userMatchIds = await this.findMatchIds(userInfo.puuid, count);
         if (!userMatchIds.length) {
             return;
         }
+        console.log("메치정보", userMatchIds);
         const userChampions = await this.allMatches(
             userMatchIds,
             userInfo.puuid,
-            userId,
+            userInfo.id,
         );
 
         const clearChampions = userChampions
@@ -145,7 +148,7 @@ export class LolService {
             .sort((a, b) => b.wins - a.wins);
 
         await this.lolUserRepository.update(
-            { id: userId },
+            { id: userInfo.id },
             { lastMatchId: clearChampions.shift() },
         );
 
@@ -172,6 +175,8 @@ export class LolService {
             .leftJoinAndSelect("lolUser.lolChampions", "lolChampions")
             .orderBy("lolChampions.total", "DESC")
             .getOne();
+
+        //await this.lolUserRepository;
         if (!lolUserInfo) {
             throw new NotFoundException(
                 "유저 id가 잘못됬거나 해당하는 롤유저가 없습니다",

@@ -630,6 +630,16 @@ main {
     position: absolute;
 }
 
+#noticeModalContainer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#noticeModalContainer.hidden,
 #profile .message-alarm.hidden,
 #matchingContainer.hidden,
 #sendMessageContainer.hidden,
@@ -733,4 +743,10 @@ main {
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
             5 5,
         pointer;
+}
+
+.notice {
+    position: absolute;
+    color: white;
+    left: 0;
 }
