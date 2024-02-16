@@ -1,63 +1,110 @@
 <!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../css/select-position-modal.css" />
+        <title>포지션 선택</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/select-position-modal.css" />
-    <title>포지션 선택</title>
-</head>
-
-<body>
-    <div class="select-position-parent">
-        <span class="close">&times;</span>
-        <div class="select-position-bar">역할 선택</div>
-        <!-- <div class="group-name">님의 그룹</div> -->
-        <div class="select-position-box">
-            <div id="position-box" class="position-jg">
-                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png" alt="" />
-                <div id="userName" class="jg-user-name" oncontextmenu="showUserClickModal(event)">
-                    <br />
+    <body>
+        <div class="select-position-parent">
+            <span class="close"
+                ><img
+                    class="modal-close-white"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EC%97%91%EC%8A%A4%EB%B0%B1.png"
+                    alt=""
+            /></span>
+            <div class="select-position-bar">역할 선택</div>
+            <!-- <div class="group-name">님의 그룹</div> -->
+            <div class="select-position-box">
+                <div id="position-box" class="position-jg">
+                    <img
+                        id="position"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
+                        alt=""
+                    />
+                    <div
+                        id="userName"
+                        class="jg-user-name"
+                        oncontextmenu="showUserClickModal(event)"
+                    >
+                        <br />
+                    </div>
+                </div>
+                <div id="position-box" class="position-top">
+                    <img
+                        id="position"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png"
+                        alt=""
+                    />
+                    <div
+                        id="userName"
+                        class="top-user-name"
+                        oncontextmenu="showUserClickModal(event)"
+                    >
+                        <br />
+                    </div>
+                </div>
+                <div id="position-box" class="position-mid">
+                    <img
+                        id="position"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
+                        alt=""
+                    />
+                    <div
+                        id="userName"
+                        class="mid-user-name"
+                        oncontextmenu="showUserClickModal(event)"
+                    >
+                        <br />
+                    </div>
+                </div>
+                <div id="position-box" class="position-adc">
+                    <img
+                        id="position"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png"
+                        alt=""
+                    />
+                    <div
+                        id="userName"
+                        class="adc-user-name"
+                        oncontextmenu="showUserClickModal(event)"
+                    >
+                        <br />
+                    </div>
+                </div>
+                <div id="position-box" class="position-sup">
+                    <img
+                        id="position"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"
+                        alt=""
+                    />
+                    <div
+                        id="userName"
+                        class="sup-user-name"
+                        oncontextmenu="showUserClickModal(event)"
+                    >
+                        <br />
+                    </div>
                 </div>
             </div>
-            <div id="position-box" class="position-top">
-                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png" alt="" />
-                <div id="userName" class="top-user-name" oncontextmenu="showUserClickModal(event)">
-                    <br />
-                </div>
-            </div>
-            <div id="position-box" class="position-mid">
-                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png" alt="" />
-                <div id="userName" class="mid-user-name" oncontextmenu="showUserClickModal(event)">
-                    <br />
-                </div>
-            </div>
-            <div id="position-box" class="position-adc">
-                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png" alt="" />
-                <div id="userName" class="adc-user-name" oncontextmenu="showUserClickModal(event)">
-                    <br />
-                </div>
-            </div>
-            <div id="position-box" class="position-sup">
-                <img id="position" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png" alt="" />
-                <div id="userName" class="sup-user-name" oncontextmenu="showUserClickModal(event)">
-                    <br />
-                </div>
+            <div class="complete-btn-box">
+                <div class="complete-btn">완료</div>
             </div>
         </div>
-        <div class="complete-btn-box">
-            <div class="complete-btn">완료</div>
-        </div>
-    </div>
-    <script>
-        // x 버튼
-        document.querySelectorAll(".select-position-parent .close").forEach((button) => {
-            button.addEventListener("click", function () {
-                document.querySelector("#positionSelectContainer").classList.add("hidden");
-            });
-        });
-    </script>
-    <script src="../js/select-positon-modal.js"></script>
-</body>
-
+        <script>
+            // x 버튼
+            document
+                .querySelectorAll(".select-position-parent .close")
+                .forEach((button) => {
+                    button.addEventListener("click", function () {
+                        document
+                            .querySelector("#positionSelectContainer")
+                            .classList.add("hidden");
+                    });
+                });
+        </script>
+        <script src="../js/select-positon-modal.js"></script>
+    </body>
 </html>

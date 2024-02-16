@@ -103,6 +103,7 @@
 }
 
 .update-group-modal .out-btn {
+    pointer-events: auto;
     height: 20px;
     width: 20px;
     font-weight: bold;
