@@ -48,6 +48,7 @@ export class LolService {
         const userInfo = await this.lolUserRepository.findOneBy({
             nameTag: name + "#" + tag,
         });
+        console.log(userInfo);
         return userInfo;
     }
 
@@ -116,9 +117,12 @@ export class LolService {
             user: discordUser,
             lastMatchId: "no",
         });
-        const thisUser = await this.lolUserRepository.findOne({
-            where: { nameTag: name + "#" + tag },
-        });
+        const thisUser = {
+            id: discordUserId,
+            wins: user[0].wins,
+            losses: user[0].losses,
+            puuid: userPuuid.puuid,
+        };
         return thisUser;
     }
 
@@ -134,7 +138,6 @@ export class LolService {
         if (!userMatchIds.length) {
             return;
         }
-        console.log("결과1: ", userMatchIds);
         const userChampions = await this.allMatches(
             userMatchIds,
             userInfo.puuid,

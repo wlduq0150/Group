@@ -1,178 +1,162 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>main page</title>
-        <script src="../component.js"></script>
-        <link href="../css/index.css" rel="stylesheet" />
-        <script>
-            function loadHTML(file) {
-                const rawFile = new XMLHttpRequest();
-                rawFile.open("GET", file, false);
-                rawFile.onreadystatechange = function () {
-                    if (rawFile.readyState === 4) {
-                        if (rawFile.status === 200 || rawFile.status === 0) {
-                            const allText = rawFile.responseText;
-                            document.write(allText);
-                        }
+
+<head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>main page</title>
+    <script src="../component.js"></script>
+    <link href="../css/index.css" rel="stylesheet" />
+    <script>
+        function loadHTML(file) {
+            const rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4) {
+                    if (rawFile.status === 200 || rawFile.status === 0) {
+                        const allText = rawFile.responseText;
+                        document.write(allText);
                     }
-                };
-                rawFile.send(null);
-            }
-        </script>
-    </head>
+                }
+            };
+            rawFile.send(null);
+        }
+    </script>
+    <script>
+        function openPDF() {
+            var pdfURL = "https://with-lol.s3.ap-northeast-2.amazonaws.com/pdf/notice.pdf";
+            window.open(pdfURL, "_blank");
+        }
+    </script>
+</head>
 
-    <body>
-        <div class="user-context" id="user-context"></div>
-        <header>
-            <img
-                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png"
-            />
-            <nav>
-                <div id="profile">
-                    <div class="message-alarm hidden">
-                        <img
-                            class="no-alarm"
-                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/noMessage.png"
-                            alt=""
-                        />
-                    </div>
-                    <div
-                        id="profile-list"
-                        oncontextmenu="showUserClickModal(event)"
-                    >
-                        <div class="discord-user-name"></div>
-                    </div>
+<body>
+    <div class="user-context" id="user-context"></div>
+    <header>
+        <div class="notice" onclick="openPDF()">
+            <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EB%A9%94%EA%B0%80%ED%8F%B0.png"
+                alt="PDF 열기">
+        </div>
+        <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png" />
+        <nav>
+            <div id="profile">
+                <div class="message-alarm hidden">
+                    <img class="no-alarm" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/noMessage.png"
+                        alt="" />
                 </div>
-                <div id="login">
-                    <input
-                        class="login"
-                        id="login-btn"
-                        type="button"
-                        value="로그인"
-                    />
-                </div>
-            </nav>
-        </header>
-        <div class="hidden" id="groupManageContainer">
-            <script>
-                loadHTML("./group-manage.html");
-            </script>
-        </div>
-        <div class="hidden" id="groupContainer">
-            <script>
-                loadHTML("./create-group-modal.html");
-            </script>
-        </div>
-        <div class="hidden" id="profileContainer">
-            <script>
-                loadHTML("./profile-modal.html");
-            </script>
-        </div>
-        <div class="hidden" id="friendRequestContainer">
-            <script>
-                loadHTML("./friend-request-modal.html");
-            </script>
-        </div>
-        <div class="hidden" id="userClickContainer">
-            <script>
-                loadHTML("./user-click-modal.html");
-            </script>
-        </div>
-        <div class="hidden container" id="friendListContainer">
-            <script>
-                loadHTML("./friend-list.html");
-            </script>
-        </div>
-        <div class="hidden container" id="blockedUserContainer">
-            <script>
-                loadHTML("./blocked-user-modal.html");
-            </script>
-        </div>
-        <div class="hidden container" id="sendMessageContainer">
-            <script>
-                loadHTML("./sendMessage-modal.html");
-            </script>
-        </div>
-        <div class="hidden container" id="matchingContainer">
-            <script>
-                loadHTML("./matching-modal.html");
-            </script>
-        </div>
-        <main>
-            <div class="main main_page">
-                <div class="user-search">
-                    <div class="refresh">
-                        <img
-                            style="width: 29px; height: 29px"
-                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png"
-                        />
-                    </div>
-                    <div class="search">
-                        <input placeholder="Search" type="text" />
-                        <img
-                            style="width: 23px; height: 23px"
-                            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png"
-                        />
-                    </div>
-                    <div
-                        class="match-group"
-                        id="groupMatchingButton"
-                        type="button"
-                        onclick="openMatching()"
-                    >
-                        랜덤 매칭
-                    </div>
-                    <div class="make-group" id="groupOpenButton" type="button">
-                        그룹 생성
-                    </div>
-                </div>
-
-                <div class="table_wrapper scrollBar">
-                    <table id="groupTable">
-                        <thead>
-                            <tr>
-                                <td class="title_room">제목</td>
-                                <td class="title_people">인원</td>
-                                <td class="title_tier">티어</td>
-                                <td class="title_user">그룹장</td>
-                                <td class="title_type">대전 모드</td>
-                                <td class="title_position">포지션 현황</td>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div id="profile-list" oncontextmenu="showUserClickModal(event)">
+                    <div class="discord-user-name"></div>
                 </div>
             </div>
-            <img
-                alt=""
-                class="chatting-notice-img-btn hidden"
-                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png"
-            />
-        </main>
-        <div class="chatting_box">
-            <img
-                alt=""
-                class="chatting-notice-img-btn hidden"
-                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png"
-                onclick="showGroupManage()"
-            />
-            <img
-                alt=""
-                class="chatting-img-btn hidden"
-                src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png"
-            />
-        </div>
-        <!-- <script src="../js/pop-up.js"></script> -->
+            <div id="login">
+                <input class="login" id="login-btn" type="button" value="로그인" />
+            </div>
+        </nav>
+    </header>
+    <div class="hidden" id="groupManageContainer">
+        <script>
+            loadHTML("./group-manage.html");
+        </script>
+    </div>
+    <div class="hidden" id="groupContainer">
+        <script>
+            loadHTML("./create-group-modal.html");
+        </script>
+    </div>
+    <div class="hidden" id="profileContainer">
+        <script>
+            loadHTML("./profile-modal.html");
+        </script>
+    </div>
+    <div class="hidden" id="friendRequestContainer">
+        <script>
+            loadHTML("./friend-request-modal.html");
+        </script>
+    </div>
+    <div class="hidden" id="userClickContainer">
+        <script>
+            loadHTML("./user-click-modal.html");
+        </script>
+    </div>
+    <div class="hidden container" id="friendListContainer">
+        <script>
+            loadHTML("./friend-list.html");
+        </script>
+    </div>
+    <div class="hidden container" id="blockedUserContainer">
+        <script>
+            loadHTML("./blocked-user-modal.html");
+        </script>
+    </div>
+    <div class="hidden container" id="sendMessageContainer">
+        <script>
+            loadHTML("./sendMessage-modal.html");
+        </script>
+    </div>
+    <div class="hidden container" id="matchingContainer">
+        <script>
+            loadHTML("./matching-modal.html");
+        </script>
+    </div>
+    <div class="visible container" id="noticeModalContainer">
+        <script>
+            loadHTML("./notice-modal.html");
+        </script>
+    </div>
+    <main>
+        <div class="main main_page">
+            <div class="user-search">
+                <div class="refresh">
+                    <img style="width: 29px; height: 29px"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/refresh.png" />
+                </div>
+                <div class="search">
+                    <input placeholder="Search" type="text" />
+                    <img style="width: 23px; height: 23px"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png" />
+                </div>
 
-        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-        <script src="../js/constants.js"></script>
-        <script src="../js/index.js"></script>
-        <script src="../js/user-click-modal.js"></script>
-        <script src="../js/matching-modal.js"></script>
-        <script src="../js/drag.js"></script>
-        <script src="../js/check-message.js"></script>
-        <!-- <script src="../js/login-modal.js"></script> -->
-    </body>
+                <div class="match-group" id="groupMatchingButton" type="button" onclick="openMatching()">
+                    랜덤 매칭
+                </div>
+                <div class="make-group" id="groupOpenButton" type="button">
+                    그룹 생성
+                </div>
+            </div>
+            <div class="table_wrapper scrollBar">
+                <table id="groupTable">
+                    <thead>
+                        <tr>
+                            <td class="title_room">제목</td>
+                            <td class="title_people">인원</td>
+                            <td class="title_tier">티어</td>
+                            <td class="title_user">그룹장</td>
+                            <td class="title_type">대전 모드</td>
+                            <td class="title_position">포지션 현황</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <img alt="" class="chatting-notice-img-btn hidden"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png" />
+    </main>
+    <div class="chatting_box">
+        <img alt="" class="chatting-notice-img-btn hidden"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png" onclick="showGroupManage()" />
+        <img alt="" class="chatting-img-btn"
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png" />
+    </div>
+    <!-- <script src="../js/pop-up.js"></script> -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="../js/user-click-modal.js"></script>
+    <script src="../js/matching-modal.js"></script>
+    <script src="../js/drag.js"></script>
+    <script src="../js/check-message.js"></script>
+    <!-- <script src="../js/login-modal.js"></script> -->
+</body>
+
 </html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notice Modal</title>
+    <link rel="stylesheet" href="../css/notice-modal.css" />
+</head>
+
+<body>
+    <div id="noticeModal" class="modal">
+        <div class="modal-bar">공지사항</div>
+        <div class="modal-content">
+            <div class="modal-content-text">
+                왼쪽 상단 <span class="highlight-text">확성기</span>를 눌러
+                <p><span class="color-text">공지 사항을 꼭 확인해 주세요!</span>
+            </div>
+        </div>
+
+        <div class="modal-btn-box">
+            <div class="ignore-btn-box">
+                <label for="ignoreForever" id="ignoreForeverLabel">
+                    <input type="checkbox" id="ignoreForever" /> 앞으로 보지 않기
+                </label>
+            </div>
+            <span id="closeModalBtn" class="close">
+                <img class="modal-close-white"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EC%97%91%EC%8A%A4%EB%B0%B1.png"
+                    alt="닫기">
+            </span>
+
+        </div>
+    </div>
+
+    <script src="../js/notice-modal.js"></script>
+</body>
+
+</html>
