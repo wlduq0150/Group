@@ -1,34 +1,43 @@
-/* notice-modal.css */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
     background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    max-width: 90%;
+    width: 700px; /* 또는 원하는 너비 */
+    max-height: 90%;
+    height: 700px; /* 또는 원하는 높이 */
+    overflow: auto;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
     border-radius: 8px;
-    position: relative;
-    text-align: center; /* Center text */
+}
+
+.modal-iframe {
+    width: 100%;
+    height: 100%;
+    transform: scale(2);
+    transform-origin: 0 0;
 }
 
 .close {
-    color: #aaa;
     position: absolute;
     top: 10px;
     right: 10px;
     font-size: 28px;
+    color: #aaa;
     font-weight: bold;
     cursor: pointer;
 }
