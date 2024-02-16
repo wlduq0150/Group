@@ -1,32 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notice Modal</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+    <meta http-equiv="imagetoolbar" content="no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>PDF.js 데모</title>
     <link rel="stylesheet" href="../css/notice-modal.css">
 </head>
 
 <body>
-
-    <div id="noticeModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-
-            <iframe class="modal-iframe" src="https://yewon.my.canva.site/diff" frameborder="0" marginwidth="0"
-                marginheight="0"></iframe>
-
-            <button id="closeModalBtn">닫기</button>
-            <label for="ignoreForever" id="ignoreForeverLabel">
-                <input type="checkbox" id="ignoreForever"> 앞으로 보지 않기
-            </label>
-        </div>
-    </div>
-
-
+    <h1>PDF.js 데모</h1>
+    <canvas id="the-canvas"></canvas>
     <script src="../js/notice-modal.js"></script>
-
 </body>
 
 </html>

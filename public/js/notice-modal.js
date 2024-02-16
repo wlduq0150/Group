@@ -1,30 +1,38 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("noticeModal");
-    const closeBtn = document.querySelector(".close");
-    const closeModalBtn = document.getElementById("closeModalBtn");
-    const ignoreForeverCheckbox = document.getElementById("ignoreForever");
+var url = "../html/notice.pdf";
 
-    // 로컬 스토리지에서 모달 표시 여부를 확인
-    const showModal = !localStorage.getItem("hideModalForever");
+var pdfjsLib = window["pdfjs-dist/build/pdf"];
 
-    // 모달 보여야하면 보여주기
-    if (showModal) {
-        modal.style.display = "block";
-    }
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://mozilla.github.io/pdf.js/build/pdf.worker.js";
 
-    // 모달 닫기
-    closeBtn.addEventListener("click", closeModal);
-    closeModalBtn.addEventListener("click", closeModal);
+var loadingTask = pdfjsLib.getDocument(url);
+loadingTask.promise.then(
+    function (pdf) {
+        console.log("PDF loaded");
 
-    function closeModal() {
-        modal.style.display = "none"; //모달 숨기기
-        if (ignoreForeverCheckbox.checked) {
-            localStorage.setItem("hideModalForever", true); // 앞으로 보지 않기
-        }
-    }
+        var pageNumber = 1;
+        pdf.getPage(pageNumber).then(function (page) {
+            console.log("Page loaded");
 
-    // iframe 내부 문서에 접근하여 스타일 변경
-    const iframeDocument =
-        document.querySelector(".modal-iframe").contentWindow.document;
-    iframeDocument.body.style.zoom = "200%";
-});
+            var scale = 1.5;
+            var viewport = page.getViewport({ scale: scale });
+
+            var canvas = document.getElementById("the-canvas");
+            var context = canvas.getContext("2d");
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            var renderContext = {
+                canvasContext: context,
+                viewport: viewport,
+            };
+            var renderTask = page.render(renderContext);
+            renderTask.promise.then(function () {
+                console.log("Page rendered");
+            });
+        });
+    },
+    function (reason) {
+        console.error(reason);
+    },
+);
