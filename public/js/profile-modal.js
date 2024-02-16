@@ -237,6 +237,7 @@ async function linkingLolUser(lolName, lolTag, userId) {
     const loading = document.querySelector(".parent .loading");
     loading.style.visibility = "visible";
     loading.classList.remove("paused");
+    console.log(userId);
     await fetch(`/lol`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
