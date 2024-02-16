@@ -36,6 +36,7 @@
     height: 110px;
 }
 .select-position-parent #userName {
+    pointer-events: auto;
     font-weight: bold;
     margin-top: 10px;
 }

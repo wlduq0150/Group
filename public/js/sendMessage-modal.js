@@ -80,7 +80,11 @@ function enterkey() {
         const friendId = document.querySelector(
             ".sendMessage-parent .discordUser-name",
         ).dataset.id;
-        if (messageInput.value != "") {
+        const blankPattern = /^\s+|\s+$/g;
+        if (
+            messageInput.value != "" &&
+            !messageInput.value.replace(blankPattern, "") == ""
+        ) {
             sendMessage(+friendId, messageInput.value);
             messageInput.value = "";
         }

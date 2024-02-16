@@ -725,3 +725,12 @@ main {
     color: #000;
     padding: 6px;
 }
+
+.modal-close-white {
+    width: 15px;
+    height: 15px;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
+}
