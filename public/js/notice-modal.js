@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const noticeModal = document.getElementById("noticeModal");
+    const noticeModal = document.getElementById("noticeModalContainer");
     const closeModalBtn = document.getElementById("closeModalBtn");
     const ignoreForeverCheckbox = document.getElementById("ignoreForever");
 
