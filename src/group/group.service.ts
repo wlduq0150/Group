@@ -42,6 +42,7 @@ export class GroupService {
     ) {
         const isDev = configService.get("NODE_ENV");
         if (isDev === "development") {
+            console.log("개발환경입니다.");
             this.clear();
         }
 
