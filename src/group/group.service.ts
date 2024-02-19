@@ -40,7 +40,7 @@ export class GroupService {
         private readonly groupGateway: GroupGateway,
         private readonly configService: ConfigService,
     ) {
-        const isDev = configService.get("NODE_ENV");
+        const isDev = configService.get("ENV");
         if (isDev === "development") {
             console.log("개발환경입니다.");
             this.clear();
