@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 import { LolChampion } from "src/entity/lol-champion.entity";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
+import { UserService } from "src/user/user.service";
 
 @Injectable()
 export class LolService {
@@ -18,13 +19,12 @@ export class LolService {
         private readonly configService: ConfigService,
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
+        private readonly userService: UserService,
     ) {}
 
     //디코유저 id로 롤 유저 찾기
     async findUserByUserId(userId: number) {
-        const lolUser = await this.lolUserRepository.findOneBy({
-            userId: userId,
-        });
+        const lolUser = await this.lolUserRepository.findOneBy({ userId });
         if (!lolUser) {
             throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
         }
@@ -33,9 +33,7 @@ export class LolService {
 
     //디코유저 id로 롤 유저 이름+태그 찾기
     async findUserNameTag(userId: number) {
-        const lolUser = await this.lolUserRepository.findOneBy({
-            userId: userId,
-        });
+        const lolUser = await this.lolUserRepository.findOneBy({ userId });
         if (!lolUser) {
             throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
         }
@@ -50,6 +48,7 @@ export class LolService {
         const userInfo = await this.lolUserRepository.findOneBy({
             nameTag: name + "#" + tag,
         });
+        console.log(userInfo);
         return userInfo;
     }
 
@@ -59,22 +58,13 @@ export class LolService {
         const userCache: string = await this.cacheManager.get(userCacheKey);
 
         if (userCache) {
-            const userInfo = JSON.parse(userCache) as
-                | LolUser
-                | {
-                      user: LolUser;
-                      champion: LolChampion[];
-                  };
-            return userInfo;
+            const user: LolUser = JSON.parse(userCache);
+            return { user };
         }
 
         const user = await this.findUserInfo(lolUserId);
 
-        await this.cacheManager.set(
-            userCacheKey,
-            JSON.stringify({ user }),
-            50000,
-        );
+        await this.cacheManager.set(userCacheKey, JSON.stringify(user), 50000);
         return { user };
     }
 
@@ -86,7 +76,16 @@ export class LolService {
         }
 
         const userInfo = await this.saveLolUser(name, tag, discordUserId);
-        await this.saveChampionData(userInfo.id);
+        console.log("유저 정보 저장완료");
+        await this.saveChampionData(discordUserId);
+
+        const userCacheKey: string = `userCache:id${userInfo.id}`;
+        const userRedisData = await this.findUserInfo(userInfo.id);
+        await this.cacheManager.set(
+            userCacheKey,
+            JSON.stringify(userRedisData),
+            50000,
+        );
     }
 
     //유저 롤 정보 저장
@@ -101,6 +100,8 @@ export class LolService {
             userPuuid.puuid,
         );
 
+        const discordUser = await this.userService.findOneById(discordUserId);
+
         await this.lolUserRepository.save({
             gameName: name,
             gameTag: tag,
@@ -113,12 +114,15 @@ export class LolService {
             leaguePoints: user[0].leaguePoints,
             wins: user[0].wins,
             losses: user[0].losses,
-            userId: discordUserId,
+            user: discordUser,
             lastMatchId: "no",
         });
-        const thisUser = await this.lolUserRepository.findOne({
-            where: { nameTag: name + "#" + tag },
-        });
+        const thisUser = {
+            id: discordUserId,
+            wins: user[0].wins,
+            losses: user[0].losses,
+            puuid: userPuuid.puuid,
+        };
         return thisUser;
     }
 
@@ -126,8 +130,10 @@ export class LolService {
     private async saveChampionData(userId: number) {
         const userInfo = await this.findUserInfo(userId);
 
+        console.log(userInfo);
+        console.log("넘버 바꾸기 전");
         const count = Number(userInfo.wins) + Number(userInfo.losses);
-
+        console.log("유저 경기 찾기 전?");
         const userMatchIds = await this.findMatchIds(userInfo.puuid, count);
         if (!userMatchIds.length) {
             return;
@@ -135,8 +141,9 @@ export class LolService {
         const userChampions = await this.allMatches(
             userMatchIds,
             userInfo.puuid,
-            userId,
+            userInfo.id,
         );
+        console.log("결과2: ", userChampions);
 
         const clearChampions = userChampions
             .filter((e) => {
@@ -145,7 +152,7 @@ export class LolService {
             .sort((a, b) => b.wins - a.wins);
 
         await this.lolUserRepository.update(
-            { id: userId },
+            { id: userInfo.id },
             { lastMatchId: clearChampions.shift() },
         );
 
@@ -172,11 +179,26 @@ export class LolService {
             .leftJoinAndSelect("lolUser.lolChampions", "lolChampions")
             .orderBy("lolChampions.total", "DESC")
             .getOne();
-        if (!lolUserInfo) {
-            throw new NotFoundException(
-                "유저 id가 잘못됬거나 해당하는 롤유저가 없습니다",
-            );
-        }
+
+        // const user = await this.userService.findOneById(userId);
+        // console.log(user);
+        // const lolUserInfo = await this.lolUserRepository.findOne({
+        //     where: {
+        //         user,
+        //     },
+        //     relations: {
+        //         user: true,
+        //         lolChampions: true,
+        //     },
+        // });
+
+        console.log("롤 데이터 불러옴");
+        // if (!lolUserInfo) {
+        //     throw new NotFoundException(
+        //         "유저 id가 잘못됬거나 해당하는 롤유저가 없습니다",
+        //     );
+        // }
+        console.log("여기 까지는 왔니?");
         return lolUserInfo;
     }
 
@@ -245,11 +267,12 @@ export class LolService {
         if (count > 10) {
             count = 10;
         }
-
+        console.log("매치 데이터 불러오기 전");
         const respose = await fetch(
             `${asiaServer}lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&api_key=${apiKey}`,
             { method: "GET" },
         );
+        console.log("매치 데이터 불러오기 완료");
         const userMatchIds = await respose.json();
         return userMatchIds; //promise
     }

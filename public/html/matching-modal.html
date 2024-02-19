@@ -1,141 +1,292 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../css/matching-modal.css" />
+        <title>포지션 선택</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/matching-modal.css" />
-    <title>포지션 선택</title>
-</head>
+    <body>
+        <div class="matching-parent">
+            <span class="close"
+                ><img
+                    class="modal-close-white"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EC%97%91%EC%8A%A4%EB%B0%B1.png"
+                    alt=""
+            /></span>
+            <div class="matching-bar">매칭</div>
+            <!-- <div class="group-name">님의 그룹</div> -->
+            <div
+                class="matching-box matching-mode-box matching-page-1"
+                data-page="1"
+            >
+                <div
+                    id="mode-box"
+                    class="select-box"
+                    onclick="clickMatchingMode(event)"
+                >
+                    <div id="mode" data-value="nomal-game">일반 게임</div>
+                    <div id="userName" class="nomal-game-user-name"><br /></div>
+                </div>
+                <div
+                    id="mode-box"
+                    class="select-box"
+                    onclick="clickMatchingMode(event)"
+                >
+                    <div id="mode" data-value="rank-game">솔로 랭크</div>
+                    <div id="userName" class="rank-game-user-name"><br /></div>
+                </div>
+                <div
+                    id="mode-box"
+                    class="select-box"
+                    onclick="clickMatchingMode(event)"
+                >
+                    <div id="mode" data-value="team-rank">자유 랭크</div>
+                    <div id="userName" class="team-rank-user-name"><br /></div>
+                </div>
+            </div>
 
-<body>
-    <div class="matching-parent">
-        <div class="matching-bar">매칭</div>
-        <!-- <div class="group-name">님의 그룹</div> -->
-        <div class="matching-box matching-mode-box matching-page-1" data-page=1>
-            <div id="mode-box" class="select-box" onclick="clickMatchingMode(event)">
-                <div id="mode" data-value="nomal-game">일반 게임</div>
-                <div id="userName" class="nomal-game-user-name"><br></div>
+            <div
+                class="matching-box matching-people-box matching-page-2"
+                data-page="2"
+            >
+                <div
+                    id="people-box"
+                    class="select-box two-people"
+                    onclick="clickMatchingPeople(event)"
+                >
+                    <div id="people" data-value="2">2인</div>
+                    <div id="userName" class="two-user-name"><br /></div>
+                </div>
+                <div
+                    id="people-box"
+                    class="select-box three-people"
+                    onclick="clickMatchingPeople(event)"
+                >
+                    <div id="people" data-value="3">3인</div>
+                    <div id="userName" class="three-user-name"><br /></div>
+                </div>
+                <div
+                    id="people-box"
+                    class="select-box four-people"
+                    onclick="clickMatchingPeople(event)"
+                >
+                    <div id="people" data-value="4">4인</div>
+                    <div id="userName" class="four-user-name"><br /></div>
+                </div>
+                <div
+                    id="people-box"
+                    class="select-box five-people"
+                    onclick="clickMatchingPeople(event)"
+                >
+                    <div id="people" data-value="5">5인</div>
+                    <div id="userName" class="five-user-name"><br /></div>
+                </div>
             </div>
-            <div id="mode-box" class="select-box" onclick="clickMatchingMode(event)">
-                <div id="mode" data-value="rank-game">솔로 랭크</div>
-                <div id="userName" class="rank-game-user-name"><br></div>
+
+            <div
+                class="matching-box matching-tier-box matching-page-3"
+                data-page="3"
+            >
+                <div
+                    id="tier-box"
+                    class="select-box iron-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="0">아이언</div>
+                    <div id="userName" class="iron-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box bronze-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="1">브론즈</div>
+                    <div id="userName" class="bronze-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box silver-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="2">실버</div>
+                    <div id="userName" class="silver-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box gold-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="3">골드</div>
+                    <div id="userName" class="gold-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box platinum-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="4">플레티넘</div>
+                    <div id="userName" class="platinum-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box emerald-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="5">에메랄드</div>
+                    <div id="userName" class="emerald-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box diamond-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="6">다이아</div>
+                    <div id="userName" class="diamond-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box master-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="7">마스터</div>
+                    <div id="userName" class="master-user-name"><br /></div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box grandmaster-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="8">그랜드마스터</div>
+                    <div id="userName" class="grandmaster-user-name">
+                        <br />
+                    </div>
+                </div>
+                <div
+                    id="tier-box"
+                    class="select-box challanger-tier"
+                    onclick="clickMatchingTier(event)"
+                >
+                    <div id="tier" data-value="9">챌린저</div>
+                    <div id="userName" class="challanger-user-name"><br /></div>
+                </div>
             </div>
-            <div id="mode-box" class="select-box" onclick="clickMatchingMode(event)">
-                <div id="mode" data-value="team-rank">자유 랭크</div>
-                <div id="userName" class="team-rank-user-name"><br></div>
+
+            <div
+                class="matching-box matching-position-box matching-page-4"
+                data-page="4"
+            >
+                <div
+                    id="position-box"
+                    class="select-box position-jg"
+                    onclick="clickMatchingPosition(event)"
+                >
+                    <img
+                        id="position"
+                        data-value="jg"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
+                        alt=""
+                    />
+                    <div id="userName" class="jg-user-name"><br /></div>
+                </div>
+                <div
+                    id="position-box"
+                    class="select-box position-top"
+                    onclick="clickMatchingPosition(event)"
+                >
+                    <img
+                        id="position"
+                        data-value="top"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png"
+                        alt=""
+                    />
+                    <div id="userName" class="top-user-name"><br /></div>
+                </div>
+                <div
+                    id="position-box"
+                    class="select-box position-mid"
+                    onclick="clickMatchingPosition(event)"
+                >
+                    <img
+                        id="position"
+                        data-value="mid"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
+                        alt=""
+                    />
+                    <div id="userName" class="mid-user-name"><br /></div>
+                </div>
+                <div
+                    id="sposition-box"
+                    class="select-box position-adc"
+                    onclick="clickMatchingPosition(event)"
+                >
+                    <img
+                        id="position"
+                        data-value="adc"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png"
+                        alt=""
+                    />
+                    <div id="userName" class="adc-user-name"><br /></div>
+                </div>
+                <div
+                    id="position-box"
+                    class="select-box position-sup"
+                    onclick="clickMatchingPosition(event)"
+                >
+                    <img
+                        id="position"
+                        data-value="sup"
+                        src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"
+                        alt=""
+                    />
+                    <div id="userName" class="sup-user-name"><br /></div>
+                </div>
+            </div>
+            <div class="complete-btn-box">
+                <div
+                    class="complete-btn prev-btn"
+                    onclick="clickPrevBtn(event)"
+                >
+                    취소
+                </div>
+                <div
+                    class="complete-btn next-btn"
+                    onclick="clickNextBtn(event)"
+                >
+                    다음
+                </div>
             </div>
         </div>
 
-        <div class="matching-box matching-people-box matching-page-2" data-page=2>
-            <div id="people-box" class="select-box two-people" onclick="clickMatchingPeople(event)">
-                <div id="people" data-value=2>2인</div>
-                <div id="userName" class="two-user-name"><br></div>
+        <div class="is-matching-parent">
+            <div class="is-matching-bar">매칭</div>
+            <!-- <div class="group-name">님의 그룹</div> -->
+            <div class="is-matching-box">
+                <div>매칭 중...</div>
             </div>
-            <div id="people-box" class="select-box three-people" onclick="clickMatchingPeople(event)">
-                <div id="people" data-value=3>3인</div>
-                <div id="userName" class="three-user-name"><br></div>
-            </div>
-            <div id="people-box" class="select-box four-people" onclick="clickMatchingPeople(event)">
-                <div id="people" data-value=4>4인</div>
-                <div id="userName" class="four-user-name"><br></div>
-            </div>
-            <div id="people-box" class="select-box five-people" onclick="clickMatchingPeople(event)">
-                <div id="people" data-value=5>5인</div>
-                <div id="userName" class="five-user-name"><br></div>
-            </div>
-        </div>
 
-        <div class="matching-box matching-tier-box matching-page-3" data-page=3>
-            <div id="tier-box" class="select-box iron-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=0>아이언</div>
-                <div id="userName" class="iron-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box bronze-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=1>브론즈</div>
-                <div id="userName" class="bronze-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box silver-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=2>실버</div>
-                <div id="userName" class="silver-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box gold-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=3>골드</div>
-                <div id="userName" class="gold-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box platinum-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=4>플레티넘</div>
-                <div id="userName" class="platinum-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box emerald-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=5>에메랄드</div>
-                <div id="userName" class="emerald-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box diamond-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=6>다이아</div>
-                <div id="userName" class="diamond-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box master-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=7>마스터</div>
-                <div id="userName" class="master-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box grandmaster-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=8>그랜드마스터</div>
-                <div id="userName" class="grandmaster-user-name"><br></div>
-            </div>
-            <div id="tier-box" class="select-box challanger-tier" onclick="clickMatchingTier(event)">
-                <div id="tier" data-value=9>챌린저</div>
-                <div id="userName" class="challanger-user-name"><br></div>
+            <div class="complete-btn-box">
+                <div
+                    class="complete-btn cancle-btn"
+                    onclick="cancleMatching(event)"
+                >
+                    매칭 취소
+                </div>
             </div>
         </div>
-
-        <div class="matching-box matching-position-box matching-page-4" data-page=4>
-            <div id="position-box" class="select-box position-jg" onclick="clickMatchingPosition(event)">
-                <img id="position" data-value="jg" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/정글흑.png"
-                    alt="" />
-                <div id="userName" class="jg-user-name"><br></div>
-            </div>
-            <div id="position-box" class="select-box position-top" onclick="clickMatchingPosition(event)">
-                <img id="position" data-value="top" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/탑흑.png"
-                    alt="" />
-                <div id="userName" class="top-user-name"><br></div>
-            </div>
-            <div id="position-box" class="select-box position-mid" onclick="clickMatchingPosition(event)">
-                <img id="position" data-value="mid" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/미드흑.png"
-                    alt="" />
-                <div id="userName" class="mid-user-name"><br></div>
-            </div>
-            <div id="sposition-box" class="select-box position-adc" onclick="clickMatchingPosition(event)">
-                <img id="position" data-value="adc" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/바텀흑.png"
-                    alt="" />
-                <div id="userName" class="adc-user-name"><br></div>
-            </div>
-            <div id="position-box" class="select-box position-sup" onclick="clickMatchingPosition(event)">
-                <img id="position" data-value="sup" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/lane/서폿흑.png"
-                    alt="" />
-                <div id="userName" class="sup-user-name"><br></div>
-            </div>
-        </div>
-        <div class="complete-btn-box">
-            <div class="complete-btn prev-btn" onclick="clickPrevBtn(event)">취소</div>
-            <div class="complete-btn next-btn" onclick="clickNextBtn(event)">다음</div>
-        </div>
-    </div>
-
-    <div class="is-matching-parent">
-        <div class="is-matching-bar">매칭</div>
-        <!-- <div class="group-name">님의 그룹</div> -->
-        <div class="is-matching-box">
-            <div>
-                매칭 중...
-            </div>
-        </div>
-
-        <div class="complete-btn-box">
-            <div class="complete-btn cancle-btn" onclick="cancleMatching(event)">매칭 취소</div>
-        </div>
-    </div>
-    <!-- <script src="../js/matching-modal.js"></script> -->
-</body>
-
+        <!-- <script src="../js/matching-modal.js"></script> -->
+        <script>
+            // x 버튼
+            document
+                .querySelectorAll(".matching-parent .close")
+                .forEach((button) => {
+                    button.addEventListener("click", function () {
+                        document
+                            .querySelector("#matchingContainer")
+                            .classList.add("hidden");
+                    });
+                });
+        </script>
+    </body>
 </html>

@@ -12,6 +12,7 @@
     right: 0;
     bottom: 0;
 }
+
 .create-group-modal {
     /* display: grid;
     place-items: center; */
@@ -44,6 +45,11 @@
     justify-content: space-around;
 }
 
+.group-comment {
+    margin-top: 25px;
+    text-align: center;
+}
+
 .create-group-modal .group-box-item {
     display: flex;
     flex-direction: column;
@@ -73,7 +79,7 @@
 }
 
 .create-group-modal .select-position-box {
-    height: 210px;
+    height: 190px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -111,4 +117,12 @@
         url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
             5 5,
         pointer;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    padding: 10px;
+    font-size: 20px;
 }

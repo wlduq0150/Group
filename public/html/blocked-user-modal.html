@@ -9,10 +9,30 @@
 
     <body>
         <div draggable="true" class="blocked-user-modal">
-            <div id="blocked_user_modal_drag_me" class="blocked-user-modal-bar">차단 목록</div>
+            <div id="blocked_user_modal_drag_me" class="blocked-user-modal-bar">
+                차단 목록
+            </div>
+            <span class="close"
+                ><img
+                    class="modal-close-white"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EC%97%91%EC%8A%A4%EB%B0%B1.png"
+                    alt=""
+            /></span>
             <div class="blocked-user-list-box"></div>
         </div>
     </body>
+    <script>
+        // x 버튼
+        document
+            .querySelectorAll(".blocked-user-modal .close")
+            .forEach((button) => {
+                button.addEventListener("click", function () {
+                    document
+                        .querySelector("#blockedUserContainer")
+                        .classList.add("hidden");
+                });
+            });
+    </script>
     <script src="../js/drag.js"></script>
     <script src="../js/blocked-user-modal.js"></script>
 </html>

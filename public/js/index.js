@@ -6,6 +6,7 @@ let friendIds = [];
 let blockedUserIds = [];
 let isGroupLoading = false;
 let isGroupJoining = false;
+let allGroups = [];
 // const socketURL = "";
 
 //const socketURL = "http://socket-lb-35040061.ap-northeast-2.elb.amazonaws.com";
@@ -43,8 +44,7 @@ window.onload = function () {
     }
 
     socket.on("getAllGroup", async function (data) {
-        let allGroups = [];
-
+        allGroups = [];
         if (Array.isArray(data.groups)) {
             allGroups = data.groups.map((groupObj) => {
                 const keys = Object.keys(groupObj);
@@ -142,19 +142,24 @@ completeBtn.addEventListener("click", async function (e) {
         position.className.split(" ")[0].replace("position-", ""),
     );
 
-    socket.emit("groupCreate", {
-        name: title,
-        mode: mode,
-        tier: tier,
-        people: mode === "aram" ? people : null,
-        owner: userId,
-        private: privateCheckbox.checked,
-        password: privateCheckbox.checked ? password : undefined,
-        position: mode === "aram" ? [] : selectedPositions,
-    });
+    // 입력 받은 문자 전체 공백 여부 확인
+    if (title.replaceAll(" ", "") !== "") {
+        socket.emit("groupCreate", {
+            name: title.trim(),
+            mode: mode,
+            tier: tier,
+            people: mode === "aram" ? people : null,
+            owner: userId,
+            private: privateCheckbox.checked,
+            password: privateCheckbox.checked ? password : undefined,
+            position: mode === "aram" ? [] : selectedPositions,
+        });
 
-    groupContainer.classList.add("hidden");
-    resetCreateGroupModal();
+        groupContainer.classList.add("hidden");
+        resetCreateGroupModal();
+    } else {
+        alert("제목이 비어있습니다!");
+    }
 });
 
 // 새로고침 이벤트 처리
@@ -215,8 +220,10 @@ async function updateLoginStatus() {
 
             socket.emit("connectWithUserId", data.userId);
             friendSocket.emit("connectWithUserId", data.userId);
+            hideMessageAlarm();
         } else {
             loginBtn.value = "로그인";
+            viewMessagAlarm();
         }
     } catch (err) {
         console.error(err);
@@ -253,9 +260,18 @@ async function updateGroupTable(groups) {
         tr.classList.add("user-group");
         tr.dataset.id = group.groupId;
         tr.onclick = joinGroup;
+        let title = group.info.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        if (title.length > 22) {
+            title = `${title.substring(0, 22)}...`;
+        }
+
+        let owner = userName;
+        if (owner.length > 7) {
+            owner = `${owner.substring(0, 7)}...`;
+        }
 
         tr.innerHTML = `
-        <td class="group_name"><span>${group.info.name}</span></td>
+        <td class="group_name"><span>${title}</span></td>
         <td class="group_people">${group.state.currentUser}/${
             group.state.totalUser
         }</td>
@@ -264,7 +280,7 @@ async function updateGroupTable(groups) {
         </td>
         <td class="group_user"><span class="user_click user" oncontextmenu="showUserClickModal(event)" data-id="${
             group.info.owner
-        }">${userName}</span></td>
+        }">${owner}</span></td>
         <td class="group_type">${Enum.Mode[group.info.mode]}</td>
         <td class="group_position">
         <div>
@@ -287,6 +303,34 @@ async function updateGroupTable(groups) {
 
         tableBody.appendChild(tr);
     }
+}
+
+// 그룹 검색 이벤트 리스너
+document
+    .querySelector(".user-search .search input")
+    .addEventListener("keyup", function (e) {
+        if (e.key === "Enter") {
+            const keyword = this.value;
+            filterGroupTable(keyword, allGroups);
+            this.value = "";
+        }
+    });
+
+document
+    .querySelector(".user-search .search img")
+    .addEventListener("click", function () {
+        const inputField = document.querySelector(".search input").value;
+        const keyword = inputField;
+        filterGroupTable(keyword, allGroups);
+        inputField.value = "";
+    });
+
+// 검색 필터링
+async function filterGroupTable(keyword, groups) {
+    const filterdGroups = groups.filter((group) =>
+        group.info.name.includes(keyword),
+    );
+    updateGroupTable(filterdGroups);
 }
 
 // 그룹 참가 함수
@@ -509,6 +553,10 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
 
         // 유저 이름
         const userId = +groupState[position].userId;
+        const fOut = document.querySelector(
+            `.update-select-position-box .position-${position} .out-btn`,
+        );
+        fOut.classList.add("hidden");
         let userName = "";
         if (userId) {
             try {
@@ -518,6 +566,8 @@ async function updateGroupUpdateState(groupInfo, groupState, aramUsers) {
                 userName = await response.text();
                 positionTarget.dataset.userId = userId;
                 positionTarget.classList.add("positionSelected");
+
+                fOut.classList.remove("hidden");
             } catch (e) {
                 console.log(e);
             }
@@ -609,6 +659,10 @@ document.querySelectorAll(".update-group-modal .out-btn").forEach((outBtn) => {
         const userName =
             outBtn.parentElement.querySelector(".user-name").textContent;
         console.log(userId);
+        if (userName == "") {
+            console.log("강퇴할 유저가 없습니다");
+            return;
+        }
         noneBlockOutModal(userId, userName);
     });
 });
@@ -632,6 +686,7 @@ chattingBtn.addEventListener("click", () => {
     const checkManage = document.getElementById("groupManageContainer");
     if (checkManage.classList.contains("hidden")) {
         showGroupManage();
+        hidenChatImg();
     } else {
         hideGroupManage();
     }
@@ -693,7 +748,11 @@ socket.on("disconnect", () => {
 
 socket.on("chat", (data) => {
     const { chat } = data;
+    if (chat.userId == blockedUserIds[chat.userId]) {
+        return;
+    }
     createChatMessage(userId, chat.userId, chat.name, chat.message);
+    alarmGroupMessage();
 });
 
 socket.on("groupJoin", (data) => {
@@ -704,6 +763,7 @@ socket.on("groupJoin", (data) => {
     updateGroupManageState(groupInfo, groupState);
     updateGroupUpdateState(groupInfo, groupState, users ? [...users] : []);
     updateSelectPositionState(groupState, users ? [...users] : []);
+    viewGroupImg();
 });
 
 socket.on("openGroupUpdate", (data) => {
@@ -734,6 +794,7 @@ socket.on("groupLeave", () => {
     resetSelectPositionState();
     resetGroupUpdateState();
     hideGroupManage();
+    hideGroupImg();
     console.log("유저 그룹 나가기 완료");
 });
 
@@ -785,7 +846,18 @@ friendSocket.on("friendComplete", (data) => {
 });
 
 friendSocket.on("sendMessage", (data) => {
-    socketMessage(data);
+    const messageContainer = document.querySelector("#sendMessageContainer");
+    const roomId = document.querySelector(
+        ".sendMessage-parent .discordUser-name",
+    ).dataset.room_id;
+    if (
+        data.messageRoomId == roomId &&
+        !messageContainer.classList.contains("hidden")
+    ) {
+        socketMessage(data);
+    } else {
+        alarmFriendMessage(data.senderId);
+    }
 });
 
 friendSocket.on("deleteFriend", (data) => {

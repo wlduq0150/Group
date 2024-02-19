@@ -46,7 +46,10 @@
     width: 130px;
     height: 40px;
     border-radius: 15px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .matching-parent {
@@ -97,7 +100,10 @@
     margin-top: 40px;
     height: 110px;
     width: 110px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 .matching-parent .complete-btn-box {
     height: 90px;
@@ -116,7 +122,10 @@
     width: 130px;
     height: 40px;
     border-radius: 15px;
-    cursor: pointer;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
 }
 
 .matching-parent .forbidden {
@@ -178,4 +187,12 @@
 
 .matching-parent {
     display: block;
+}
+
+.select-box > div {
+    pointer-events: none;
+}
+
+#people-box.hidden {
+    display: none;
 }

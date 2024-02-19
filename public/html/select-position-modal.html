@@ -9,6 +9,12 @@
 
     <body>
         <div class="select-position-parent">
+            <span class="close"
+                ><img
+                    class="modal-close-white"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EC%97%91%EC%8A%A4%EB%B0%B1.png"
+                    alt=""
+            /></span>
             <div class="select-position-bar">역할 선택</div>
             <!-- <div class="group-name">님의 그룹</div> -->
             <div class="select-position-box">
@@ -87,6 +93,18 @@
                 <div class="complete-btn">완료</div>
             </div>
         </div>
+        <script>
+            // x 버튼
+            document
+                .querySelectorAll(".select-position-parent .close")
+                .forEach((button) => {
+                    button.addEventListener("click", function () {
+                        document
+                            .querySelector("#positionSelectContainer")
+                            .classList.add("hidden");
+                    });
+                });
+        </script>
         <script src="../js/select-positon-modal.js"></script>
     </body>
 </html>

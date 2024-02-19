@@ -99,6 +99,7 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 senderId: client["userId"],
                 message: sendMessageDto.message,
                 sendDate: korNow,
+                messageRoomId: messageRoom.id,
             });
         }
 
@@ -107,6 +108,7 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             senderId: client["userId"],
             message: sendMessageDto.message,
             sendDate: korNow,
+            messageRoomId: messageRoom.id,
         });
         const messageData = {
             senderId: client["userId"],
@@ -116,20 +118,25 @@ export class FriendGateway implements OnGatewayConnection, OnGatewayDisconnect {
             messageRoomId: messageRoom.id,
         };
 
-        //레디스에 새 메세지 저장
-        await this.friendService.saveNewMessageRedis(
-            messageRoom.id,
-            messageData,
-        );
-
-        //db에 비동기적으로 새 메세지 저장
-        this.saveOneMessage(
-            client["userId"],
-            +sendMessageDto.friendId,
-            sendMessageDto.message,
-            korNow,
-            +messageRoom.id,
-        );
+        //db와 redis는 같은 데이터가 존재해야 하기 때문에
+        try {
+            //db에 비동기적으로 새 메세지 저장
+            await Promise.all([
+                this.saveOneMessage(
+                    client["userId"],
+                    +sendMessageDto.friendId,
+                    sendMessageDto.message,
+                    korNow,
+                    +messageRoom.id,
+                ),
+                this.friendService.saveNewMessageRedis(
+                    messageRoom.id,
+                    messageData,
+                ),
+            ]);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     //메세지 저장

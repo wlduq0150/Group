@@ -22,14 +22,28 @@
             rawFile.send(null);
         }
     </script>
+    <script>
+        function openPDF() {
+            var pdfURL = "https://with-lol.s3.ap-northeast-2.amazonaws.com/pdf/notice.pdf";
+            window.open(pdfURL, "_blank");
+        }
+    </script>
 </head>
 
 <body>
     <div class="user-context" id="user-context"></div>
     <header>
+        <div class="notice" onclick="openPDF()">
+            <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EB%A9%94%EA%B0%80%ED%8F%B0.png"
+                alt="PDF 열기">
+        </div>
         <img src="https://with-lol.s3.ap-northeast-2.amazonaws.com/siteLogo/5.png" />
         <nav>
             <div id="profile">
+                <div class="message-alarm hidden">
+                    <img class="no-alarm" src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/noMessage.png"
+                        alt="" />
+                </div>
                 <div id="profile-list" oncontextmenu="showUserClickModal(event)">
                     <div class="discord-user-name"></div>
                 </div>
@@ -84,6 +98,11 @@
             loadHTML("./matching-modal.html");
         </script>
     </div>
+    <div class="hidden container" id="noticeModalContainer">
+        <script>
+            loadHTML("./notice-modal.html");
+        </script>
+    </div>
     <main>
         <div class="main main_page">
             <div class="user-search">
@@ -96,6 +115,7 @@
                     <img style="width: 23px; height: 23px"
                         src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/search.png" />
                 </div>
+
                 <div class="match-group" id="groupMatchingButton" type="button" onclick="openMatching()">
                     랜덤 매칭
                 </div>
@@ -103,7 +123,6 @@
                     그룹 생성
                 </div>
             </div>
-
             <div class="table_wrapper scrollBar">
                 <table id="groupTable">
                     <thead>
@@ -125,18 +144,18 @@
     </main>
     <div class="chatting_box">
         <img alt="" class="chatting-notice-img-btn hidden"
-            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png" />
+            src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/chatting.png" onclick="showGroupManage()" />
         <img alt="" class="chatting-img-btn"
             src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/comment.png" />
     </div>
     <!-- <script src="../js/pop-up.js"></script> -->
-
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="../js/constants.js"></script>
     <script src="../js/index.js"></script>
     <script src="../js/user-click-modal.js"></script>
     <script src="../js/matching-modal.js"></script>
     <script src="../js/drag.js"></script>
+    <script src="../js/check-message.js"></script>
     <!-- <script src="../js/login-modal.js"></script> -->
 </body>
 

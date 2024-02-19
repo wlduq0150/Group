@@ -25,6 +25,7 @@ export class LolController {
     //유저 생성
     @Post()
     async findUser(@Body() lolDto: LolDto) {
+        console.log(lolDto);
         return await this.lolService.saveUserAllInfo(
             lolDto.name,
             lolDto.tag,

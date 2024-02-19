@@ -283,6 +283,12 @@ main {
     }
 }
 
+.notice img {
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
+}
+
 .title_room {
     width: 33%;
     text-align: left;
@@ -517,6 +523,24 @@ main {
     }
 }
 
+#profile .message-alarm {
+    position: relative;
+    margin-top: 10px;
+}
+
+#profile .message-alarm img {
+    margin: 5px;
+    width: 34px;
+    height: 34px;
+}
+
+#pofile .message-alarm .on-alarm :hover {
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
+}
+
 @keyframes fade-in {
     from {
         opacity: 0;
@@ -612,6 +636,17 @@ main {
     position: absolute;
 }
 
+#noticeModalContainer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#noticeModalContainer.hidden,
+#profile .message-alarm.hidden,
 #matchingContainer.hidden,
 #sendMessageContainer.hidden,
 #friendListContainer.hidden,
@@ -684,6 +719,7 @@ main {
     height: 70px;
 }
 
+.chatting-img-btn.hidden,
 .chatting-notice-img-btn.hidden {
     display: none;
 }
@@ -704,4 +740,19 @@ main {
     background-color: #fff;
     color: #000;
     padding: 6px;
+}
+
+.modal-close-white {
+    width: 15px;
+    height: 15px;
+    cursor:
+        url("https://with-lol.s3.ap-northeast-2.amazonaws.com/cursor/pcursor.cur")
+            5 5,
+        pointer;
+}
+
+.notice {
+    position: absolute;
+    color: white;
+    left: 0;
 }

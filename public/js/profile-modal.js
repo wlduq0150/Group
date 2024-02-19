@@ -1,6 +1,11 @@
 const mostChampionCount = 3;
-
+let isProfileLoading = false;
 async function getUserProfile(userId, discordUserName) {
+    if (isProfileLoading) {
+        console.log("로딩중");
+        return;
+    }
+    isProfileLoading = true;
     fetch(`/lol/user/${userId}`, {
         method: "GET",
     })
@@ -118,6 +123,8 @@ async function getUserProfile(userId, discordUserName) {
             const loading = document.querySelector(".parent .loading");
             loading.style.visibility = "hidden";
             loading.classList.add("paused");
+
+            isProfileLoading = false;
         })
         .catch((err) => {
             console.log(err);
@@ -126,19 +133,18 @@ async function getUserProfile(userId, discordUserName) {
 
 //discordUserId 로 discord이름과 lolUser정보 가져오기
 async function getLolUserId(discordUserId) {
-    const discordUserName = document.querySelector(
-        "#profile .discord-user-name",
-    ).innerText;
     const res = await fetch(`/lol/discordUser/${discordUserId}`, {
         method: "GET",
     });
     const me = discordUserId == userId;
+    const nameRes = await fetch(`/user/${discordUserId}`);
+    const discordUserName = await nameRes.text();
     if (res.status >= 400) {
         noDataLolUser(discordUserId, discordUserName, me);
         return;
     }
 
-    getUserProfile(userId, discordUserName);
+    getUserProfile(discordUserId, discordUserName);
 }
 
 //프로필을 켰을때 작동하는 함수
@@ -174,6 +180,7 @@ function showProfileModal() {
     }
 }
 
+//닫기버튼 눌렀을때
 document.querySelector(".parent .close-btn").addEventListener("click", (e) => {
     document.querySelector("#profileContainer").classList.add("hidden");
 });
@@ -194,13 +201,18 @@ function noDataLolUser(discordUserId, discordUserName, me) {
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "visible";
+        document.querySelector(".not-connect-modal .discord-name").innerHTML =
+            `${discordUserName}`;
+        document
+            .querySelector(".not-connect-modal .discord-name")
+            .setAttribute("data-id", `${discordUserId}`);
     } else {
+        console.log(discordUserId, discordUserName);
         document.querySelector(".parent").style.display = "none";
         document.querySelector(".not-connect-modal").style.display = "flex";
         document.querySelector(
             ".not-connect-modal .linking-account-btn",
         ).style.visibility = "hidden";
-        console.log(discordUserName + discordUserId);
         const discordName = document.querySelector(
             ".not-connect-modal .discord-name",
         );
@@ -225,6 +237,7 @@ async function linkingLolUser(lolName, lolTag, userId) {
     const loading = document.querySelector(".parent .loading");
     loading.style.visibility = "visible";
     loading.classList.remove("paused");
+    console.log(userId);
     await fetch(`/lol`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

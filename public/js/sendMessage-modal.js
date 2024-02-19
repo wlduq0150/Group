@@ -1,4 +1,5 @@
 //뒤로가기
+let isFriendMessageLoading = false;
 document
     .querySelector(".sendMessage-parent .back-btn")
     .addEventListener("click", (e) => {
@@ -9,6 +10,15 @@ document
 
 //친구 메세지 열기
 async function openSendMessage(friendName, friendId) {
+    const messageAlarm = document.querySelector("#profile .message-alarm");
+
+    if (
+        messageAlarm.firstChild.className == "on-alarm" &&
+        messageAlarm.firstChild.dataset.id == friendId
+    ) {
+        noAlarmMessage();
+    }
+    isFriendMessageLoading = true;
     document.querySelector(".sendMessage-parent .discordUser-name").innerHTML =
         `${friendName}`;
     document
@@ -37,6 +47,8 @@ async function fillMessage(messages) {
     let roomId;
     if (!messages.length) {
         roomId = messages.id;
+
+        messageList.setAttribute("data-count", `0`);
     } else {
         roomId = messages[0].messageRoomId;
     }
@@ -68,7 +80,11 @@ function enterkey() {
         const friendId = document.querySelector(
             ".sendMessage-parent .discordUser-name",
         ).dataset.id;
-        if (messageInput.value != "") {
+        const blankPattern = /^\s+|\s+$/g;
+        if (
+            messageInput.value != "" &&
+            !messageInput.value.replace(blankPattern, "") == ""
+        ) {
             sendMessage(+friendId, messageInput.value);
             messageInput.value = "";
         }
@@ -82,6 +98,7 @@ function downScroll() {
     );
 
     scroll.scrollTop = scroll.scrollHeight;
+    isFriendMessageLoading = false;
 }
 
 //메세지 소켓으로 보내기
@@ -100,7 +117,6 @@ function socketMessage(data) {
 
 //메세지 생성
 function createMessage(data, lastChild) {
-    console.log(data);
     if (data == null) {
         return;
     }
@@ -127,7 +143,9 @@ function createMessage(data, lastChild) {
         <div class="one-message">
             <div class="message-time">${day[1].substr(0, 5)}</div>
                 <div class="message-text-box">
-                    <div class="message-text">${data.message}</div>
+                    <div class="message-text">${data.message
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")}</div>
                     </div>
                 </div>
             </div>
@@ -143,9 +161,10 @@ function createMessage(data, lastChild) {
 
         tailMessage = `
             <div class="one-message">
-                
                     <div class="message-text-box">
-                        <div class="message-text">${data.message}</div>
+                        <div class="message-text">${data.message
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")}</div>
                     </div>
                     <div class="message-time">${day[1].substr(0, 5)}</div>
                 </div>
@@ -161,6 +180,7 @@ function createMessage(data, lastChild) {
             lastChild.querySelector(".message-time").innerHTML = "";
         } else {
         }
+        newMessage = newMessage + ` <div class="message-day"></div>`;
     } else {
         newMessage =
             newMessage +
@@ -173,15 +193,19 @@ function createMessage(data, lastChild) {
 }
 
 //스크롤을 가장위로 올렸을 때
-let messageCount = document.querySelector(
+const messageCount = document.querySelector(
     ".sendMessage-parent .sendMessage-list-box",
 );
 
 messageCount.addEventListener("scroll", (e) => {
+    if (isFriendMessageLoading) {
+        console.log("채팅로딩중");
+        return;
+    }
     const roomId = document.querySelector(
         ".sendMessage-parent .discordUser-name",
     ).dataset.room_id;
-    const count = messageCount.dataset.count;
+    let count = messageCount.dataset.count;
     const oldScrollHeight = e.target.scrollHeight;
     if (count > 0 && e.target.scrollTop == 0) {
         fetch(`/friend/getRedisRoom/${roomId}`, { method: "GET" })
@@ -198,7 +222,6 @@ messageCount.addEventListener("scroll", (e) => {
                 const start = count - 30 <= 0 ? 0 : count - 30;
                 for (let i = start; i < count; i++) {
                     const oldMessage = createMessage(data[i], lastChild);
-
                     parent.insertBefore(oldMessage, first);
                     lastChild = oldMessage;
                 }
@@ -218,3 +241,15 @@ messageCount.addEventListener("scroll", (e) => {
             });
     }
 });
+
+function hideSendMessage() {
+    document.querySelector("#sendMessageContainer").classList.add("hidden");
+}
+
+document
+    .querySelector("#sendMessageContainer")
+    .addEventListener("click", (e) => {
+        if (e.target.classList.contains("container")) {
+            hideSendMessage();
+        }
+    });

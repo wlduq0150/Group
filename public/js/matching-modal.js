@@ -10,6 +10,7 @@ let isStartMatching = false;
 
 function clickMatchingMode(e) {
     const target = e.currentTarget;
+    console.log(target);
 
     const currentMode = target.querySelector("#mode").dataset.value;
 
@@ -17,16 +18,19 @@ function clickMatchingMode(e) {
         initMode();
         matchingMode = currentMode;
         target.style.color = "rgb(247, 176, 22)";
+        initPeople();
         return;
     }
 
     if (matchingMode && matchingMode === currentMode) {
         matchingMode = null;
         target.style.color = "rgb(0, 0, 0)";
+        initPeople();
         return;
     }
 
     matchingMode = currentMode;
+    initPeople();
     target.style.color = "rgb(247, 176, 22)";
 }
 
@@ -81,9 +85,6 @@ function clickMatchingPosition(e) {
 
     const img = target.querySelector("#position");
     const currentPosition = img.dataset.value;
-
-    console.log(matchingPosition);
-    console.log(currentPosition);
 
     if (matchingPosition && matchingPosition !== currentPosition) {
         initPosition();
@@ -229,12 +230,36 @@ function initMode() {
 
 function initPeople() {
     matchingPeople = null;
+    console.log(matchingMode);
+
+    document.querySelector(".matching-parent .two-people").style.display =
+        "flex";
+    document.querySelector(".matching-parent .three-people").style.display =
+        "flex";
+    document.querySelector(".matching-parent .four-people").style.display =
+        "flex";
+    document.querySelector(".matching-parent .five-people").style.display =
+        "flex";
 
     document
         .querySelectorAll(".matching-parent .matching-people-box .select-box")
         .forEach((div) => {
             div.style.color = "rgb(0, 0, 0)";
         });
+
+    if (matchingMode === "rank-game") {
+        document.querySelector(".matching-parent .three-people").style.display =
+            "none";
+        document.querySelector(".matching-parent .four-people").style.display =
+            "none";
+        document.querySelector(".matching-parent .five-people").style.display =
+            "none";
+    }
+
+    if (matchingMode === "team-rank") {
+        document.querySelector(".matching-parent .four-people").style.display =
+            "none";
+    }
 }
 
 function initTier() {
@@ -277,9 +302,9 @@ function initMatching() {
 function openIsMatchingModal() {
     document.querySelector(".is-matching-parent").style.display = "block";
 
-    const isOpenIsMatching = !document
+    const isOpenIsMatching = document
         .querySelector("#matchingContainer")
-        .classList.includes("hidden");
+        .classList.contains("hidden");
     if (isOpenIsMatching) {
         document.querySelector("#matchingContainer").classList.add("hidden");
     }

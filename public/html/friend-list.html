@@ -16,6 +16,12 @@
             <div id="friend_list_modal_drag_me" class="friend_list_title">
                 친구 목록
             </div>
+            <span class="close"
+                ><img
+                    class="modal-close-white"
+                    src="https://with-lol.s3.ap-northeast-2.amazonaws.com/menuIcon/%EC%97%91%EC%8A%A4%EB%B0%B1.png"
+                    alt=""
+            /></span>
             <div class="friend_title">
                 <div>
                     <input
@@ -51,6 +57,18 @@
             </div>
         </div>
     </body>
+    <script>
+        // x 버튼
+        document
+            .querySelectorAll("#friend-list-modal .close")
+            .forEach((button) => {
+                button.addEventListener("click", function () {
+                    document
+                        .querySelector("#friendListContainer")
+                        .classList.add("hidden");
+                });
+            });
+    </script>
     <script src="../js/friend-sendMessage.js"></script>
     <script src="../js/friend-list-modal.js"></script>
     <script src="../js/drag.js"></script>
