@@ -40,7 +40,10 @@ export class GroupService {
         private readonly groupGateway: GroupGateway,
         private readonly configService: ConfigService,
     ) {
-        this.clear();
+        const isDev = configService.get("NODE_ENV");
+        if (isDev === "development") {
+            this.clear();
+        }
 
         this.redlock = new Redlock([redisService.getRedisClient()], {
             retryCount: 3,
