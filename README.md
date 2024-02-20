@@ -5,16 +5,17 @@ LOL 기반의 실시간 게임 그룹 매칭 서비스 입니다.
 <br>
 <br>
 
+
 ## 👋 팀 소개
 
 <table>
   <tbody>
     <tr align="center">
       <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/29b873b6-d26b-4897-999f-97dcbc020f63" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/937270bb-744b-4f99-af1b-5db146897786" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/f8e90480-3054-4571-9f5a-14f6eeb1b64a" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/ae4b485e-dd83-4770-b979-12703372ebe2" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/06c92865-e0a3-4545-a69e-05db2615ab1b" width="100px;" alt=""/><br /></td>
     </tr>
     <tr align="center">
   </tr>
