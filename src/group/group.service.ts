@@ -103,14 +103,14 @@ export class GroupService {
         const groupStateKey = generateGroupStateKey(groupId);
 
         // 채널 생성 메서드 불러오기
-        const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
-        const discordId = await this.userService.findDiscordIdByUserId(+owner);
+        // const guildId = this.configService.get<string>("DISCORD_GUILD_ID");
+        // const discordId = await this.userService.findDiscordIdByUserId(+owner);
 
-        const { voiceChannelId } =
-            await this.discordService.createVoiceChannelAndRole(
-                guildId,
-                discordId,
-            );
+        // const { voiceChannelId } =
+        //     await this.discordService.createVoiceChannelAndRole(
+        //         guildId,
+        //         discordId,
+        //     );
 
         const group: Group = {
             name,
@@ -119,7 +119,7 @@ export class GroupService {
             mic,
             owner,
             open: true,
-            voiceChannelId,
+            voiceChannelId: null,
         };
         const groupState = initGroupState(position, people);
 
@@ -284,7 +284,7 @@ export class GroupService {
         const groupStateKey = generateGroupStateKey(groupId);
         const groupStateLockkey = generateGroupLockKey(groupId);
 
-        const lock = await this.redlock.acquire([groupStateLockkey], 1000);
+        const lock = await this.redlock.acquire([groupStateLockkey], 2000);
 
         const groupInfo = await this.findGroupInfoById(groupId);
         const groupState = await this.findGroupStateById(groupId);
@@ -304,13 +304,13 @@ export class GroupService {
                 throw new Error("이미 해당 그룹에 참여하고 있습니다.");
             }
 
-            const owner = await this.userService.findOneById(groupInfo.owner);
-            const ownerBlockedList = owner.blockedUsers.map((user) => user.id);
-            if (ownerBlockedList.includes(userId)) {
-                throw new Error(
-                    "차단 당한 유저의 그룹에는 참여할 수 없습니다.",
-                );
-            }
+            // const owner = await this.userService.findOneById(groupInfo.owner);
+            // const ownerBlockedList = owner.blockedUsers.map((user) => user.id);
+            // if (ownerBlockedList.includes(userId)) {
+            //     throw new Error(
+            //         "차단 당한 유저의 그룹에는 참여할 수 없습니다.",
+            //     );
+            // }
 
             groupState.currentUser += 1;
             groupState.users.push(userId);
@@ -365,15 +365,15 @@ export class GroupService {
                     }
                 }
             }
-            const discordId =
-                await this.userService.findDiscordIdByUserId(userId);
-            const lobbyChannelId = this.configService.get<string>(
-                "DISCORD_LOBBY_CHANNEL_ID",
-            );
-            this.discordService.moveUserToLobbyChannel(
-                discordId,
-                lobbyChannelId,
-            );
+            // const discordId =
+            //     await this.userService.findDiscordIdByUserId(userId);
+            // const lobbyChannelId = this.configService.get<string>(
+            //     "DISCORD_LOBBY_CHANNEL_ID",
+            // );
+            // this.discordService.moveUserToLobbyChannel(
+            //     discordId,
+            //     lobbyChannelId,
+            // );
 
             // 방장일 경우 새로운 방장으로 교체 (칼바람 나락이 아닐 경우)
             if (groupInfo.mode === "aram" && groupInfo.owner === userId) {
@@ -394,7 +394,7 @@ export class GroupService {
             if (isGroupEmpty) {
                 this.removeGroup(groupId);
                 // 살짝 수정 필요
-                this.discordService.deleteChannel(groupInfo.voiceChannelId);
+                // this.discordService.deleteChannel(groupInfo.voiceChannelId);
                 return null;
             } else {
                 // 변화 저장

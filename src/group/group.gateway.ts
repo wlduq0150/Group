@@ -77,8 +77,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage("connectWithUserId")
     async connectWithUserId(client: Socket): Promise<void> {
         const userId = Math.floor(Math.random() * 1000000) + 1;
-
         await this.groupService.saveDataInSocket(client.id, "userId", userId);
+        console.log(`${userId} 유저 입장`);
     }
 
     @SubscribeMessage("clear")
@@ -166,12 +166,15 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const uniqueId = uuidv4();
         const groupId = `group-${uniqueId}`; // 유니큰한 값 랜덤 생성으로 바뀔 예정
-        const groupInfo = await this.groupService.createGroup(
-            groupId,
-            createGroupDto,
-        );
+        const groupInfo = await this.groupService.createGroup(groupId, {
+            ...createGroupDto,
+            owner: userId,
+            mic: false,
+        });
 
-        await this.groupJoin(client, { groupId });
+        console.log("그룹 생성 완료");
+
+        this.groupJoin(client, { groupId });
 
         return groupId;
     }
@@ -233,7 +236,6 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             "userId",
         ));
         if (!userId) {
-            console.log("로그인 에러");
             throw new WsException("로그인이 필요합니다.");
         }
 
@@ -259,6 +261,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const groupState = await this.groupService.joinGroup(groupId, userId);
         const groupInfo = await this.groupService.findGroupInfoById(groupId);
 
+        console.log("여기까지는 잘 오나?");
+
         // 그룹 참가
         await client.join(groupId);
         await this.groupService.saveDataInSocket(client.id, "groupId", groupId);
@@ -271,17 +275,17 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // 소켓으로 접속한 유저들 목록 불러오기
         const users = await this.findGroupUsers(groupId);
 
-        this.server.to(groupId).emit("groupJoin", {
-            groupId,
-            userId,
-            groupInfo,
-            groupState,
-            users: groupInfo.mode === "aram" ? users : null,
-        });
+        // this.server.to(groupId).emit("groupJoin", {
+        //     groupId,
+        //     userId,
+        //     groupInfo,
+        //     groupState,
+        //     users: groupInfo.mode === "aram" ? users : null,
+        // });
 
-        this.server
-            .to(client.id)
-            .emit("positionSelect", { groupId, groupInfo, groupState });
+        // this.server
+        //     .to(client.id)
+        //     .emit("positionSelect", { groupId, groupInfo, groupState });
     }
 
     // 클라이언트에서 포지션 선택시 발생하는 이벤트
@@ -309,9 +313,9 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             position,
         );
 
-        this.server
-            .to(groupId)
-            .emit("positionSelected", { groupState, position, userId });
+        // this.server
+        //     .to(groupId)
+        //     .emit("positionSelected", { groupState, position, userId });
 
         console.log("포지션 선택");
     }
@@ -341,7 +345,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
             position,
         );
 
-        this.server.to(groupId).emit("positionDeselected", { groupState });
+        // this.server.to(groupId).emit("positionDeselected", { groupState });
 
         console.log("포지션 선택 해제");
     }
