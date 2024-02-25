@@ -75,7 +75,9 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // 클라이언트 socket 연결시 connections에 등록
     @SubscribeMessage("connectWithUserId")
-    async connectWithUserId(client: Socket, userId: number): Promise<void> {
+    async connectWithUserId(client: Socket): Promise<void> {
+        const userId = Math.floor(Math.random() * 1000000) + 1;
+
         await this.groupService.saveDataInSocket(client.id, "userId", userId);
     }
 
@@ -310,6 +312,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server
             .to(groupId)
             .emit("positionSelected", { groupState, position, userId });
+
+        console.log("포지션 선택");
     }
 
     // 클라이언트에서 포지션 선택해제시 발생하는 이벤트
@@ -338,6 +342,8 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         );
 
         this.server.to(groupId).emit("positionDeselected", { groupState });
+
+        console.log("포지션 선택 해제");
     }
 
     @SubscribeMessage("groupLeave")
