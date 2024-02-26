@@ -25,8 +25,9 @@ import {
     DefaultEventsMap,
 } from "socket.io/dist/typed-events";
 import { generateUserDataKey } from "./function/gen-redis-key.function";
+import { WsBaseExceptionFilter } from "./filter/exception.filter";
 
-@UseFilters(WsExceptionFilter)
+@UseFilters(WsExceptionFilter, WsBaseExceptionFilter)
 @WebSocketGateway({ namespace: "/group", cors: "true" })
 @Injectable()
 export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -294,7 +295,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
-        const { groupId, position } = selectPositionDto;
+        const { position } = selectPositionDto;
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
             "userId",
@@ -326,7 +331,11 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client: Socket,
         selectPositionDto: SelectPositionDto,
     ): Promise<void> {
-        const { groupId, position } = selectPositionDto;
+        const { position } = selectPositionDto;
+        const groupId = await this.groupService.getDataInSocket(
+            client.id,
+            "groupId",
+        );
         const userId = +(await this.groupService.getDataInSocket(
             client.id,
             "userId",
@@ -464,6 +473,7 @@ export class GroupGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const chat = await this.groupService.createGroupChat(userId, message);
 
-        this.server.to(groupId).emit("chat", { chat });
+        // this.server.to(groupId).emit("chat", { chat });
+        console.log("채팅");
     }
 }

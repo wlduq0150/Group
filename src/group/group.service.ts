@@ -479,7 +479,7 @@ export class GroupService {
     }
 
     async createGroupChat(userId: number, message: string) {
-        const name = await this.userService.findNameByUserId(userId);
+        const name = "테스트 유저";
 
         return { userId, name, message };
     }
