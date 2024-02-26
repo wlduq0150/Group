@@ -5,16 +5,17 @@ LOL 기반의 실시간 게임 그룹 매칭 서비스 입니다.
 <br>
 <br>
 
+
 ## 👋 팀 소개
 
 <table>
   <tbody>
     <tr align="center">
       <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/29b873b6-d26b-4897-999f-97dcbc020f63" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
-      <td align="center"><img src="" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/937270bb-744b-4f99-af1b-5db146897786" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/f8e90480-3054-4571-9f5a-14f6eeb1b64a" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/ae4b485e-dd83-4770-b979-12703372ebe2" width="100px;" alt=""/><br /></td>
+      <td align="center"><img src="https://github.com/wlduq0150/Group/assets/73841368/06c92865-e0a3-4545-a69e-05db2615ab1b" width="100px;" alt=""/><br /></td>
     </tr>
     <tr align="center">
   </tr>
@@ -51,17 +52,17 @@ LOL 기반의 실시간 게임 그룹 매칭 서비스 입니다.
       대용량 트래픽 개선<br>
     </td>
     <td>
+      신고 기능<br>
       디스코드 로그인<br>
       그룹과 디스코드 연동<br>
-      신고 기능<br>
     </td>
     <td>
-      사용자 LOL 프로필 연동<br>
       1:1 개인 채팅<br>
+      사용자 LOL 프로필 연동<br>
     </td>
     <td>
-      사용자 LOL 프로필 연동<br>
       최근 그룹 목록<br>
+      사용자 LOL 프로필 연동<br>
     </td>
     <td>
       친구 및 차단<br>
@@ -208,29 +209,42 @@ $ npm run start:prod
 
 ## 🪄 주요 기능
 
-1. **실시간 그룹 생성, 삭제 및 유저 입/퇴장**
+1. **실시간 그룹 기능**
 
-    - 
+    - 그룹 생성
+    - 그룹 참가 및 퇴장
+    - 역할 선택 및 해제
+    - 그룹 동시성 처리
 
-2. **그룹 내 채팅 및 유저간 1:1 채팅**
+2. **실시간 채팅**
 
-    - 
+    - 그룹 채팅 기능
+    - 1:1 개인 채팅 기능
+    - 개인 채팅 캐싱
 
-3. **그룹 찾기 완료시 그룹원 전원 디스코드 통화방으로 이동**
+3. **디스코드 연동**
 
-    -
+    - 디스코드 로그인
+    - 그룹과 음성채널 연동
 
-4. **유저 게임 프로필 자동 갱신 및 조회**
+4. **게임 프로필 연동**
+   
+    - 라이엇 API를 통해 게임 정보 불러오기
+    - 주기적으로 프로필 자동 갱신
 
-    - 
+5. **커뮤니티**
 
-5. **유저간 친구 및 차단**
-
-    - 
+    - 친구 신청
+    - 실시간 친구 신청 알림
+    - 유저 차단 및 해제
+    - 신고 기능
 
 6. **랜덤 그룹 매칭**
 
-    -
+    - redis를 통해 대기열 구현
+    - 매칭 조건을 key에 담아 저장 후 패턴 조회
+    - 랜덤 매칭 알고리즘
+    - 동시성 처리
 
 <br>
 <br>
